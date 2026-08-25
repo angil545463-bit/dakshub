@@ -168,7 +168,10 @@
     message.style.maxWidth = "80%";
 
     messages.appendChild(message);
-
+const messagesRef = window.chatRef(window.chatDB, "messages");
+window.chatPush(messagesRef, {
+  text: text
+});
     input.value = "";
     input.focus();
   }

@@ -1,1 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+  <title>Dakshub Chat</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #1a102b;
+      color: white;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .chat-container {
+      width: 90%;
+      max-width: 500px;
+      height: 90vh;
+      max-height: 700px;
+      background: #26163d;
+      border-radius: 20px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      box-shadow: 0 0 30px rgba(0, 0, 0, 0.4);
+    }
+
+    .header {
+      padding: 20px;
+      text-align: center;
+      border-bottom: 1px solid #3d2a59;
+    }
+
+    .header h1 {
+      margin: 0;
+      font-size: 28px;
+    }
+
+    .status {
+      margin-top: 8px;
+      color: #aaa;
+      font-size: 14px;
+    }
+
+    .messages {
+      flex: 1;
+      padding: 20px;
+      overflow-y: auto;
+    }
+
+    .empty-message {
+      text-align: center;
+      color: #aaa;
+      margin-top: 50px;
+    }
+
+    .input-area {
+      display: flex;
+      padding: 15px;
+      gap: 10px;
+      border-top: 1px solid #3d2a59;
+    }
+
+    input {
+      flex: 1;
+      padding: 14px;
+      border: none;
+      border-radius: 10px;
+      outline: none;
+      font-size: 15px;
+    }
+
+    button {
+      border: none;
+      padding: 14px 18px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .send {
+      background: #a855f7;
+      color: white;
+    }
+
+    .controls {
+      display: flex;
+      gap: 10px;
+      padding: 15px;
+      justify-content: center;
+    }
+
+    .next {
+      background: #6d28d9;
+      color: white;
+    }
+
+    .leave {
+      background: #444;
+      color: white;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="chat-container">
+
+    <div class="header">
+      <h1>DAKSHUB</h1>
+      <div class="status">🟢 Looking for someone...</div>
+    </div>
+
+    <div class="messages">
+      <div class="empty-message">
+        No messages yet.<br>
+        Say hello when you're connected!
+      </div>
+    </div>
+
+    <div class="input-area">
+      <input type="text" placeholder="Type your message...">
+      <button class="send">Send</button>
+    </div>
+
+    <div class="controls">
+      <button class="next">Next</button>
+      <button class="leave">Leave</button>
+    </div>
+
+  </div>
+
+</body>
+</html>

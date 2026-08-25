@@ -180,6 +180,36 @@
       sendMessage();
     }
   });
+  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+  apiKey: "AIzaSyBA7whtVuz10pNxlK5lIOVbEJJLBQ6G3wU",
+  authDomain: "dakshub-3cd0f.firebaseapp.com",
+  projectId: "dakshub-3cd0f",
+  storageBucket: "dakshub-3cd0f.firebasestorage.app",
+  messagingSenderId: "203055229267",
+  appId: "1:203055229267:web:647ddbd7407995019d19a6",
+  measurementId: "G-CDSY4KZFHQ"
+};
+  (async () => {
+  const { initializeApp } = await import(
+    "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js"
+  );
+
+  const { getDatabase, ref, push, onChildAdded } = await import(
+    "https://www.gstatic.com/firebasejs/11.0.2/firebase-database.js"
+  );
+
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
+
+  window.chatDB = db;
+  window.chatRef = ref;
+  window.chatPush = push;
+  window.chatOnChildAdded = onChildAdded;
+
+  console.log("Firebase connected successfully!");
+})();
 </script>
+  
 </body>
 </html>

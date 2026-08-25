@@ -64,6 +64,25 @@
       margin-top: 50px;
     }
 
+    .message {
+      padding: 12px;
+      border-radius: 10px;
+      margin: 10px 0;
+      width: fit-content;
+      max-width: 80%;
+      word-wrap: break-word;
+    }
+
+    .my-message {
+      background: #6d28d9;
+      margin-left: auto;
+    }
+
+    .other-message {
+      background: #444;
+      margin-right: auto;
+    }
+
     .input-area {
       display: flex;
       padding: 15px;
@@ -109,6 +128,12 @@
       background: #444;
       color: white;
     }
+
+    button:disabled,
+    input:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
   </style>
 </head>
 
@@ -118,32 +143,63 @@
 
     <div class="header">
       <h1>DAKSHUB</h1>
-      <div class="status">🟢 Looking for someone...</div>
+      <div class="status" id="status">🟢 Looking for someone...</div>
     </div>
 
-    <div class="messages">
+    <div class="messages" id="messages">
       <div class="empty-message">
-        No messages yet.<br>
-        Say hello when you're connected!
+        Looking for someone...
       </div>
     </div>
 
     <div class="input-area">
-      <input type="text" placeholder="Type your message...">
-      <button class="send">Send</button>
+      <input
+        type="text"
+        id="messageInput"
+        placeholder="Type your message..."
+        disabled
+      >
+
+      <button class="send" id="sendButton" disabled>
+        Send
+      </button>
     </div>
 
     <div class="controls">
-      <button class="next">Next</button>
-      <button class="leave">Leave</button>
+      <button class="next" id="nextButton">
+        Next
+      </button>
+
+      <button class="leave" id="leaveButton">
+        Leave
+      </button>
     </div>
 
   </div>
 
-  <script>
-    const input = document.querySelector("input");
-    const sendButton = document.querySelector(".send");
-    const messages = document.querySelector(".messages");
+
+  <script type="module">
+
+    import { initializeApp } from
+      "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
+
+    import {
+      getDatabase,
+      ref,
+      push,
+      set,
+      get,
+      remove,
+      onValue,
+      onChildAdded,
+      runTransaction
+    } from
+      "https://www.gstatic.com/firebasejs/11.0.2/firebase-database.js";
+
+
+    /* =========================
+       FIREBASE CONFIG
+    ========================== */
 
     const firebaseConfig = {
       apiKey: "AIzaSyBA7whtVuz10pNxlK5lIOVbEJJLBQ6G3wU",
@@ -155,76 +211,463 @@
       measurementId: "G-CDSY4KZFHQ"
     };
 
-    (async () => {
 
-      const { initializeApp } = await import(
-        "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js"
+    /* =========================
+       START FIREBASE
+    ========================== */
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+
+    /* =========================
+       HTML ELEMENTS
+    ========================== */
+
+    const input = document.getElementById("messageInput");
+    const sendButton = document.getElementById("sendButton");
+    const nextButton = document.getElementById("nextButton");
+    const leaveButton = document.getElementById("leaveButton");
+    const messages = document.getElementById("messages");
+    const status = document.getElementById("status");
+
+
+    /* =========================
+       USER ID
+    ========================== */
+
+    let userId = localStorage.getItem("dakshubUserId");
+
+    if (!userId) {
+      userId = push(ref(db, "users")).key;
+
+      localStorage.setItem(
+        "dakshubUserId",
+        userId
+      );
+    }
+
+
+    /* =========================
+       VARIABLES
+    ========================== */
+
+    let currentRoom = null;
+    let stopMessageListener = null;
+    let stopAssignmentListener = null;
+
+
+    /* =========================
+       STATUS
+    ========================== */
+
+    function setStatus(text) {
+      status.textContent = text;
+    }
+
+
+    /* =========================
+       CLEAR CHAT
+    ========================== */
+
+    function clearMessages(text = "Looking for someone...") {
+
+      messages.innerHTML = `
+        <div class="empty-message">
+          ${text}
+        </div>
+      `;
+    }
+
+
+    /* =========================
+       SHOW MESSAGE
+    ========================== */
+
+    function showMessage(data) {
+
+      const emptyMessage =
+        document.querySelector(".empty-message");
+
+      if (emptyMessage) {
+        emptyMessage.remove();
+      }
+
+      const message =
+        document.createElement("div");
+
+      message.classList.add("message");
+
+      if (data.sender === userId) {
+        message.classList.add("my-message");
+      } else {
+        message.classList.add("other-message");
+      }
+
+      message.textContent = data.text;
+
+      messages.appendChild(message);
+
+      messages.scrollTop =
+        messages.scrollHeight;
+    }
+
+
+    /* =========================
+       JOIN ROOM
+    ========================== */
+
+    function joinRoom(roomId) {
+
+      currentRoom = roomId;
+
+      setStatus("🟢 Connected!");
+
+      input.disabled = false;
+      sendButton.disabled = false;
+
+      clearMessages("Loading messages...");
+
+
+      if (stopMessageListener) {
+        stopMessageListener();
+      }
+
+
+      const messagesRef =
+        ref(db, `rooms/${roomId}/messages`);
+
+
+      stopMessageListener =
+        onChildAdded(
+          messagesRef,
+          (snapshot) => {
+
+            const data =
+              snapshot.val();
+
+            if (data) {
+              showMessage(data);
+            }
+
+          }
+        );
+
+    }
+
+
+    /* =========================
+       LISTEN FOR MATCH
+    ========================== */
+
+    function listenForMatch() {
+
+      if (stopAssignmentListener) {
+        stopAssignmentListener();
+      }
+
+
+      const assignmentRef =
+        ref(db, `assignments/${userId}`);
+
+
+      stopAssignmentListener =
+        onValue(
+          assignmentRef,
+          (snapshot) => {
+
+            const data =
+              snapshot.val();
+
+            if (
+              data &&
+              data.roomId &&
+              !currentRoom
+            ) {
+
+              joinRoom(
+                data.roomId
+              );
+
+            }
+
+          }
+        );
+
+    }
+
+
+    /* =========================
+       FIND SOMEONE
+    ========================== */
+
+    async function findSomeone() {
+
+      currentRoom = null;
+
+      input.disabled = true;
+      sendButton.disabled = true;
+
+      setStatus("🟢 Looking for someone...");
+
+      clearMessages(
+        "Looking for someone..."
       );
 
-      const { getDatabase, ref, push, onChildAdded } = await import(
-        "https://www.gstatic.com/firebasejs/11.0.2/firebase-database.js"
+
+      await remove(
+        ref(db, `assignments/${userId}`)
       );
 
-      const app = initializeApp(firebaseConfig);
-      const db = getDatabase(app);
 
-      const messagesRef = ref(db, "messages");
+      const waitingRef =
+        ref(db, "matchmaking/waiting");
 
-      console.log("Firebase connected successfully!");
 
-      function showMessage(text) {
-        const emptyMessage = document.querySelector(".empty-message");
+      const result =
+        await runTransaction(
+          waitingRef,
+          (waitingUser) => {
 
-        if (emptyMessage) {
-          emptyMessage.remove();
+            if (!waitingUser) {
+              return userId;
+            }
+
+            if (
+              waitingUser !== userId
+            ) {
+              return;
+            }
+
+            return waitingUser;
+
+          }
+        );
+
+
+      const waitingUser =
+        result.snapshot.val();
+
+
+      /* If we became the waiting user */
+
+      if (
+        result.committed &&
+        waitingUser === userId
+      ) {
+
+        listenForMatch();
+
+        return;
+      }
+
+
+      /* Someone else was waiting */
+
+      if (
+        waitingUser &&
+        waitingUser !== userId
+      ) {
+
+        const otherUserId =
+          waitingUser;
+
+
+        await runTransaction(
+          waitingRef,
+          (current) => {
+
+            if (
+              current === otherUserId
+            ) {
+              return null;
+            }
+
+            return current;
+
+          }
+        );
+
+
+        const roomId =
+          [userId, otherUserId]
+            .sort()
+            .join("_");
+
+
+        await set(
+          ref(db, `rooms/${roomId}/users`),
+          {
+            [userId]: true,
+            [otherUserId]: true
+          }
+        );
+
+
+        await set(
+          ref(db, `assignments/${userId}`),
+          {
+            roomId: roomId
+          }
+        );
+
+
+        await set(
+          ref(
+            db,
+            `assignments/${otherUserId}`
+          ),
+          {
+            roomId: roomId
+          }
+        );
+
+
+        listenForMatch();
+
+      }
+
+    }
+
+
+    /* =========================
+       SEND MESSAGE
+    ========================== */
+
+    async function sendMessage() {
+
+      const text =
+        input.value.trim();
+
+
+      if (
+        text === "" ||
+        !currentRoom
+      ) {
+        return;
+      }
+
+
+      const messagesRef =
+        ref(
+          db,
+          `rooms/${currentRoom}/messages`
+        );
+
+
+      await push(
+        messagesRef,
+        {
+          text: text,
+          sender: userId,
+          time: Date.now()
         }
+      );
 
-        const message = document.createElement("div");
-        message.textContent = text;
 
-        message.style.background = "#6d28d9";
-        message.style.padding = "12px";
-        message.style.borderRadius = "10px";
-        message.style.margin = "10px 0";
-        message.style.marginLeft = "auto";
-        message.style.width = "fit-content";
-        message.style.maxWidth = "80%";
+      input.value = "";
 
-        messages.appendChild(message);
+      input.focus();
 
-        messages.scrollTop = messages.scrollHeight;
-      }
+    }
 
-      function sendMessage() {
-        const text = input.value.trim();
 
-        if (text === "") return;
+    /* =========================
+       SEND BUTTON
+    ========================== */
 
-        push(messagesRef, {
-          text: text
-        });
+    sendButton.addEventListener(
+      "click",
+      sendMessage
+    );
 
-        input.value = "";
-        input.focus();
-      }
 
-      sendButton.addEventListener("click", sendMessage);
+    /* =========================
+       ENTER KEY
+    ========================== */
 
-      input.addEventListener("keypress", function(event) {
-        if (event.key === "Enter") {
+    input.addEventListener(
+      "keypress",
+      function(event) {
+
+        if (
+          event.key === "Enter"
+        ) {
           sendMessage();
         }
-      });
 
-      onChildAdded(messagesRef, (snapshot) => {
-        const data = snapshot.val();
+      }
+    );
 
-        if (data && data.text) {
-          showMessage(data.text);
+
+    /* =========================
+       NEXT BUTTON
+    ========================== */
+
+    nextButton.addEventListener(
+      "click",
+      async function() {
+
+        if (stopMessageListener) {
+          stopMessageListener();
+          stopMessageListener = null;
         }
-      });
 
-    })();
+
+        currentRoom = null;
+
+
+        await findSomeone();
+
+      }
+    );
+
+
+    /* =========================
+       LEAVE BUTTON
+    ========================== */
+
+    leaveButton.addEventListener(
+      "click",
+      async function() {
+
+        if (stopMessageListener) {
+          stopMessageListener();
+          stopMessageListener = null;
+        }
+
+
+        currentRoom = null;
+
+        input.disabled = true;
+        sendButton.disabled = true;
+
+
+        setStatus("⚪ You left the chat");
+
+        clearMessages(
+          "You left the chat."
+        );
+
+
+        await remove(
+          ref(db, `assignments/${userId}`)
+        );
+
+      }
+    );
+
+
+    /* =========================
+       START MATCHING
+    ========================== */
+
+    console.log(
+      "Firebase connected successfully!"
+    );
+
+    findSomeone();
+
   </script>
 
 </body>

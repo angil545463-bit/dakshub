@@ -2,23 +2,14 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<meta name="viewport"
-content="width=device-width, initial-scale=1.0">
-
-<title>Dakshub - Chat with New People</title>
-
-<!-- Firebase -->
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+<title>Dakshub - Chat with People Online</title>
+<meta name="description" content="Dakshub is a place to meet and chat with new people online in real time.">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://mydaksh.shop/">
 
 <style>
-
-/* =========================================
-   DAKSHUB - REALTIME CHAT WEBSITE
-   ONE FILE VERSION
-========================================= */
-
 *{
     margin:0;
     padding:0;
@@ -26,276 +17,264 @@ content="width=device-width, initial-scale=1.0">
 }
 
 :root{
-    --bg:#171021;
-    --bg2:#21162f;
-    --card:#2d203d;
-    --card2:#38284b;
-    --border:rgba(255,255,255,.12);
+    --bg:#160d24;
+    --bg2:#211332;
+    --card:#2c1a40;
+    --card2:#38224f;
     --text:#ffffff;
-    --muted:#b9afc8;
+    --muted:#bdb2c9;
     --purple:#7c3aed;
     --purple2:#9b6cff;
-    --green:#53d68a;
-    --danger:#ef4444;
-    --input:#443558;
+    --border:rgba(255,255,255,.12);
+    --green:#42d392;
+    --danger:#ff5d6c;
 }
 
 body.light{
-    --bg:#f3f4f6;
+    --bg:#f5f3f7;
     --bg2:#ffffff;
     --card:#ffffff;
-    --card2:#f1edf7;
-    --border:rgba(0,0,0,.12);
-    --text:#1f2937;
-    --muted:#6b7280;
-    --purple:#6d28d9;
-    --purple2:#7c3aed;
-    --green:#16a34a;
-    --input:#e5e7eb;
+    --card2:#f0eaf5;
+    --text:#241b2b;
+    --muted:#6e6475;
+    --border:rgba(0,0,0,.1);
 }
 
 body{
     min-height:100vh;
-    background:
-        radial-gradient(circle at top right, rgba(124,58,237,.14), transparent 28%),
-        var(--bg);
-    color:var(--text);
     font-family:Arial,Helvetica,sans-serif;
+    background:var(--bg);
+    color:var(--text);
     transition:.25s;
 }
 
-/* =========================================
-   TOP BAR
-========================================= */
-
-.topbar{
-    height:76px;
-    width:100%;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    padding:0 7%;
-    background:var(--bg2);
-    border-bottom:1px solid var(--border);
-    position:sticky;
-    top:0;
-    z-index:100;
+button,input{
+    font:inherit;
 }
 
-.brand{
-    font-size:27px;
-    font-weight:900;
-    letter-spacing:2px;
+button{
     cursor:pointer;
 }
 
-.brand span{
+/* TOP BAR */
+.topbar{
+    height:68px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 6%;
+    background:var(--bg2);
+    border-bottom:1px solid var(--border);
+}
+
+.logo{
+    font-size:25px;
+    font-weight:800;
+    letter-spacing:1px;
+}
+
+.logo span{
     color:var(--purple2);
 }
 
-.top-actions{
+.nav{
     display:flex;
     gap:10px;
 }
 
-.small-btn{
+.nav button{
     border:1px solid var(--border);
     background:var(--card);
     color:var(--text);
-    padding:10px 15px;
+    padding:10px 14px;
     border-radius:10px;
-    cursor:pointer;
-    font-weight:700;
-    transition:.2s;
 }
 
-.small-btn:hover{
-    transform:translateY(-2px);
-    background:var(--card2);
+.nav button:hover{
+    transform:translateY(-1px);
 }
 
-/* =========================================
-   MAIN
-========================================= */
-
-.page{
-    width:min(950px,94%);
-    margin:0 auto;
-    padding:32px 0 40px;
+/* MAIN */
+.main{
+    width:min(1050px,94%);
+    margin:30px auto;
 }
 
 .hero{
     text-align:center;
-    margin-bottom:25px;
+    margin-bottom:24px;
 }
 
 .hero h1{
-    font-size:clamp(27px,4vw,40px);
+    font-size:clamp(28px,5vw,46px);
     margin-bottom:10px;
+}
+
+.hero h1 span{
+    color:var(--purple2);
 }
 
 .hero p{
     color:var(--muted);
-    font-size:16px;
+    max-width:650px;
+    margin:auto;
+    line-height:1.6;
 }
 
-/* =========================================
-   CHAT CARD
-========================================= */
+/* CHAT APP */
+.chat-app{
+    display:grid;
+    grid-template-columns:300px 1fr;
+    min-height:580px;
+    border:1px solid var(--border);
+    border-radius:20px;
+    overflow:hidden;
+    background:var(--card);
+    box-shadow:0 20px 50px rgba(0,0,0,.25);
+}
 
-.chat-card{
-    width:100%;
-    height:min(650px,72vh);
-    min-height:520px;
+.sidebar{
+    padding:24px;
+    background:var(--bg2);
+    border-right:1px solid var(--border);
+}
+
+.sidebar h2{
+    font-size:20px;
+    margin-bottom:8px;
+}
+
+.status-text{
+    color:var(--muted);
+    font-size:14px;
+    line-height:1.5;
+    margin-bottom:20px;
+}
+
+.status-box{
+    padding:15px;
+    border-radius:14px;
     background:var(--card);
     border:1px solid var(--border);
-    border-radius:22px;
-    overflow:hidden;
-    display:flex;
-    flex-direction:column;
-    box-shadow:0 20px 60px rgba(0,0,0,.25);
+    margin-bottom:18px;
 }
 
-.chat-header{
-    min-height:90px;
-    padding:17px 22px;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    border-bottom:1px solid var(--border);
-}
-
-.person{
-    display:flex;
-    align-items:center;
-    gap:14px;
-}
-
-.avatar{
-    width:48px;
-    height:48px;
-    min-width:48px;
-    border-radius:50%;
-    background:linear-gradient(135deg,var(--purple2),var(--purple));
-    display:grid;
-    place-items:center;
-    font-size:22px;
-    font-weight:bold;
-}
-
-.person-info h2{
-    font-size:17px;
-    margin-bottom:5px;
-}
-
-.person-info p{
+.status-label{
     color:var(--muted);
-    font-size:13px;
+    font-size:12px;
+    margin-bottom:7px;
+}
+
+.status-value{
+    font-weight:bold;
+    font-size:14px;
 }
 
 .dot{
+    width:9px;
+    height:9px;
     display:inline-block;
-    width:8px;
-    height:8px;
     border-radius:50%;
     background:var(--green);
     margin-right:6px;
 }
 
-.state{
-    color:var(--purple2);
-    font-size:11px;
-    font-weight:bold;
-    letter-spacing:1px;
-    text-align:right;
+.dot.off{
+    background:#888;
 }
 
-/* =========================================
-   CHAT AREA
-========================================= */
+.action-btn{
+    width:100%;
+    border:none;
+    border-radius:12px;
+    padding:14px;
+    background:var(--purple);
+    color:white;
+    font-weight:bold;
+    margin-bottom:10px;
+}
+
+.action-btn:hover{
+    background:var(--purple2);
+}
+
+.action-btn:disabled{
+    opacity:.55;
+    cursor:not-allowed;
+}
+
+.end-btn{
+    background:transparent;
+    border:1px solid var(--danger);
+    color:var(--danger);
+}
+
+.info{
+    margin-top:18px;
+    color:var(--muted);
+    font-size:13px;
+    line-height:1.6;
+}
+
+/* CHAT */
+.chat-area{
+    display:flex;
+    flex-direction:column;
+    min-width:0;
+}
+
+.chat-head{
+    padding:18px 22px;
+    border-bottom:1px solid var(--border);
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+}
+
+.chat-head h3{
+    font-size:17px;
+}
+
+.chat-sub{
+    color:var(--muted);
+    font-size:13px;
+    margin-top:4px;
+}
+
+.badge{
+    font-size:11px;
+    padding:7px 10px;
+    border-radius:999px;
+    background:var(--card2);
+    color:var(--muted);
+}
 
 .messages{
     flex:1;
-    overflow-y:auto;
     padding:22px;
+    overflow:auto;
     display:flex;
     flex-direction:column;
-    gap:12px;
-    scroll-behavior:smooth;
-}
-
-.messages::-webkit-scrollbar{
-    width:8px;
-}
-
-.messages::-webkit-scrollbar-thumb{
-    background:rgba(255,255,255,.15);
-    border-radius:10px;
+    gap:10px;
 }
 
 .empty{
     flex:1;
     display:flex;
     flex-direction:column;
-    align-items:center;
     justify-content:center;
+    align-items:center;
     text-align:center;
     color:var(--muted);
-    min-height:280px;
-}
-
-.empty-icon{
-    font-size:46px;
-    margin-bottom:15px;
 }
 
 .empty h3{
     color:var(--text);
     margin-bottom:8px;
-    font-size:21px;
 }
-
-.search-animation{
-    display:flex;
-    gap:7px;
-    margin-top:18px;
-}
-
-.search-animation span{
-    width:8px;
-    height:8px;
-    border-radius:50%;
-    background:var(--purple2);
-    animation:bounce 1s infinite;
-}
-
-.search-animation span:nth-child(2){
-    animation-delay:.15s;
-}
-
-.search-animation span:nth-child(3){
-    animation-delay:.3s;
-}
-
-@keyframes bounce{
-    0%,100%{
-        transform:translateY(0);
-        opacity:.4;
-    }
-
-    50%{
-        transform:translateY(-8px);
-        opacity:1;
-    }
-}
-
-/* =========================================
-   MESSAGE BUBBLES
-========================================= */
 
 .message-row{
     display:flex;
-    width:100%;
 }
 
 .message-row.mine{
@@ -303,20 +282,16 @@ body{
 }
 
 .bubble{
-    max-width:76%;
-    padding:12px 15px;
-    border-radius:17px;
+    max-width:75%;
+    padding:11px 14px;
+    border-radius:15px;
     background:var(--card2);
-    line-height:1.45;
+    line-height:1.4;
     word-break:break-word;
 }
 
-.mine .bubble{
-    background:linear-gradient(
-        135deg,
-        var(--purple),
-        var(--purple2)
-    );
+.message-row.mine .bubble{
+    background:var(--purple);
     color:white;
 }
 
@@ -324,106 +299,46 @@ body{
     font-size:10px;
     opacity:.65;
     margin-top:5px;
-    text-align:right;
 }
 
-/* =========================================
-   INPUT AREA
-========================================= */
-
-.input-section{
-    padding:14px;
+.input-area{
+    padding:15px;
     border-top:1px solid var(--border);
-}
-
-.input-row{
     display:flex;
     gap:10px;
 }
 
-#messageInput{
+.input-area input{
     flex:1;
-    height:52px;
-    border:none;
-    outline:none;
-    border-radius:13px;
-    padding:0 16px;
-    background:var(--input);
-    color:var(--text);
-    font-size:15px;
-}
-
-#messageInput::placeholder{
-    color:var(--muted);
-}
-
-#sendBtn{
-    border:none;
-    min-width:90px;
-    border-radius:13px;
-    background:var(--purple);
-    color:white;
-    font-weight:bold;
-    cursor:pointer;
-    transition:.2s;
-}
-
-#sendBtn:hover{
-    background:var(--purple2);
-    transform:translateY(-1px);
-}
-
-#sendBtn:disabled{
-    opacity:.45;
-    cursor:not-allowed;
-    transform:none;
-}
-
-/* =========================================
-   BOTTOM BUTTONS
-========================================= */
-
-.bottom-actions{
-    display:flex;
-    justify-content:center;
-    gap:10px;
-    padding-top:12px;
-}
-
-.main-btn{
-    border:none;
-    padding:12px 22px;
-    border-radius:12px;
-    color:white;
-    background:var(--purple);
-    font-weight:bold;
-    cursor:pointer;
-    transition:.2s;
-}
-
-.main-btn:hover{
-    transform:translateY(-2px);
-    background:var(--purple2);
-}
-
-.leave-btn{
-    background:#4b5563;
-}
-
-.leave-btn:hover{
-    background:#64748b;
-}
-
-/* =========================================
-   ABOUT
-========================================= */
-
-.about{
-    margin-top:24px;
-    padding:22px;
+    min-width:0;
     border:1px solid var(--border);
+    background:var(--bg2);
+    color:var(--text);
+    padding:13px 15px;
+    border-radius:12px;
+    outline:none;
+}
+
+.send-btn{
+    border:none;
+    border-radius:12px;
+    padding:0 20px;
+    background:var(--purple);
+    color:white;
+    font-weight:bold;
+}
+
+.send-btn:disabled{
+    opacity:.5;
+}
+
+/* ABOUT */
+.about{
+    margin-top:25px;
+    padding:22px;
     border-radius:18px;
     background:var(--card);
+    border:1px solid var(--border);
     display:none;
 }
 
@@ -433,861 +348,472 @@ body{
 
 .about p{
     color:var(--muted);
-    line-height:1.6;
+    line-height:1.7;
 }
 
-/* =========================================
-   FOOTER
-========================================= */
-
-.footer{
-    text-align:center;
-    color:var(--muted);
-    margin-top:25px;
-    font-size:13px;
-}
-
-/* =========================================
-   TOAST
-========================================= */
-
+/* TOAST */
 .toast{
     position:fixed;
-    bottom:25px;
+    bottom:22px;
     left:50%;
     transform:translateX(-50%) translateY(100px);
-    background:#111827;
-    color:white;
-    padding:13px 20px;
-    border-radius:12px;
-    z-index:1000;
+    background:#111;
+    color:#fff;
+    padding:12px 18px;
+    border-radius:10px;
     transition:.3s;
-    box-shadow:0 10px 30px rgba(0,0,0,.3);
+    z-index:1000;
 }
 
 .toast.show{
     transform:translateX(-50%) translateY(0);
 }
 
-/* =========================================
-   MOBILE
-========================================= */
+/* FOOTER */
+footer{
+    text-align:center;
+    padding:25px;
+    color:var(--muted);
+    font-size:13px;
+}
 
-@media(max-width:600px){
-
-    .topbar{
-        height:68px;
-        padding:0 4%;
+/* MOBILE */
+@media(max-width:750px){
+    .chat-app{
+        grid-template-columns:1fr;
+        min-height:650px;
     }
 
-    .brand{
-        font-size:23px;
+    .sidebar{
+        border-right:none;
+        border-bottom:1px solid var(--border);
     }
 
-    .small-btn{
-        padding:8px 10px;
-        font-size:12px;
-    }
-
-    .page{
-        width:100%;
-        padding:22px 10px;
+    .info{
+        display:none;
     }
 
     .hero{
         margin-bottom:18px;
     }
 
-    .hero h1{
-        font-size:27px;
+    .nav button{
+        padding:9px 10px;
     }
-
-    .hero p{
-        font-size:14px;
-        padding:0 10px;
-    }
-
-    .chat-card{
-        min-height:560px;
-        height:calc(100vh - 180px);
-        border-radius:16px;
-    }
-
-    .chat-header{
-        padding:14px;
-    }
-
-    .state{
-        font-size:9px;
-    }
-
-    .bubble{
-        max-width:85%;
-    }
-
-    #sendBtn{
-        min-width:70px;
-    }
-
 }
-
 </style>
 </head>
 
 <body>
 
 <header class="topbar">
+    <div class="logo">DAKS<span>HUB</span></div>
 
-    <div class="brand"
-         onclick="goHome()">
-        DAK<span>SHUB</span>
+    <div class="nav">
+        <button onclick="goHome()">Home</button>
+        <button onclick="showAbout()">About</button>
+        <button id="themeButton" onclick="toggleTheme()">☀ Light</button>
     </div>
-
-    <div class="top-actions">
-
-        <button class="small-btn"
-                onclick="showAbout()">
-            About
-        </button>
-
-        <button class="small-btn"
-                onclick="toggleTheme()"
-                id="themeButton">
-            ☀ Light
-        </button>
-
-    </div>
-
 </header>
 
-
-<main class="page">
+<main class="main">
 
     <section class="hero">
-
-        <h1>
-            Meet and Chat with New People
-        </h1>
-
-        <p>
-            Connect with another person and chat in real time.
-        </p>
-
+        <h1>Meet. Match. <span>Chat.</span></h1>
+        <p>Connect with another person and start a real-time conversation on Dakshub.</p>
     </section>
 
+    <section class="chat-app">
 
-    <section class="chat-card">
+        <aside class="sidebar">
+            <h2>Random Chat</h2>
+            <p class="status-text">Press New Chat and wait for another person to join.</p>
 
-        <div class="chat-header">
+            <div class="status-box">
+                <div class="status-label">CONNECTION</div>
+                <div class="status-value" id="connectionState">
+                    <span class="dot off"></span>NOT CONNECTED
+                </div>
+            </div>
 
-            <div class="person">
+            <button class="action-btn" id="newChatBtn" onclick="startNewChat()">
+                New Chat
+            </button>
 
-                <div class="avatar"
-                     id="avatar">
-                    ?
+            <button class="action-btn end-btn" onclick="leaveChat()">
+                End Chat
+            </button>
+
+            <p class="info">
+                Dakshub connects two people through Firebase Realtime Database.
+                Messages are shown in real time while the chat is active.
+            </p>
+        </aside>
+
+        <section class="chat-area">
+
+            <div class="chat-head">
+                <div>
+                    <h3 id="partnerTitle">Ready to connect</h3>
+                    <div class="chat-sub" id="partnerStatus">
+                        Press New Chat to find someone
+                    </div>
                 </div>
 
-                <div class="person-info">
+                <div class="badge" id="chatBadge">OFFLINE</div>
+            </div>
 
-                    <h2 id="partnerTitle">
-                        Looking for someone
-                    </h2>
+            <div class="messages" id="messages">
 
-                    <p id="partnerStatus">
-                        <span class="dot"></span>
-                        Searching for another person
-                    </p>
-
+                <div class="empty" id="emptyState">
+                    <h3 id="emptyTitle">Ready to Meet Someone?</h3>
+                    <p id="emptyText">Press New Chat to start searching.</p>
                 </div>
 
             </div>
 
-            <div class="state"
-                 id="connectionState">
-                NOT CONNECTED
-            </div>
-
-        </div>
-
-
-        <div class="messages"
-             id="messages">
-
-            <div class="empty"
-                 id="emptyState">
-
-                <div class="empty-icon">
-                    💬
-                </div>
-
-                <h3 id="emptyTitle">
-                    Ready to Meet Someone?
-                </h3>
-
-                <p id="emptyText">
-                    Press New Chat to find another person.
-                </p>
-
-                <div class="search-animation"
-                     id="dots"
-                     style="display:none;">
-
-                    <span></span>
-                    <span></span>
-                    <span></span>
-
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <div class="input-section">
-
-            <div class="input-row">
-
+            <div class="input-area">
                 <input
                     id="messageInput"
                     type="text"
-                    maxlength="1000"
-                    placeholder="Type your message..."
+                    placeholder="Type a message..."
                     disabled
                 >
 
-                <button id="sendBtn"
-                        onclick="sendMessage()"
-                        disabled>
+                <button
+                    class="send-btn"
+                    id="sendBtn"
+                    onclick="sendMessage()"
+                    disabled
+                >
                     Send
                 </button>
-
             </div>
 
-
-            <div class="bottom-actions">
-
-                <button class="main-btn"
-                        onclick="startNewChat()">
-                    New Chat
-                </button>
-
-                <button class="main-btn leave-btn"
-                        onclick="leaveChat()">
-                    Leave
-                </button>
-
-            </div>
-
-        </div>
-
+        </section>
     </section>
 
-
-    <section class="about"
-             id="about">
-
+    <section class="about" id="about">
         <h2>About Dakshub</h2>
-
         <p>
-            Dakshub uses Firebase Realtime Database to match two people
-            and exchange messages instantly. Open this website on two
-            different devices and press New Chat on both devices to test
-            the realtime connection.
+            Dakshub is a simple real-time random chat website. When two users
+            press New Chat, the system attempts to match them and creates a
+            shared chat room using Firebase Realtime Database.
         </p>
-
     </section>
-
-
-    <footer class="footer">
-
-        © <span id="year"></span> Dakshub
-
-    </footer>
 
 </main>
 
+<div class="toast" id="toast"></div>
 
-<div class="toast"
-     id="toast">
-</div>
+<footer>
+    © <span id="year"></span> Dakshub
+</footer>
 
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
 <script>
 
-/* =========================================
+/* =========================
    FIREBASE CONFIG
-========================================= */
+========================= */
 
 const firebaseConfig = {
-
-    apiKey:
-    "AIzaSyBA7whtVuz10pNxlK5lIOVbEJJLBQ6G3wU",
-
-    authDomain:
-    "dakshub-3cd0f.firebaseapp.com",
-
-    databaseURL:
-    "https://dakshub-3cd0f-default-rtdb.firebaseio.com",
-
-    projectId:
-    "dakshub-3cd0f",
-
-    storageBucket:
-    "dakshub-3cd0f.firebasestorage.app",
-
-    messagingSenderId:
-    "203055229267",
-
-    appId:
-    "1:203055229267:web:647ddbd7407995019d19a6",
-
-    measurementId:
-    "G-CDSY4KZFHQ"
-
+    apiKey: "AIzaSyBA7whtVuz10pNxlK5lIOVbEJJLBQ6G3wU",
+    authDomain: "dakshub-3cd0f.firebaseapp.com",
+    databaseURL: "https://dakshub-3cd0f-default-rtdb.firebaseio.com",
+    projectId: "dakshub-3cd0f",
+    storageBucket: "dakshub-3cd0f.firebasestorage.app",
+    messagingSenderId: "203055229267",
+    appId: "1:203055229267:web:647ddbd7407995019d19a6",
+    measurementId: "G-CDSY4KZFHQ"
 };
 
-
-/* =========================================
-   START FIREBASE
-========================================= */
-
 firebase.initializeApp(firebaseConfig);
-
 const db = firebase.database();
 
-
-/* =========================================
+/* =========================
    USER ID
-========================================= */
+========================= */
 
-let clientId =
-    localStorage.getItem("dakshubClientId");
+let clientId = localStorage.getItem("dakshubClientId");
 
 if(!clientId){
-
     clientId =
         "user_" +
         Date.now() +
         "_" +
-        Math.random()
-        .toString(36)
-        .substring(2,12);
+        Math.random().toString(36).substring(2,12);
 
-    localStorage.setItem(
-        "dakshubClientId",
-        clientId
-    );
-
+    localStorage.setItem("dakshubClientId", clientId);
 }
 
-
-/* =========================================
+/* =========================
    VARIABLES
-========================================= */
+========================= */
 
 let currentTicketId = null;
-
 let currentRoomId = null;
-
 let isSearching = false;
-
+let searchTimer = null;
 let messageListener = null;
-
 let assignmentListener = null;
 
-let searchTimer = null;
+const messages = document.getElementById("messages");
+const emptyState = document.getElementById("emptyState");
+const messageInput = document.getElementById("messageInput");
+const sendBtn = document.getElementById("sendBtn");
+const newChatBtn = document.getElementById("newChatBtn");
 
-
-/* =========================================
-   ELEMENTS
-========================================= */
-
-const messages =
-    document.getElementById("messages");
-
-const emptyState =
-    document.getElementById("emptyState");
-
-const emptyTitle =
-    document.getElementById("emptyTitle");
-
-const emptyText =
-    document.getElementById("emptyText");
-
-const dots =
-    document.getElementById("dots");
-
-const partnerTitle =
-    document.getElementById("partnerTitle");
-
-const partnerStatus =
-    document.getElementById("partnerStatus");
-
-const connectionState =
-    document.getElementById("connectionState");
-
-const messageInput =
-    document.getElementById("messageInput");
-
-const sendBtn =
-    document.getElementById("sendBtn");
-
-
-/* =========================================
-   START NEW CHAT
-========================================= */
+/* =========================
+   START CHAT
+========================= */
 
 function startNewChat(){
 
-    if(currentRoomId){
-
-        leaveChat(false);
-
-    }
-
-    if(isSearching){
-
+    if(isSearching || currentRoomId){
         return;
-
     }
 
     isSearching = true;
+    newChatBtn.disabled = true;
 
-    partnerTitle.textContent =
+    document.getElementById("partnerTitle").textContent =
         "Looking for someone";
 
-    partnerStatus.innerHTML =
-        '<span class="dot"></span>' +
-        'Searching for another person';
+    document.getElementById("partnerStatus").textContent =
+        "Searching for another person...";
 
-    connectionState.textContent =
+    document.getElementById("connectionState").innerHTML =
+        '<span class="dot"></span>SEARCHING';
+
+    document.getElementById("chatBadge").textContent =
         "SEARCHING";
 
-    emptyState.style.display =
-        "flex";
-
-    emptyTitle.textContent =
+    emptyState.style.display = "flex";
+    document.getElementById("emptyTitle").textContent =
         "Searching for someone...";
 
-    emptyText.textContent =
-        "Waiting for another person to join Dakshub.";
+    document.getElementById("emptyText").textContent =
+        "Waiting for another Dakshub user.";
 
-    dots.style.display =
-        "flex";
+    const ticketRef = db.ref("matchmaking").push();
 
-    messageInput.disabled =
-        true;
+    currentTicketId = ticketRef.key;
 
-    sendBtn.disabled =
-        true;
-
-
-    /* Create a matchmaking ticket */
-
-    const ticketRef =
-        db.ref("matchmaking").push();
-
-    currentTicketId =
-        ticketRef.key;
-
-
-    const ticketData = {
-
-        userId:clientId,
-
-        createdAt:
-        firebase.database.ServerValue.TIMESTAMP,
-
-        lastSeen:
-        firebase.database.ServerValue.TIMESTAMP
-
-    };
-
-
-    ticketRef.set(ticketData);
-
-
-    /* Remove ticket when connection closes */
+    ticketRef.set({
+        userId: clientId,
+        createdAt: firebase.database.ServerValue.TIMESTAMP
+    });
 
     ticketRef.onDisconnect().remove();
 
-
-    /* Listen for assignment */
-
     listenForAssignment();
-
-
-    /* Try finding another person */
-
     findPartner();
 
+    searchTimer = setInterval(function(){
 
-    /* Try again every 2 seconds */
+        if(isSearching && !currentRoomId){
+            findPartner();
+        }
 
-    searchTimer =
-        setInterval(function(){
+    }, 2000);
 
-            if(
-                isSearching &&
-                !currentRoomId
-            ){
-
-                findPartner();
-
-            }
-
-        },2000);
-
-
-    showToast(
-        "Searching for another person..."
-    );
-
+    showToast("Searching for someone...");
 }
 
-
-/* =========================================
+/* =========================
    FIND PARTNER
-========================================= */
+========================= */
 
 function findPartner(){
 
-    if(
-        !isSearching ||
-        !currentTicketId ||
-        currentRoomId
-    ){
-
+    if(!isSearching || !currentTicketId || currentRoomId){
         return;
-
     }
 
-
-    db.ref("matchmaking")
-    .once("value")
+    db.ref("matchmaking").once("value")
     .then(function(snapshot){
 
         let partner = null;
 
-        const now =
-            Date.now();
-
-
         snapshot.forEach(function(child){
 
-            const data =
-                child.val();
-
-
-            if(partner){
-
-                return;
-
-            }
-
+            const data = child.val();
 
             if(
+                !partner &&
                 child.key !== currentTicketId &&
                 data &&
                 data.userId !== clientId
             ){
-
-                /*
-                   Ignore very old tickets
-                */
-
-                const lastSeen =
-                    data.lastSeen || 0;
-
-
-                if(
-                    now - lastSeen < 60000
-                ){
-
-                    partner = {
-
-                        ticketId:
-                        child.key,
-
-                        userId:
-                        data.userId
-
-                    };
-
-                }
-
+                partner = {
+                    ticketId: child.key
+                };
             }
 
         });
 
-
         if(partner){
-
             claimPartner(partner);
-
         }
 
     })
     .catch(function(error){
-
         console.error(error);
-
-        showToast(
-            "Database connection error."
-        );
-
+        showToast("Database connection error.");
     });
-
 }
 
-
-/* =========================================
-   CLAIM A PARTNER SAFELY
-========================================= */
+/* =========================
+   CLAIM PARTNER
+========================= */
 
 function claimPartner(partner){
 
-    if(
-        currentRoomId ||
-        !isSearching
-    ){
-
+    if(currentRoomId || !isSearching){
         return;
-
     }
 
+    const ids = [currentTicketId, partner.ticketId].sort();
 
     const roomId =
-        "room_" +
-        currentTicketId +
-        "_" +
-        partner.ticketId;
+        "room_" + ids[0] + "_" + ids[1];
 
+    const claimRef =
+        db.ref("claims/" + partner.ticketId);
 
-    const assignmentRef =
-        db.ref(
-            "assignments/" +
-            partner.ticketId
-        );
-
-
-    assignmentRef
-    .transaction(function(current){
+    claimRef.transaction(function(current){
 
         if(current === null){
-
             return {
-
-                roomId:roomId,
-
-                partnerTicket:
-                currentTicketId,
-
+                claimedBy: currentTicketId,
+                roomId: roomId,
                 createdAt:
-                firebase.database
-                .ServerValue
-                .TIMESTAMP
-
+                    firebase.database.ServerValue.TIMESTAMP
             };
-
         }
-
 
         return;
 
-    },
-    function(error,committed){
+    }, function(error, committed){
 
         if(error){
-
             console.error(error);
-
             return;
-
         }
-
 
         if(committed){
 
-            /*
-               Partner successfully claimed
-            */
-
             db.ref(
-                "assignments/" +
-                currentTicketId
-            )
-            .set({
-
-                roomId:roomId,
-
-                partnerTicket:
-                partner.ticketId,
-
-                createdAt:
-                firebase.database
-                .ServerValue
-                .TIMESTAMP
-
+                "assignments/" + currentTicketId
+            ).set({
+                roomId: roomId
             });
 
-
             db.ref(
-                "rooms/" +
-                roomId
-            )
-            .update({
-
-                createdAt:
-                firebase.database
-                .ServerValue
-                .TIMESTAMP,
-
-                active:true
-
+                "assignments/" + partner.ticketId
+            ).set({
+                roomId: roomId
             });
 
+            db.ref(
+                "rooms/" + roomId
+            ).update({
+                createdAt:
+                    firebase.database.ServerValue.TIMESTAMP,
+                active: true
+            });
 
             joinRoom(roomId);
-
         }
 
     });
-
 }
 
-
-/* =========================================
-   LISTEN FOR MATCH
-========================================= */
+/* =========================
+   LISTEN FOR ASSIGNMENT
+========================= */
 
 function listenForAssignment(){
 
     const ref =
-        db.ref(
-            "assignments/" +
-            currentTicketId
-        );
-
+        db.ref("assignments/" + currentTicketId);
 
     assignmentListener =
-        ref.on(
-            "value",
-            function(snapshot){
+        ref.on("value", function(snapshot){
 
-                const data =
-                    snapshot.val();
+            const data = snapshot.val();
 
-
-                if(
-                    data &&
-                    data.roomId &&
-                    !currentRoomId
-                ){
-
-                    joinRoom(
-                        data.roomId
-                    );
-
-                }
-
+            if(
+                data &&
+                data.roomId &&
+                !currentRoomId
+            ){
+                joinRoom(data.roomId);
             }
-        );
 
+        });
 }
 
-
-/* =========================================
+/* =========================
    JOIN ROOM
-========================================= */
+========================= */
 
 function joinRoom(roomId){
 
     if(currentRoomId){
-
         return;
-
     }
 
-
-    currentRoomId =
-        roomId;
-
-    isSearching =
-        false;
-
+    currentRoomId = roomId;
+    isSearching = false;
 
     if(searchTimer){
-
-        clearInterval(
-            searchTimer
-        );
-
-        searchTimer =
-            null;
-
+        clearInterval(searchTimer);
+        searchTimer = null;
     }
 
+    db.ref(
+        "matchmaking/" + currentTicketId
+    ).remove();
 
-    /* Remove matchmaking ticket */
-
-    if(currentTicketId){
-
-        db.ref(
-            "matchmaking/" +
-            currentTicketId
-        ).remove();
-
-    }
-
-
-    partnerTitle.textContent =
+    document.getElementById("partnerTitle").textContent =
         "Connected to someone";
 
-    partnerStatus.innerHTML =
-        '<span class="dot"></span>' +
-        'You can start chatting now';
+    document.getElementById("partnerStatus").textContent =
+        "You can start chatting now";
 
-    connectionState.textContent =
+    document.getElementById("connectionState").innerHTML =
+        '<span class="dot"></span>CONNECTED';
+
+    document.getElementById("chatBadge").textContent =
         "CONNECTED";
 
-    dots.style.display =
-        "none";
+    emptyState.style.display = "none";
 
-    emptyState.style.display =
-        "none";
-
-    messageInput.disabled =
-        false;
-
-    sendBtn.disabled =
-        false;
+    messageInput.disabled = false;
+    sendBtn.disabled = false;
+    newChatBtn.disabled = true;
 
     messageInput.focus();
 
-
-    showToast(
-        "You are connected! Say hello 👋"
-    );
-
+    showToast("Connected! Say hello 👋");
 
     listenForMessages();
-
 }
 
-
-/* =========================================
-   LISTEN FOR REALTIME MESSAGES
-========================================= */
+/* =========================
+   REALTIME MESSAGES
+========================= */
 
 function listenForMessages(){
 
     if(!currentRoomId){
-
         return;
-
     }
-
 
     const ref =
         db.ref(
@@ -1296,108 +822,61 @@ function listenForMessages(){
             "/messages"
         );
 
-
     messageListener =
-        ref.on(
-            "child_added",
-            function(snapshot){
+        ref.on("child_added", function(snapshot){
 
-                const data =
-                    snapshot.val();
+            const data = snapshot.val();
 
-
-                if(data){
-
-                    addMessage(
-                        data.text,
-                        data.sender === clientId,
-                        data.time
-                    );
-
-                }
-
+            if(data){
+                addMessage(
+                    data.text,
+                    data.sender === clientId,
+                    data.time
+                );
             }
-        );
 
+        });
 }
 
-
-/* =========================================
+/* =========================
    SEND MESSAGE
-========================================= */
+========================= */
 
 function sendMessage(){
 
     const text =
         messageInput.value.trim();
 
-
-    if(
-        !text ||
-        !currentRoomId
-    ){
-
+    if(!text || !currentRoomId){
         return;
-
     }
-
-
-    const messageData = {
-
-        sender:clientId,
-
-        text:text,
-
-        time:
-        firebase.database
-        .ServerValue
-        .TIMESTAMP
-
-    };
-
 
     db.ref(
         "rooms/" +
         currentRoomId +
         "/messages"
-    )
-    .push(messageData)
+    ).push({
+        sender: clientId,
+        text: text,
+        time:
+            firebase.database.ServerValue.TIMESTAMP
+    })
     .then(function(){
-
-        messageInput.value =
-            "";
-
+        messageInput.value = "";
     })
     .catch(function(error){
-
         console.error(error);
-
-        showToast(
-            "Message could not be sent."
-        );
-
+        showToast("Message could not be sent.");
     });
-
 }
 
+/* =========================
+   SHOW MESSAGE
+========================= */
 
-/* =========================================
-   ADD MESSAGE TO SCREEN
-========================================= */
+function addMessage(text, mine, time){
 
-function addMessage(
-    text,
-    mine,
-    time
-){
-
-    if(emptyState){
-
-        emptyState.style.display =
-            "none";
-
-    }
-
+    emptyState.style.display = "none";
 
     const row =
         document.createElement("div");
@@ -1406,20 +885,15 @@ function addMessage(
         "message-row" +
         (mine ? " mine" : "");
 
-
     const bubble =
         document.createElement("div");
 
-    bubble.className =
-        "bubble";
-
+    bubble.className = "bubble";
 
     const textElement =
         document.createElement("div");
 
-    textElement.textContent =
-        text;
-
+    textElement.textContent = text;
 
     const timeElement =
         document.createElement("div");
@@ -1427,12 +901,8 @@ function addMessage(
     timeElement.className =
         "message-time";
 
-
     const date =
-        time ?
-        new Date(time) :
-        new Date();
-
+        time ? new Date(time) : new Date();
 
     timeElement.textContent =
         date.toLocaleTimeString(
@@ -1443,47 +913,25 @@ function addMessage(
             }
         );
 
-
-    bubble.appendChild(
-        textElement
-    );
-
-    bubble.appendChild(
-        timeElement
-    );
-
-    row.appendChild(
-        bubble
-    );
-
-    messages.appendChild(
-        row
-    );
-
+    bubble.appendChild(textElement);
+    bubble.appendChild(timeElement);
+    row.appendChild(bubble);
+    messages.appendChild(row);
 
     messages.scrollTop =
         messages.scrollHeight;
-
 }
 
-
-/* =========================================
+/* =========================
    LEAVE CHAT
-========================================= */
+========================= */
 
-function leaveChat(showMessage = true){
+function leaveChat(){
 
     if(searchTimer){
-
-        clearInterval(
-            searchTimer
-        );
-
-        searchTimer =
-            null;
-
+        clearInterval(searchTimer);
+        searchTimer = null;
     }
-
 
     if(currentTicketId){
 
@@ -1492,304 +940,186 @@ function leaveChat(showMessage = true){
             currentTicketId
         ).remove();
 
+        db.ref(
+            "assignments/" +
+            currentTicketId
+        ).remove();
     }
-
 
     if(
         currentTicketId &&
         assignmentListener
     ){
-
         db.ref(
             "assignments/" +
             currentTicketId
-        )
-        .off(
+        ).off(
             "value",
             assignmentListener
         );
-
     }
-
 
     if(
         currentRoomId &&
         messageListener
     ){
-
         db.ref(
             "rooms/" +
             currentRoomId +
             "/messages"
-        )
-        .off(
+        ).off(
             "child_added",
             messageListener
         );
-
     }
 
+    currentTicketId = null;
+    currentRoomId = null;
+    isSearching = false;
+    assignmentListener = null;
+    messageListener = null;
 
-    currentTicketId =
-        null;
+    messages.innerHTML = "";
+    messages.appendChild(emptyState);
 
-    currentRoomId =
-        null;
+    emptyState.style.display = "flex";
 
-    isSearching =
-        false;
-
-    assignmentListener =
-        null;
-
-    messageListener =
-        null;
-
-
-    messages.innerHTML =
-        "";
-
-
-    messages.appendChild(
-        emptyState
-    );
-
-
-    emptyState.style.display =
-        "flex";
-
-    emptyTitle.textContent =
+    document.getElementById("emptyTitle").textContent =
         "Ready to Meet Someone?";
 
-    emptyText.textContent =
-        "Press New Chat to find another person.";
+    document.getElementById("emptyText").textContent =
+        "Press New Chat to start searching.";
 
-    dots.style.display =
-        "none";
+    document.getElementById("partnerTitle").textContent =
+        "Ready to connect";
 
+    document.getElementById("partnerStatus").textContent =
+        "Press New Chat to find someone";
 
-    partnerTitle.textContent =
-        "Looking for someone";
+    document.getElementById("connectionState").innerHTML =
+        '<span class="dot off"></span>NOT CONNECTED';
 
-    partnerStatus.innerHTML =
-        '<span class="dot"></span>' +
-        'Ready to start';
+    document.getElementById("chatBadge").textContent =
+        "OFFLINE";
 
-    connectionState.textContent =
-        "NOT CONNECTED";
+    messageInput.disabled = true;
+    sendBtn.disabled = true;
+    messageInput.value = "";
 
+    newChatBtn.disabled = false;
 
-    messageInput.disabled =
-        true;
-
-    sendBtn.disabled =
-        true;
-
-    messageInput.value =
-        "";
-
-
-    if(showMessage){
-
-        showToast(
-            "Chat ended."
-        );
-
-    }
-
+    showToast("Chat ended.");
 }
 
-
-/* =========================================
-   ENTER KEY
-========================================= */
+/* =========================
+   ENTER TO SEND
+========================= */
 
 messageInput.addEventListener(
     "keydown",
     function(event){
 
         if(event.key === "Enter"){
-
             sendMessage();
-
         }
 
     }
 );
 
-
-/* =========================================
+/* =========================
    THEME
-========================================= */
+========================= */
 
 function toggleTheme(){
 
-    document.body.classList.toggle(
-        "light"
-    );
-
+    document.body.classList.toggle("light");
 
     const button =
-        document.getElementById(
-            "themeButton"
-        );
+        document.getElementById("themeButton");
 
+    if(document.body.classList.contains("light")){
 
-    if(
-        document.body.classList.contains(
-            "light"
-        )
-    ){
-
-        button.textContent =
-            "🌙 Dark";
-
+        button.textContent = "🌙 Dark";
         localStorage.setItem(
             "dakshubTheme",
             "light"
         );
 
-    }
+    }else{
 
-    else{
-
-        button.textContent =
-            "☀ Light";
-
+        button.textContent = "☀ Light";
         localStorage.setItem(
             "dakshubTheme",
             "dark"
         );
-
     }
-
 }
-
 
 if(
-    localStorage.getItem(
-        "dakshubTheme"
-    ) === "light"
+    localStorage.getItem("dakshubTheme") ===
+    "light"
 ){
+    document.body.classList.add("light");
 
-    document.body.classList.add(
-        "light"
-    );
-
-
-    document.getElementById(
-        "themeButton"
-    ).textContent =
-        "🌙 Dark";
-
+    document.getElementById("themeButton")
+    .textContent = "🌙 Dark";
 }
 
-
-/* =========================================
-   ABOUT
-========================================= */
+/* =========================
+   ABOUT / HOME
+========================= */
 
 function showAbout(){
 
     const about =
-        document.getElementById(
-            "about"
-        );
+        document.getElementById("about");
 
-
-    if(
+    about.style.display =
         about.style.display === "block"
-    ){
+        ? "none"
+        : "block";
 
-        about.style.display =
-            "none";
-
-    }
-
-    else{
-
-        about.style.display =
-            "block";
-
+    if(about.style.display === "block"){
         about.scrollIntoView({
             behavior:"smooth"
         });
-
     }
-
 }
 
-
 function goHome(){
-
     window.scrollTo({
         top:0,
         behavior:"smooth"
     });
-
 }
 
-
-/* =========================================
+/* =========================
    TOAST
-========================================= */
+========================= */
 
 let toastTimer = null;
-
 
 function showToast(text){
 
     const toast =
-        document.getElementById(
-            "toast"
-        );
+        document.getElementById("toast");
 
+    toast.textContent = text;
+    toast.classList.add("show");
 
-    toast.textContent =
-        text;
-
-
-    toast.classList.add(
-        "show"
-    );
-
-
-    clearTimeout(
-        toastTimer
-    );
-
+    clearTimeout(toastTimer);
 
     toastTimer =
-        setTimeout(
-            function(){
+        setTimeout(function(){
 
-                toast.classList.remove(
-                    "show"
-                );
+            toast.classList.remove("show");
 
-            },
-            3000
-        );
-
+        },3000);
 }
 
-
-/* =========================================
-   YEAR
-========================================= */
-
-document.getElementById(
-    "year"
-).textContent =
-new Date().getFullYear();
-
-
-/* =========================================
-   STARTING STATE
-========================================= */
-
-connectionState.textContent =
-    "NOT CONNECTED";
+/* YEAR */
+document.getElementById("year").textContent =
+    new Date().getFullYear();
 
 </script>
 

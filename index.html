@@ -4,166 +4,1051 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>Dakshub Chat</title>
+  <title>DAKSHUB - Chat with New People</title>
 
   <style>
+    /* ================================
+       DAKSHUB - COMPLETE WEBSITE STYLE
+    ================================= */
+
+    :root {
+      --bg: #160d24;
+      --bg-soft: #21142f;
+      --card: #2a1b3d;
+      --card-light: #332148;
+      --border: #49335f;
+      --text: #ffffff;
+      --text-soft: #c8bfd1;
+      --primary: #7447c7;
+      --primary-hover: #8b5cdb;
+      --secondary: #514463;
+      --input: #4c405d;
+      --success: #57c78b;
+      --danger: #d65b72;
+      --shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+    }
+
+    body.light-mode {
+      --bg: #eeeaf4;
+      --bg-soft: #e1dbe9;
+      --card: #ffffff;
+      --card-light: #f7f4fa;
+      --border: #d9d1e0;
+      --text: #231c2b;
+      --text-soft: #675f70;
+      --primary: #653ab5;
+      --primary-hover: #7b4dcc;
+      --secondary: #ddd5e5;
+      --input: #eee9f2;
+      --success: #258957;
+      --danger: #c43f59;
+      --shadow: 0 20px 60px rgba(70, 50, 90, 0.15);
+    }
+
     * {
       box-sizing: border-box;
     }
 
+    html {
+      scroll-behavior: smooth;
+    }
+
     body {
       margin: 0;
-      font-family: Arial, sans-serif;
-      background: #1a102b;
-      color: white;
       min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 20px;
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      transition: background 0.3s, color 0.3s;
     }
 
-    .chat-container {
-      width: 100%;
-      max-width: 520px;
-      background: #2a1b3d;
-      border-radius: 20px;
-      overflow: hidden;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-    }
-
-    .header {
-      padding: 20px;
-      border-bottom: 1px solid #46345c;
-      text-align: center;
-    }
-
-    .header h1 {
-      margin: 0;
-      font-size: 28px;
-    }
-
-    .status {
-      margin-top: 10px;
-      color: #c9c1d4;
-      font-size: 14px;
-    }
-
-    .chat-area {
-      height: 350px;
-      padding: 25px;
-      color: #d7d0df;
-      text-align: center;
-    }
-
-    .input-area {
-      padding: 15px;
-      border-top: 1px solid #46345c;
-      display: flex;
-      gap: 10px;
-    }
-
+    button,
     input {
-      flex: 1;
-      padding: 15px;
-      border: none;
-      border-radius: 10px;
-      background: #514463;
-      color: white;
-      font-size: 15px;
-      outline: none;
-    }
-
-    input::placeholder {
-      color: #c4bbcc;
+      font-family: inherit;
     }
 
     button {
       border: none;
-      padding: 14px 20px;
-      border-radius: 10px;
-      background: #7447b8;
-      color: white;
-      font-size: 15px;
       cursor: pointer;
+      transition: transform 0.2s, opacity 0.2s, background 0.2s;
     }
 
     button:hover {
-      opacity: 0.9;
+      transform: translateY(-1px);
     }
 
-    .buttons {
-      padding: 0 15px 20px;
+    button:active {
+      transform: translateY(0);
+    }
+
+    /* ================================
+       TOP NAVIGATION
+    ================================= */
+
+    .topbar {
+      width: 100%;
+      padding: 16px 5%;
       display: flex;
-      justify-content: center;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--bg-soft);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .logo {
+      color: var(--text);
+      font-size: 26px;
+      font-weight: 800;
+      letter-spacing: 2px;
+    }
+
+    .logo span {
+      color: var(--primary-hover);
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
       gap: 10px;
     }
 
-    .new-chat {
-      background: #5d3a91;
+    .theme-button {
+      min-width: 45px;
+      height: 42px;
+      border-radius: 10px;
+      background: var(--secondary);
+      color: var(--text);
+      font-size: 18px;
     }
 
-    .about {
+    .about-button {
+      padding: 11px 16px;
+      border-radius: 10px;
+      background: transparent;
+      color: var(--text-soft);
+      border: 1px solid var(--border);
+    }
+
+    /* ================================
+       MAIN PAGE
+    ================================= */
+
+    .page {
+      width: 100%;
+      max-width: 1100px;
+      margin: auto;
+      padding: 45px 20px;
+    }
+
+    .hero {
       text-align: center;
-      padding: 18px 25px 25px;
-      color: #bdb3c8;
-      font-size: 14px;
+      margin-bottom: 35px;
+    }
+
+    .hero h1 {
+      font-size: clamp(32px, 6vw, 54px);
+      margin: 0 0 12px;
+      letter-spacing: -1px;
+    }
+
+    .hero p {
+      margin: auto;
+      max-width: 650px;
+      color: var(--text-soft);
+      line-height: 1.7;
+      font-size: 16px;
+    }
+
+    /* ================================
+       CHAT CARD
+    ================================= */
+
+    .chat-container {
+      width: 100%;
+      max-width: 720px;
+      margin: auto;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+
+    .chat-header {
+      padding: 20px 22px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border);
+      background: var(--card-light);
+    }
+
+    .person-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .avatar {
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--primary);
+      color: white;
+      font-weight: bold;
+      font-size: 18px;
+    }
+
+    .person-name {
+      margin: 0;
+      font-size: 17px;
+    }
+
+    .status {
+      margin-top: 5px;
+      color: var(--text-soft);
+      font-size: 13px;
+    }
+
+    .online-dot {
+      display: inline-block;
+      width: 9px;
+      height: 9px;
+      background: var(--success);
+      border-radius: 50%;
+      margin-right: 5px;
+    }
+
+    .online-dot.searching {
+      animation: pulse 1.2s infinite;
+    }
+
+    @keyframes pulse {
+      0% {
+        opacity: 0.4;
+        transform: scale(0.9);
+      }
+
+      50% {
+        opacity: 1;
+        transform: scale(1.2);
+      }
+
+      100% {
+        opacity: 0.4;
+        transform: scale(0.9);
+      }
+    }
+
+    .header-badge {
+      padding: 7px 11px;
+      border-radius: 20px;
+      background: rgba(116, 71, 199, 0.18);
+      color: var(--primary-hover);
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    /* ================================
+       MESSAGES
+    ================================= */
+
+    .chat-area {
+      height: 390px;
+      overflow-y: auto;
+      padding: 22px;
+      scroll-behavior: smooth;
+    }
+
+    .empty-state {
+      min-height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      color: var(--text-soft);
+    }
+
+    .empty-icon {
+      width: 70px;
+      height: 70px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-radius: 50%;
+      background: var(--secondary);
+      font-size: 28px;
+      margin-bottom: 15px;
+    }
+
+    .empty-state h2 {
+      color: var(--text);
+      font-size: 20px;
+      margin: 0 0 8px;
+    }
+
+    .empty-state p {
+      margin: 0;
+      max-width: 380px;
+      line-height: 1.6;
+    }
+
+    .message-row {
+      display: flex;
+      margin: 12px 0;
+    }
+
+    .message-row.you {
+      justify-content: flex-end;
+    }
+
+    .message-row.system {
+      justify-content: center;
+    }
+
+    .message {
+      max-width: 75%;
+      padding: 12px 15px;
+      border-radius: 16px;
       line-height: 1.5;
-      border-top: 1px solid #46345c;
+      word-break: break-word;
+    }
+
+    .message.other {
+      background: var(--secondary);
+      color: var(--text);
+      border-bottom-left-radius: 4px;
+    }
+
+    .message.you {
+      background: var(--primary);
+      color: white;
+      border-bottom-right-radius: 4px;
+    }
+
+    .system-message {
+      color: var(--text-soft);
+      font-size: 13px;
+      padding: 7px 12px;
+      border-radius: 20px;
+      background: var(--bg-soft);
+    }
+
+    /* ================================
+       INPUT
+    ================================= */
+
+    .input-section {
+      padding: 16px;
+      border-top: 1px solid var(--border);
+      background: var(--card-light);
+    }
+
+    .input-row {
+      display: flex;
+      gap: 10px;
+    }
+
+    #messageInput {
+      width: 100%;
+      padding: 15px 17px;
+      border: 1px solid transparent;
+      border-radius: 12px;
+      outline: none;
+      background: var(--input);
+      color: var(--text);
+      font-size: 15px;
+      transition: border 0.2s;
+    }
+
+    #messageInput:focus {
+      border-color: var(--primary);
+    }
+
+    #messageInput::placeholder {
+      color: var(--text-soft);
+    }
+
+    .send-button {
+      padding: 0 22px;
+      min-width: 90px;
+      border-radius: 12px;
+      background: var(--primary);
+      color: white;
+      font-weight: bold;
+      font-size: 15px;
+    }
+
+    .send-button:hover {
+      background: var(--primary-hover);
+    }
+
+    /* ================================
+       CHAT ACTIONS
+    ================================= */
+
+    .actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 10px;
+      padding: 15px 16px 20px;
+      background: var(--card-light);
+    }
+
+    .action-button {
+      padding: 13px 10px;
+      border-radius: 11px;
+      font-weight: bold;
+      color: white;
+    }
+
+    .new-chat {
+      background: var(--primary);
+    }
+
+    .next-chat {
+      background: #396db8;
+    }
+
+    .leave-chat {
+      background: var(--secondary);
+      color: var(--text);
+    }
+
+    /* ================================
+       WEBSITE INFORMATION
+    ================================= */
+
+    .features {
+      margin-top: 70px;
+    }
+
+    .section-title {
+      text-align: center;
+      font-size: 28px;
+      margin-bottom: 10px;
+    }
+
+    .section-description {
+      text-align: center;
+      color: var(--text-soft);
+      max-width: 650px;
+      margin: 0 auto 30px;
+      line-height: 1.7;
+    }
+
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+    }
+
+    .feature-card {
+      padding: 25px;
+      border-radius: 16px;
+      background: var(--card);
+      border: 1px solid var(--border);
+    }
+
+    .feature-icon {
+      font-size: 26px;
+      margin-bottom: 14px;
+    }
+
+    .feature-card h3 {
+      margin: 0 0 9px;
+      font-size: 18px;
+    }
+
+    .feature-card p {
+      margin: 0;
+      color: var(--text-soft);
+      line-height: 1.6;
+      font-size: 14px;
+    }
+
+    .about-section {
+      margin-top: 60px;
+      padding: 35px;
+      text-align: center;
+      border-radius: 20px;
+      background: var(--card);
+      border: 1px solid var(--border);
+    }
+
+    .about-section h2 {
+      margin-top: 0;
+    }
+
+    .about-section p {
+      max-width: 700px;
+      margin: 12px auto;
+      line-height: 1.8;
+      color: var(--text-soft);
+    }
+
+    footer {
+      text-align: center;
+      padding: 45px 20px 20px;
+      color: var(--text-soft);
+      font-size: 13px;
+    }
+
+    /* ================================
+       TOAST
+    ================================= */
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 25px;
+      transform: translate(-50%, 100px);
+      padding: 13px 20px;
+      border-radius: 12px;
+      background: var(--primary);
+      color: white;
+      box-shadow: var(--shadow);
+      opacity: 0;
+      transition: 0.3s;
+      z-index: 100;
+    }
+
+    .toast.show {
+      transform: translate(-50%, 0);
+      opacity: 1;
+    }
+
+    /* ================================
+       MOBILE
+    ================================= */
+
+    @media (max-width: 700px) {
+      .page {
+        padding: 30px 12px;
+      }
+
+      .topbar {
+        padding: 13px 16px;
+      }
+
+      .about-button {
+        display: none;
+      }
+
+      .chat-area {
+        height: 350px;
+      }
+
+      .feature-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .actions {
+        grid-template-columns: 1fr;
+      }
+
+      .chat-header {
+        padding: 16px;
+      }
+
+      .message {
+        max-width: 85%;
+      }
+
+      .hero {
+        margin-bottom: 25px;
+      }
+
+      .about-section {
+        padding: 25px 18px;
+      }
     }
   </style>
 </head>
 
 <body>
 
-  <div class="chat-container">
+  <!-- TOP BAR -->
+  <header class="topbar">
+    <div class="logo">DAKS<span>HUB</span></div>
 
-    <div class="header">
-      <h1>DAKSHUB</h1>
-      <div class="status">● Looking for someone...</div>
-    </div>
-
-    <div class="chat-area" id="chatArea">
-      Looking for someone...
-    </div>
-
-    <div class="input-area">
-      <input
-        type="text"
-        id="messageInput"
-        placeholder="Type your message..."
+    <div class="nav-actions">
+      <button
+        class="about-button"
+        onclick="document.getElementById('about').scrollIntoView()"
       >
-      <button onclick="sendMessage()">Send</button>
-    </div>
+        About
+      </button>
 
-    <div class="buttons">
-      <button class="new-chat" onclick="newChat()">New Chat</button>
+      <button
+        class="theme-button"
+        id="themeButton"
+        onclick="toggleTheme()"
+        title="Change theme"
+      >
+        ☀️
+      </button>
     </div>
+  </header>
 
-    <div class="about">
-      Dakshub is a simple website where people can connect and chat with others.
-    </div>
+  <main class="page">
 
-  </div>
+    <!-- HERO -->
+    <section class="hero">
+      <h1>Meet and Chat with New People</h1>
+
+      <p>
+        Dakshub is a simple place to start a conversation with someone new.
+        Press New Chat when you are ready to begin.
+      </p>
+    </section>
+
+    <!-- CHAT -->
+    <section class="chat-container">
+
+      <div class="chat-header">
+
+        <div class="person-info">
+          <div class="avatar" id="avatar">?</div>
+
+          <div>
+            <h2 class="person-name" id="personName">
+              Looking for someone
+            </h2>
+
+            <div class="status" id="statusText">
+              <span class="online-dot searching"></span>
+              Searching for a person...
+            </div>
+          </div>
+        </div>
+
+        <div class="header-badge" id="chatBadge">
+          NOT CONNECTED
+        </div>
+
+      </div>
+
+      <!-- MESSAGES -->
+      <div class="chat-area" id="chatArea">
+
+        <div class="empty-state" id="emptyState">
+          <div class="empty-icon">💬</div>
+
+          <h2>Start a New Chat</h2>
+
+          <p>
+            Click the New Chat button below to start looking for someone.
+          </p>
+        </div>
+
+      </div>
+
+      <!-- INPUT -->
+      <div class="input-section">
+        <div class="input-row">
+
+          <input
+            type="text"
+            id="messageInput"
+            placeholder="Type your message..."
+            autocomplete="off"
+          >
+
+          <button class="send-button" onclick="sendMessage()">
+            Send
+          </button>
+
+        </div>
+      </div>
+
+      <!-- ACTION BUTTONS -->
+      <div class="actions">
+
+        <button
+          class="action-button new-chat"
+          onclick="startNewChat()"
+        >
+          + New Chat
+        </button>
+
+        <button
+          class="action-button next-chat"
+          onclick="nextChat()"
+        >
+          Next
+        </button>
+
+        <button
+          class="action-button leave-chat"
+          onclick="leaveChat()"
+        >
+          Leave
+        </button>
+
+      </div>
+
+    </section>
+
+    <!-- FEATURES -->
+    <section class="features">
+
+      <h2 class="section-title">Simple Features</h2>
+
+      <p class="section-description">
+        Dakshub is designed to keep things simple and easy to use.
+      </p>
+
+      <div class="feature-grid">
+
+        <div class="feature-card">
+          <div class="feature-icon">💬</div>
+          <h3>Chat</h3>
+          <p>
+            Type a message and start a conversation in a simple chat window.
+          </p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">➕</div>
+          <h3>New Chat</h3>
+          <p>
+            Start again whenever you want to look for a new person.
+          </p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">🌙</div>
+          <h3>Dark and Light Mode</h3>
+          <p>
+            Choose between dark mode and light mode using the button at the top.
+          </p>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ABOUT -->
+    <section class="about-section" id="about">
+
+      <h2>What is Dakshub?</h2>
+
+      <p>
+        Dakshub is a website made for people who want a simple place to meet
+        and talk with new people.
+      </p>
+
+      <p>
+        The website is still growing, and more features can be added in the
+        future to make chatting easier and more useful.
+      </p>
+
+    </section>
+
+  </main>
+
+  <footer>
+    © <span id="year"></span> Dakshub. A simple place to chat with new people.
+  </footer>
+
+  <div class="toast" id="toast"></div>
 
   <script>
-    function sendMessage() {
-      const input = document.getElementById("messageInput");
-      const chatArea = document.getElementById("chatArea");
 
-      if (input.value.trim() !== "") {
-        chatArea.innerHTML =
-          "<p><b>You:</b> " + input.value + "</p>";
+    /* ================================
+       VARIABLES
+    ================================= */
 
-        input.value = "";
+    const chatArea = document.getElementById("chatArea");
+    const messageInput = document.getElementById("messageInput");
+    const personName = document.getElementById("personName");
+    const statusText = document.getElementById("statusText");
+    const chatBadge = document.getElementById("chatBadge");
+    const avatar = document.getElementById("avatar");
+    const themeButton = document.getElementById("themeButton");
+    const toast = document.getElementById("toast");
+
+    let connected = false;
+    let currentPerson = null;
+    let toastTimer;
+
+    /* ================================
+       THEME
+    ================================= */
+
+    function toggleTheme() {
+      document.body.classList.toggle("light-mode");
+
+      const isLight =
+        document.body.classList.contains("light-mode");
+
+      themeButton.textContent = isLight ? "🌙" : "☀️";
+
+      localStorage.setItem(
+        "dakshubTheme",
+        isLight ? "light" : "dark"
+      );
+
+      showToast(
+        isLight ? "Light mode enabled" : "Dark mode enabled"
+      );
+    }
+
+    function loadTheme() {
+      const savedTheme = localStorage.getItem("dakshubTheme");
+
+      if (savedTheme === "light") {
+        document.body.classList.add("light-mode");
+        themeButton.textContent = "🌙";
       }
     }
 
-    function newChat() {
-      document.getElementById("chatArea").innerHTML =
-        "Looking for someone...";
-      document.getElementById("messageInput").value = "";
+    /* ================================
+       TOAST
+    ================================= */
+
+    function showToast(message) {
+      clearTimeout(toastTimer);
+
+      toast.textContent = message;
+      toast.classList.add("show");
+
+      toastTimer = setTimeout(function () {
+        toast.classList.remove("show");
+      }, 2500);
     }
+
+    /* ================================
+       MESSAGE FUNCTIONS
+    ================================= */
+
+    function addMessage(text, type) {
+      const row = document.createElement("div");
+
+      if (type === "you") {
+        row.className = "message-row you";
+      } else if (type === "system") {
+        row.className = "message-row system";
+      } else {
+        row.className = "message-row";
+      }
+
+      const message = document.createElement("div");
+
+      if (type === "system") {
+        message.className = "system-message";
+      } else {
+        message.className = "message " + type;
+      }
+
+      message.textContent = text;
+
+      row.appendChild(message);
+      chatArea.appendChild(row);
+
+      chatArea.scrollTop = chatArea.scrollHeight;
+    }
+
+    function clearChat() {
+      chatArea.innerHTML = "";
+    }
+
+    function sendMessage() {
+      const text = messageInput.value.trim();
+
+      if (text === "") {
+        showToast("Please type a message first");
+        return;
+      }
+
+      if (!connected) {
+        showToast("Start a new chat first");
+        return;
+      }
+
+      addMessage(text, "you");
+
+      messageInput.value = "";
+
+      showToast("Message sent");
+    }
+
+    /* ================================
+       START NEW CHAT
+    ================================= */
+
+    function startNewChat() {
+
+      if (connected) {
+        nextChat();
+        return;
+      }
+
+      clearChat();
+
+      connected = false;
+
+      personName.textContent = "Looking for someone";
+      avatar.textContent = "?";
+
+      statusText.innerHTML =
+        '<span class="online-dot searching"></span> Searching for a person...';
+
+      chatBadge.textContent = "SEARCHING";
+
+      addMessage("Looking for someone...", "system");
+
+      showToast("Searching for someone");
+
+      setTimeout(function () {
+        connectPerson();
+      }, 1800);
+    }
+
+    /* ================================
+       CONNECT DEMO PERSON
+       This is only a front-end demo.
+       A real connection needs a server.
+    ================================= */
+
+    function connectPerson() {
+
+      const names = [
+        "Alex",
+        "Sam",
+        "Jordan",
+        "Taylor",
+        "Chris",
+        "Robin",
+        "Jamie",
+        "Casey"
+      ];
+
+      currentPerson =
+        names[Math.floor(Math.random() * names.length)];
+
+      connected = true;
+
+      personName.textContent = currentPerson;
+      avatar.textContent =
+        currentPerson.charAt(0).toUpperCase();
+
+      statusText.innerHTML =
+        '<span class="online-dot"></span> Connected';
+
+      chatBadge.textContent = "CONNECTED";
+
+      addMessage(
+        "You are now connected with " + currentPerson + ".",
+        "system"
+      );
+
+      showToast("Connected with " + currentPerson);
+    }
+
+    /* ================================
+       NEXT CHAT
+    ================================= */
+
+    function nextChat() {
+
+      if (!connected) {
+        startNewChat();
+        return;
+      }
+
+      clearChat();
+
+      connected = false;
+
+      personName.textContent = "Looking for someone";
+      avatar.textContent = "?";
+
+      statusText.innerHTML =
+        '<span class="online-dot searching"></span> Looking for someone new...';
+
+      chatBadge.textContent = "SEARCHING";
+
+      addMessage("Looking for a new person...", "system");
+
+      showToast("Searching for a new person");
+
+      setTimeout(function () {
+        connectPerson();
+      }, 1500);
+    }
+
+    /* ================================
+       LEAVE CHAT
+    ================================= */
+
+    function leaveChat() {
+
+      if (!connected) {
+        showToast("You are not connected to anyone");
+        return;
+      }
+
+      connected = false;
+      currentPerson = null;
+
+      clearChat();
+
+      personName.textContent = "Chat ended";
+      avatar.textContent = "!";
+
+      statusText.innerHTML =
+        "You have left the conversation";
+
+      chatBadge.textContent = "NOT CONNECTED";
+
+      const empty = document.createElement("div");
+
+      empty.className = "empty-state";
+
+      empty.innerHTML = `
+        <div class="empty-icon">👋</div>
+        <h2>Chat Ended</h2>
+        <p>
+          You have left the conversation.
+          Click New Chat whenever you want to start again.
+        </p>
+      `;
+
+      chatArea.appendChild(empty);
+
+      showToast("You left the chat");
+    }
+
+    /* ================================
+       ENTER TO SEND
+    ================================= */
+
+    messageInput.addEventListener("keydown", function (event) {
+
+      if (event.key === "Enter") {
+        event.preventDefault();
+        sendMessage();
+      }
+
+    });
+
+    /* ================================
+       PAGE START
+    ================================= */
+
+    document.getElementById("year").textContent =
+      new Date().getFullYear();
+
+    loadTheme();
+
   </script>
 
 </body>

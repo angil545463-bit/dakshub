@@ -20,25 +20,22 @@
       display: flex;
       justify-content: center;
       align-items: center;
+      padding: 20px;
     }
 
     .chat-container {
-      width: 90%;
-      max-width: 500px;
-      height: 90vh;
-      max-height: 700px;
-      background: #26163d;
+      width: 100%;
+      max-width: 520px;
+      background: #2a1b3d;
       border-radius: 20px;
-      display: flex;
-      flex-direction: column;
       overflow: hidden;
-      box-shadow: 0 0 30px rgba(0, 0, 0, 0.4);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
     }
 
     .header {
       padding: 20px;
+      border-bottom: 1px solid #46345c;
       text-align: center;
-      border-bottom: 1px solid #3d2a59;
     }
 
     .header h1 {
@@ -47,92 +44,72 @@
     }
 
     .status {
-      margin-top: 8px;
-      color: #aaa;
+      margin-top: 10px;
+      color: #c9c1d4;
       font-size: 14px;
     }
 
-    .messages {
-      flex: 1;
-      padding: 20px;
-      overflow-y: auto;
-    }
-
-    .empty-message {
+    .chat-area {
+      height: 350px;
+      padding: 25px;
+      color: #d7d0df;
       text-align: center;
-      color: #aaa;
-      margin-top: 50px;
-    }
-
-    .message {
-      padding: 12px;
-      border-radius: 10px;
-      margin: 10px 0;
-      width: fit-content;
-      max-width: 80%;
-      word-wrap: break-word;
-    }
-
-    .my-message {
-      background: #6d28d9;
-      margin-left: auto;
-    }
-
-    .other-message {
-      background: #444;
-      margin-right: auto;
     }
 
     .input-area {
-      display: flex;
       padding: 15px;
+      border-top: 1px solid #46345c;
+      display: flex;
       gap: 10px;
-      border-top: 1px solid #3d2a59;
     }
 
     input {
       flex: 1;
-      padding: 14px;
+      padding: 15px;
       border: none;
       border-radius: 10px;
-      outline: none;
+      background: #514463;
+      color: white;
       font-size: 15px;
+      outline: none;
+    }
+
+    input::placeholder {
+      color: #c4bbcc;
     }
 
     button {
       border: none;
-      padding: 14px 18px;
+      padding: 14px 20px;
       border-radius: 10px;
+      background: #7447b8;
+      color: white;
+      font-size: 15px;
       cursor: pointer;
-      font-weight: bold;
     }
 
-    .send {
-      background: #a855f7;
-      color: white;
+    button:hover {
+      opacity: 0.9;
     }
 
-    .controls {
+    .buttons {
+      padding: 0 15px 20px;
       display: flex;
-      gap: 10px;
-      padding: 15px;
       justify-content: center;
+      gap: 10px;
     }
 
-    .next {
-      background: #6d28d9;
-      color: white;
+    .new-chat {
+      background: #5d3a91;
     }
 
-    .leave {
-      background: #444;
-      color: white;
-    }
-
-    button:disabled,
-    input:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
+    .about {
+      text-align: center;
+      padding: 18px 25px 25px;
+      color: #bdb3c8;
+      font-size: 14px;
+      line-height: 1.5;
+      border-top: 1px solid #46345c;
     }
   </style>
 </head>
@@ -143,13 +120,11 @@
 
     <div class="header">
       <h1>DAKSHUB</h1>
-      <div class="status" id="status">🟢 Looking for someone...</div>
+      <div class="status">● Looking for someone...</div>
     </div>
 
-    <div class="messages" id="messages">
-      <div class="empty-message">
-        Looking for someone...
-      </div>
+    <div class="chat-area" id="chatArea">
+      Looking for someone...
     </div>
 
     <div class="input-area">
@@ -157,517 +132,38 @@
         type="text"
         id="messageInput"
         placeholder="Type your message..."
-        disabled
       >
-
-      <button class="send" id="sendButton" disabled>
-        Send
-      </button>
+      <button onclick="sendMessage()">Send</button>
     </div>
 
-    <div class="controls">
-      <button class="next" id="nextButton">
-        Next
-      </button>
+    <div class="buttons">
+      <button class="new-chat" onclick="newChat()">New Chat</button>
+    </div>
 
-      <button class="leave" id="leaveButton">
-        Leave
-      </button>
+    <div class="about">
+      Dakshub is a simple website where people can connect and chat with others.
     </div>
 
   </div>
 
+  <script>
+    function sendMessage() {
+      const input = document.getElementById("messageInput");
+      const chatArea = document.getElementById("chatArea");
 
-  <script type="module">
+      if (input.value.trim() !== "") {
+        chatArea.innerHTML =
+          "<p><b>You:</b> " + input.value + "</p>";
 
-    import { initializeApp } from
-      "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
-
-    import {
-      getDatabase,
-      ref,
-      push,
-      set,
-      get,
-      remove,
-      onValue,
-      onChildAdded,
-      runTransaction
-    } from
-      "https://www.gstatic.com/firebasejs/11.0.2/firebase-database.js";
-
-
-    /* =========================
-       FIREBASE CONFIG
-    ========================== */
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyBA7whtVuz10pNxlK5lIOVbEJJLBQ6G3wU",
-      authDomain: "dakshub-3cd0f.firebaseapp.com",
-      projectId: "dakshub-3cd0f",
-      storageBucket: "dakshub-3cd0f.firebasestorage.app",
-      messagingSenderId: "203055229267",
-      appId: "1:203055229267:web:647ddbd7407995019d19a6",
-      measurementId: "G-CDSY4KZFHQ"
-    };
-
-
-    /* =========================
-       START FIREBASE
-    ========================== */
-
-    const app = initializeApp(firebaseConfig);
-    const db = getDatabase(app);
-
-
-    /* =========================
-       HTML ELEMENTS
-    ========================== */
-
-    const input = document.getElementById("messageInput");
-    const sendButton = document.getElementById("sendButton");
-    const nextButton = document.getElementById("nextButton");
-    const leaveButton = document.getElementById("leaveButton");
-    const messages = document.getElementById("messages");
-    const status = document.getElementById("status");
-
-
-    /* =========================
-       USER ID
-    ========================== */
-
-    let userId = localStorage.getItem("dakshubUserId");
-
-    if (!userId) {
-      userId = push(ref(db, "users")).key;
-
-      localStorage.setItem(
-        "dakshubUserId",
-        userId
-      );
+        input.value = "";
+      }
     }
 
-
-    /* =========================
-       VARIABLES
-    ========================== */
-
-    let currentRoom = null;
-    let stopMessageListener = null;
-    let stopAssignmentListener = null;
-
-
-    /* =========================
-       STATUS
-    ========================== */
-
-    function setStatus(text) {
-      status.textContent = text;
+    function newChat() {
+      document.getElementById("chatArea").innerHTML =
+        "Looking for someone...";
+      document.getElementById("messageInput").value = "";
     }
-
-
-    /* =========================
-       CLEAR CHAT
-    ========================== */
-
-    function clearMessages(text = "Looking for someone...") {
-
-      messages.innerHTML = `
-        <div class="empty-message">
-          ${text}
-        </div>
-      `;
-    }
-
-
-    /* =========================
-       SHOW MESSAGE
-    ========================== */
-
-    function showMessage(data) {
-
-      const emptyMessage =
-        document.querySelector(".empty-message");
-
-      if (emptyMessage) {
-        emptyMessage.remove();
-      }
-
-      const message =
-        document.createElement("div");
-
-      message.classList.add("message");
-
-      if (data.sender === userId) {
-        message.classList.add("my-message");
-      } else {
-        message.classList.add("other-message");
-      }
-
-      message.textContent = data.text;
-
-      messages.appendChild(message);
-
-      messages.scrollTop =
-        messages.scrollHeight;
-    }
-
-
-    /* =========================
-       JOIN ROOM
-    ========================== */
-
-    function joinRoom(roomId) {
-
-      currentRoom = roomId;
-
-      setStatus("🟢 Connected!");
-
-      input.disabled = false;
-      sendButton.disabled = false;
-
-      clearMessages("Loading messages...");
-
-
-      if (stopMessageListener) {
-        stopMessageListener();
-      }
-
-
-      const messagesRef =
-        ref(db, `rooms/${roomId}/messages`);
-
-
-      stopMessageListener =
-        onChildAdded(
-          messagesRef,
-          (snapshot) => {
-
-            const data =
-              snapshot.val();
-
-            if (data) {
-              showMessage(data);
-            }
-
-          }
-        );
-
-    }
-
-
-    /* =========================
-       LISTEN FOR MATCH
-    ========================== */
-
-    function listenForMatch() {
-
-      if (stopAssignmentListener) {
-        stopAssignmentListener();
-      }
-
-
-      const assignmentRef =
-        ref(db, `assignments/${userId}`);
-
-
-      stopAssignmentListener =
-        onValue(
-          assignmentRef,
-          (snapshot) => {
-
-            const data =
-              snapshot.val();
-
-            if (
-              data &&
-              data.roomId &&
-              !currentRoom
-            ) {
-
-              joinRoom(
-                data.roomId
-              );
-
-            }
-
-          }
-        );
-
-    }
-
-
-    /* =========================
-       FIND SOMEONE
-    ========================== */
-
-    async function findSomeone() {
-
-      currentRoom = null;
-
-      input.disabled = true;
-      sendButton.disabled = true;
-
-      setStatus("🟢 Looking for someone...");
-
-      clearMessages(
-        "Looking for someone..."
-      );
-
-
-      await remove(
-        ref(db, `assignments/${userId}`)
-      );
-
-
-      const waitingRef =
-        ref(db, "matchmaking/waiting");
-
-
-      const result =
-        await runTransaction(
-          waitingRef,
-          (waitingUser) => {
-
-            if (!waitingUser) {
-              return userId;
-            }
-
-            if (
-              waitingUser !== userId
-            ) {
-              return;
-            }
-
-            return waitingUser;
-
-          }
-        );
-
-
-      const waitingUser =
-        result.snapshot.val();
-
-
-      /* If we became the waiting user */
-
-      if (
-        result.committed &&
-        waitingUser === userId
-      ) {
-
-        listenForMatch();
-
-        return;
-      }
-
-
-      /* Someone else was waiting */
-
-      if (
-        waitingUser &&
-        waitingUser !== userId
-      ) {
-
-        const otherUserId =
-          waitingUser;
-
-
-        await runTransaction(
-          waitingRef,
-          (current) => {
-
-            if (
-              current === otherUserId
-            ) {
-              return null;
-            }
-
-            return current;
-
-          }
-        );
-
-
-        const roomId =
-          [userId, otherUserId]
-            .sort()
-            .join("_");
-
-
-        await set(
-          ref(db, `rooms/${roomId}/users`),
-          {
-            [userId]: true,
-            [otherUserId]: true
-          }
-        );
-
-
-        await set(
-          ref(db, `assignments/${userId}`),
-          {
-            roomId: roomId
-          }
-        );
-
-
-        await set(
-          ref(
-            db,
-            `assignments/${otherUserId}`
-          ),
-          {
-            roomId: roomId
-          }
-        );
-
-
-        listenForMatch();
-
-      }
-
-    }
-
-
-    /* =========================
-       SEND MESSAGE
-    ========================== */
-
-    async function sendMessage() {
-
-      const text =
-        input.value.trim();
-
-
-      if (
-        text === "" ||
-        !currentRoom
-      ) {
-        return;
-      }
-
-
-      const messagesRef =
-        ref(
-          db,
-          `rooms/${currentRoom}/messages`
-        );
-
-
-      await push(
-        messagesRef,
-        {
-          text: text,
-          sender: userId,
-          time: Date.now()
-        }
-      );
-
-
-      input.value = "";
-
-      input.focus();
-
-    }
-
-
-    /* =========================
-       SEND BUTTON
-    ========================== */
-
-    sendButton.addEventListener(
-      "click",
-      sendMessage
-    );
-
-
-    /* =========================
-       ENTER KEY
-    ========================== */
-
-    input.addEventListener(
-      "keypress",
-      function(event) {
-
-        if (
-          event.key === "Enter"
-        ) {
-          sendMessage();
-        }
-
-      }
-    );
-
-
-    /* =========================
-       NEXT BUTTON
-    ========================== */
-
-    nextButton.addEventListener(
-      "click",
-      async function() {
-
-        if (stopMessageListener) {
-          stopMessageListener();
-          stopMessageListener = null;
-        }
-
-
-        currentRoom = null;
-
-
-        await findSomeone();
-
-      }
-    );
-
-
-    /* =========================
-       LEAVE BUTTON
-    ========================== */
-
-    leaveButton.addEventListener(
-      "click",
-      async function() {
-
-        if (stopMessageListener) {
-          stopMessageListener();
-          stopMessageListener = null;
-        }
-
-
-        currentRoom = null;
-
-        input.disabled = true;
-        sendButton.disabled = true;
-
-
-        setStatus("⚪ You left the chat");
-
-        clearMessages(
-          "You left the chat."
-        );
-
-
-        await remove(
-          ref(db, `assignments/${userId}`)
-        );
-
-      }
-    );
-
-
-    /* =========================
-       START MATCHING
-    ========================== */
-
-    console.log(
-      "Firebase connected successfully!"
-    );
-
-    findSomeone();
-
   </script>
 
 </body>

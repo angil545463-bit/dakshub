@@ -522,6 +522,7 @@ footer{
 <!-- Firebase SDK -->
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
 
 <script>
 
@@ -545,19 +546,10 @@ const db = firebase.database();
 
 /* =========================
    USER ID
+   Firebase Anonymous Auth gives each visitor a real Firebase UID.
 ========================= */
 
-let clientId = localStorage.getItem("dakshubClientId");
-
-if(!clientId){
-    clientId =
-        "user_" +
-        Date.now() +
-        "_" +
-        Math.random().toString(36).substring(2,12);
-
-    localStorage.setItem("dakshubClientId", clientId);
-}
+let clientId = null;
 
 /* =========================
    VARIABLES
@@ -576,11 +568,32 @@ const messageInput = document.getElementById("messageInput");
 const sendBtn = document.getElementById("sendBtn");
 const newChatBtn = document.getElementById("newChatBtn");
 
+/* Authenticate anonymously before allowing database access. */
+newChatBtn.disabled = true;
+firebase.auth().signInAnonymously()
+.then(function(result){
+    clientId = result.user.uid;
+    newChatBtn.disabled = false;
+    document.getElementById("connectionState").innerHTML =
+        '<span class="dot"></span>READY';
+})
+.catch(function(error){
+    console.error(error);
+    document.getElementById("connectionState").innerHTML =
+        '<span class="dot off"></span>AUTH ERROR';
+    showToast("Could not connect securely. Please try again.");
+});
+
 /* =========================
    START CHAT
 ========================= */
 
 function startNewChat(){
+
+    if(!clientId){
+        showToast("Connecting securely. Please wait...");
+        return;
+    }
 
     if(isSearching || currentRoomId){
         return;
@@ -659,7 +672,8 @@ function findPartner(){
                 data.userId !== clientId
             ){
                 partner = {
-                    ticketId: child.key
+                    ticketId: child.key,
+                    userId: data.userId
                 };
             }
 
@@ -698,7 +712,7 @@ function claimPartner(partner){
 
         if(current === null){
             return {
-                claimedBy: currentTicketId,
+                claimedBy: clientId,
                 roomId: roomId,
                 createdAt:
                     firebase.database.ServerValue.TIMESTAMP
@@ -717,26 +731,21 @@ function claimPartner(partner){
         if(committed){
 
             db.ref(
-                "assignments/" + currentTicketId
-            ).set({
-                roomId: roomId
-            });
-
-            db.ref(
-                "assignments/" + partner.ticketId
-            ).set({
-                roomId: roomId
-            });
-
-            db.ref(
                 "rooms/" + roomId
             ).update({
                 createdAt:
                     firebase.database.ServerValue.TIMESTAMP,
-                active: true
+                active: true,
+                users: {
+                    [clientId]: true,
+                    [partner.userId]: true
+                }
+            }).then(function(){
+                joinRoom(roomId);
+            }).catch(function(error){
+                console.error(error);
+                showToast("Could not create secure chat room.");
             });
-
-            joinRoom(roomId);
         }
 
     });
@@ -748,8 +757,9 @@ function claimPartner(partner){
 
 function listenForAssignment(){
 
+    /* The partner claims our ticket; the claim contains the room ID. */
     const ref =
-        db.ref("assignments/" + currentTicketId);
+        db.ref("claims/" + currentTicketId);
 
     assignmentListener =
         ref.on("value", function(snapshot){
@@ -949,10 +959,6 @@ function leaveChat(){
             currentTicketId
         ).remove();
 
-        db.ref(
-            "assignments/" +
-            currentTicketId
-        ).remove();
     }
 
     if(
@@ -960,7 +966,7 @@ function leaveChat(){
         assignmentListener
     ){
         db.ref(
-            "assignments/" +
+            "claims/" +
             currentTicketId
         ).off(
             "value",

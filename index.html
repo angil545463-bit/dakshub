@@ -1251,8 +1251,10 @@ function registerAccount(){
                 email: v.email,
                 createdAt: firebase.database.ServerValue.TIMESTAMP
             }).then(function(){
+                return result.user.sendEmailVerification();
+            }).then(function(){
                 updateAccountUI(result.user);
-                showToast("Account created successfully.");
+                showToast("Account created. Check your email to verify it.");
             });
         })
         .catch(function(error){
@@ -1296,7 +1298,12 @@ function loginAccount(){
     .then(function(result){
         clientId = result.user.uid;
         updateAccountUI(result.user);
-        showToast("Logged in successfully.");
+
+        if(result.user.emailVerified){
+            showToast("Logged in successfully.");
+        }else{
+            showToast("Please verify your email from your inbox.");
+        }
     })
     .catch(function(error){
         console.error(error);

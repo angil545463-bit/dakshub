@@ -621,6 +621,12 @@ footer{
       <button type="button" onclick="registerAccount()">Create Account</button>
       <button type="button" class="secondary" onclick="loginAccount()">Log In</button>
     </div>
+
+    <div style="margin-top:10px">
+      <button type="button" class="secondary" onclick="forgotPassword()">
+        Forgot Password?
+      </button>
+    </div>
   </div>
 
   <div id="loggedInPanel" style="display:none">
@@ -1397,6 +1403,24 @@ function loginAccount(){
     .catch(function(error){
         console.error(error);
         showToast(error.message || "Could not log in.");
+    });
+}
+
+function forgotPassword(){
+    const email = document.getElementById("accountEmail").value.trim();
+
+    if(!email){
+        showToast("Enter your email address first.");
+        return;
+    }
+
+    firebase.auth().sendPasswordResetEmail(email)
+    .then(function(){
+        showToast("Password reset email sent. Check Inbox and Spam/Junk.");
+    })
+    .catch(function(error){
+        console.error(error);
+        showToast(error.message || "Could not send password reset email.");
     });
 }
 

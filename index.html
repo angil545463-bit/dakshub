@@ -410,6 +410,35 @@ footer{
         padding:9px 10px;
     }
 }
+
+/* ACCOUNT / PROFILE */
+.account-panel{
+    margin-top:25px;
+    padding:22px;
+    border-radius:18px;
+    background:var(--card);
+    border:1px solid var(--border);
+}
+.account-panel h2{margin-bottom:8px}
+.account-panel p{color:var(--muted);line-height:1.5;margin-bottom:14px}
+.account-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.account-grid input{
+    width:100%;border:1px solid var(--border);background:var(--bg2);
+    color:var(--text);padding:12px;border-radius:10px;outline:none;
+}
+.account-actions{display:flex;gap:10px;margin-top:12px;flex-wrap:wrap}
+.account-actions button{
+    border:none;border-radius:10px;padding:11px 15px;background:var(--purple);
+    color:#fff;font-weight:bold;
+}
+.account-actions button.secondary{background:var(--card2);color:var(--text)}
+.profile-card{
+    padding:14px;border:1px solid var(--border);border-radius:12px;
+    background:var(--card2);margin-top:12px;display:none;
+}
+.profile-card strong{font-size:17px}
+@media(max-width:750px){.account-grid{grid-template-columns:1fr}}
+
 </style>
 </head>
 
@@ -501,6 +530,30 @@ footer{
 
         </section>
     </section>
+
+
+<section class="account-panel">
+  <h2>Your Dakshub Profile</h2>
+  <p>Create a permanent account so your profile can be saved securely with Firebase.</p>
+
+  <div class="account-grid">
+    <input id="accountEmail" type="email" placeholder="Email address" autocomplete="email">
+    <input id="accountPassword" type="password" placeholder="Password" autocomplete="new-password">
+    <input id="profileUsername" type="text" placeholder="Username" maxlength="30" autocomplete="nickname">
+  </div>
+
+  <div class="account-actions">
+    <button type="button" onclick="registerAccount()">Create Account</button>
+    <button type="button" class="secondary" onclick="loginAccount()">Log In</button>
+    <button type="button" class="secondary" onclick="logoutAccount()">Log Out</button>
+  </div>
+
+  <div class="profile-card" id="profileCard">
+    <strong id="profileName"></strong>
+    <div id="profileEmail"></div>
+  </div>
+</section>
+
 
     <section class="about" id="about">
         <h2>About Dakshub</h2>
@@ -1130,6 +1183,95 @@ function showToast(text){
             toast.classList.remove("show");
 
         },3000);
+}
+
+
+/* =========================
+   PERMANENT ACCOUNT / PROFILE
+   ========================= */
+
+function getAccountValues(){
+    return {
+        email: document.getElementById("accountEmail").value.trim(),
+        password: document.getElementById("accountPassword").value,
+        username: document.getElementById("profileUsername").value.trim()
+    };
+}
+
+function registerAccount(){
+    const v = getAccountValues();
+
+    if(!v.email || !v.password || !v.username){
+        showToast("Enter email, password and username.");
+        return;
+    }
+
+    if(v.password.length < 6){
+        showToast("Password must be at least 6 characters.");
+        return;
+    }
+
+    firebase.auth().createUserWithEmailAndPassword(v.email, v.password)
+    .then(function(result){
+        return db.ref("profiles/" + result.user.uid).set({
+            username: v.username,
+            email: v.email,
+            createdAt: firebase.database.ServerValue.TIMESTAMP
+        }).then(function(){
+            showProfile(result.user);
+            showToast("Account created successfully.");
+        });
+    })
+    .catch(function(error){
+        console.error(error);
+        showToast(error.message || "Could not create account.");
+    });
+}
+
+function loginAccount(){
+    const v = getAccountValues();
+
+    if(!v.email || !v.password){
+        showToast("Enter email and password.");
+        return;
+    }
+
+    firebase.auth().signInWithEmailAndPassword(v.email, v.password)
+    .then(function(result){
+        showProfile(result.user);
+        showToast("Logged in successfully.");
+    })
+    .catch(function(error){
+        console.error(error);
+        showToast(error.message || "Could not log in.");
+    });
+}
+
+function logoutAccount(){
+    firebase.auth().signOut()
+    .then(function(){
+        document.getElementById("profileCard").style.display = "none";
+        showToast("Logged out.");
+    })
+    .catch(function(error){
+        console.error(error);
+        showToast("Could not log out.");
+    });
+}
+
+function showProfile(user){
+    db.ref("profiles/" + user.uid).once("value")
+    .then(function(snapshot){
+        const profile = snapshot.val() || {};
+        document.getElementById("profileName").textContent =
+            profile.username || "Dakshub user";
+        document.getElementById("profileEmail").textContent =
+            user.email || "";
+        document.getElementById("profileCard").style.display = "block";
+    })
+    .catch(function(error){
+        console.error(error);
+    });
 }
 
 /* YEAR */

@@ -1606,13 +1606,13 @@ function startPresence(user){
         presenceRef.onDisconnect().set({
             online: false,
             lastSeen: firebase.database.ServerValue.TIMESTAMP
-        });
-
-        presenceRef.set({
-            online: true,
-            lastSeen: firebase.database.ServerValue.TIMESTAMP
+        }).then(function(){
+            return presenceRef.set({
+                online: true,
+                lastSeen: firebase.database.ServerValue.TIMESTAMP
+            });
         }).catch(function(error){
-            console.error(error);
+            console.error("Presence update failed:", error);
         });
     });
 }
@@ -1785,7 +1785,8 @@ function startUsersDashboard(){
 
         let online = 0;
         ids.forEach(function(uid){
-            if(presenceData[uid] && presenceData[uid].online === true){
+            const p = presenceData[uid];
+            if(p && p.online === true){
                 online++;
             }
         });
@@ -1838,12 +1839,21 @@ function startUsersDashboard(){
                 document.createTextNode(isOnline ? "Online" : "Offline")
             );
 
-            if(isOnline && uid !== firebase.auth().currentUser.uid){
+            const isMe = firebase.auth().currentUser &&
+                         uid === firebase.auth().currentUser.uid;
+
+            const statusLabel = document.createElement("span");
+            statusLabel.className = "status-label";
+            statusLabel.textContent = isOnline ? "Online" : (isMe ? "You • Offline" : "Offline");
+            status.appendChild(statusLabel);
+
+            if(isOnline && !isMe){
                 const chatButton = document.createElement("button");
                 chatButton.type = "button";
                 chatButton.className = "secondary";
                 chatButton.textContent = "💬 Chat";
                 chatButton.style.padding = "8px 11px";
+                chatButton.style.marginLeft = "10px";
                 chatButton.style.border = "1px solid var(--border)";
                 chatButton.style.borderRadius = "9px";
                 chatButton.style.background = "var(--card2)";
@@ -1853,11 +1863,6 @@ function startUsersDashboard(){
                     openPrivateChat(uid, profile.username || "Dakshub user");
                 });
                 status.appendChild(chatButton);
-            }else{
-                const offlineHint = document.createElement("span");
-                offlineHint.textContent =
-                    uid === firebase.auth().currentUser.uid ? "You" : "Offline";
-                status.appendChild(offlineHint);
             }
 
             row.appendChild(main);

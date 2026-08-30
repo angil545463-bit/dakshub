@@ -446,8 +446,8 @@ footer{
 
 
 /* PRIVATE USER CHAT */
-.user-row{cursor:pointer}
-.user-row:hover{border-color:var(--accent)}
+.user-row{cursor:pointer;transition:.15s}
+.user-row:hover{border-color:var(--purple2);transform:translateY(-1px)}
 .user-chat-hint{font-size:11px;color:var(--accent);margin-top:3px}
 .private-chat-panel{margin-top:25px;padding:0;border-radius:18px;background:var(--card);border:1px solid var(--border);overflow:hidden}
 .private-chat-header{padding:18px 20px;border-bottom:1px solid var(--border)}
@@ -648,7 +648,7 @@ footer{
 <section class="dashboard-panel" id="dashboardPanel" style="display:none">
     <h2>Dakshub Users</h2>
     <div class="dashboard-subtitle">
-        Registered users and their current online status. Your account is included.
+        Registered users and their current online status. Tap 💬 Chat beside an online user to message them.
     </div>
 
     <div class="stats-grid">
@@ -776,18 +776,8 @@ firebase.auth().onAuthStateChanged(function(user){
         updateAccountUI(user);
 
         if(!user.isAnonymous){
-            // Existing accounts were created before the public directory was added.
-            // Make sure every already-registered account gets a directory entry.
-            syncUserToDirectory(user)
-            .then(function(){
-                startPresence(user);
-                startUsersDashboard();
-            })
-            .catch(function(error){
-                console.error("Directory sync failed:", error);
-                startPresence(user);
-                startUsersDashboard();
-            });
+            startPresence(user);
+            startUsersDashboard();
         }else{
             stopUsersDashboard();
         }
@@ -1628,34 +1618,6 @@ function startPresence(user){
 }
 
 
-
-function syncUserToDirectory(user){
-    if(!user || user.isAnonymous){
-        return Promise.resolve();
-    }
-
-    const directoryRef = db.ref("directory/" + user.uid);
-
-    return directoryRef.once("value").then(function(directorySnap){
-        if(directorySnap.exists()){
-            return null;
-        }
-
-        // First try the existing private profile, because it contains
-        // the username created for older accounts.
-        return db.ref("profiles/" + user.uid).once("value")
-        .then(function(profileSnap){
-            const profile = profileSnap.val() || {};
-            const username = profile.username || "user-" + user.uid.slice(0, 6);
-
-            return directoryRef.set({
-                username: username,
-                createdAt: profile.createdAt || firebase.database.ServerValue.TIMESTAMP
-            });
-        });
-    });
-}
-
 function makePrivateRoomId(uid1, uid2){
     return [uid1, uid2].sort().join("_");
 }
@@ -1668,10 +1630,18 @@ function openPrivateChat(partnerUid, partnerName){
     }
     if(user.uid === partnerUid) return;
 
-    closePrivateChat();
+    db.ref("presence/" + partnerUid).once("value")
+    .then(function(presenceSnap){
+        const presence = presenceSnap.val() || {};
+        if(presence.online !== true){
+            showToast("This user is offline.");
+            return;
+        }
 
-    privateChatPartnerId = partnerUid;
-    privateChatRoomId = makePrivateRoomId(user.uid, partnerUid);
+        closePrivateChat();
+
+        privateChatPartnerId = partnerUid;
+        privateChatRoomId = makePrivateRoomId(user.uid, partnerUid);
 
     document.getElementById("privateChatPanel").style.display = "block";
     document.getElementById("privateChatTitle").textContent = "Chat with " + partnerName;
@@ -1702,9 +1672,10 @@ function openPrivateChat(partnerUid, partnerName){
             behavior:"smooth",
             block:"start"
         });
-    }).catch(function(error){
-        console.error(error);
-        showToast("Could not open private chat.");
+        }).catch(function(error){
+            console.error(error);
+            showToast("Could not open private chat.");
+        });
     });
 }
 
@@ -1867,20 +1838,30 @@ function startUsersDashboard(){
                 document.createTextNode(isOnline ? "Online" : "Offline")
             );
 
-            const chatHint = document.createElement("div");
-            chatHint.className = "user-chat-hint";
-            chatHint.textContent = isOnline ? "Tap to chat" : "Offline";
-            status.appendChild(chatHint);
+            if(isOnline && uid !== firebase.auth().currentUser.uid){
+                const chatButton = document.createElement("button");
+                chatButton.type = "button";
+                chatButton.className = "secondary";
+                chatButton.textContent = "💬 Chat";
+                chatButton.style.padding = "8px 11px";
+                chatButton.style.border = "1px solid var(--border)";
+                chatButton.style.borderRadius = "9px";
+                chatButton.style.background = "var(--card2)";
+                chatButton.style.color = "var(--text)";
+                chatButton.addEventListener("click", function(event){
+                    event.stopPropagation();
+                    openPrivateChat(uid, profile.username || "Dakshub user");
+                });
+                status.appendChild(chatButton);
+            }else{
+                const offlineHint = document.createElement("span");
+                offlineHint.textContent =
+                    uid === firebase.auth().currentUser.uid ? "You" : "Offline";
+                status.appendChild(offlineHint);
+            }
 
             row.appendChild(main);
             row.appendChild(status);
-
-            if(isOnline && uid !== firebase.auth().currentUser.uid){
-                row.addEventListener("click", function(){
-                    openPrivateChat(uid, profile.username || "Dakshub user");
-                });
-            }
-
             list.appendChild(row);
         });
     }

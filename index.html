@@ -436,8 +436,8 @@ footer{
     padding:14px;border:1px solid var(--border);border-radius:12px;
     background:var(--card2);margin-top:12px;display:none;
 }
-.profile-card strong{font-size:17px}
-@media(max-width:750px){.account-grid{grid-template-columns:1fr}}
+.profile-card strong{font-size:17px}.account-panel .error{color:var(--danger);font-size:13px;margin-top:10px}
+@media(max-width:750px){.account-grid{grid-template-columns:1fr}.account-panel{margin-top:18px}}
 
 </style>
 </head>
@@ -532,25 +532,32 @@ footer{
     </section>
 
 
-<section class="account-panel">
-  <h2>Your Dakshub Profile</h2>
-  <p>Create a permanent account so your profile can be saved securely with Firebase.</p>
+<section class="account-panel" id="accountPanel">
+  <div id="loggedOutPanel">
+    <h2>Create your Dakshub account</h2>
+    <p>Register with an email, password and username. Your username will be saved to your Dakshub profile.</p>
 
-  <div class="account-grid">
-    <input id="accountEmail" type="email" placeholder="Email address" autocomplete="email">
-    <input id="accountPassword" type="password" placeholder="Password" autocomplete="new-password">
-    <input id="profileUsername" type="text" placeholder="Username" maxlength="30" autocomplete="nickname">
+    <div class="account-grid">
+      <input id="accountEmail" type="email" placeholder="Email address" autocomplete="email">
+      <input id="accountPassword" type="password" placeholder="Password (6+ characters)" autocomplete="new-password">
+      <input id="profileUsername" type="text" placeholder="Username" maxlength="30" autocomplete="nickname">
+    </div>
+
+    <div class="account-actions">
+      <button type="button" onclick="registerAccount()">Create Account</button>
+      <button type="button" class="secondary" onclick="loginAccount()">Log In</button>
+    </div>
   </div>
 
-  <div class="account-actions">
-    <button type="button" onclick="registerAccount()">Create Account</button>
-    <button type="button" class="secondary" onclick="loginAccount()">Log In</button>
-    <button type="button" class="secondary" onclick="logoutAccount()">Log Out</button>
-  </div>
-
-  <div class="profile-card" id="profileCard">
-    <strong id="profileName"></strong>
-    <div id="profileEmail"></div>
+  <div id="loggedInPanel" style="display:none">
+    <h2>My Dakshub Profile</h2>
+    <div class="profile-card" id="profileCard" style="display:block">
+      <strong id="profileName">Loading...</strong>
+      <div id="profileEmail"></div>
+    </div>
+    <div class="account-actions">
+      <button type="button" class="secondary" onclick="logoutAccount()">Log Out</button>
+    </div>
   </div>
 </section>
 
@@ -621,20 +628,28 @@ const messageInput = document.getElementById("messageInput");
 const sendBtn = document.getElementById("sendBtn");
 const newChatBtn = document.getElementById("newChatBtn");
 
-/* Authenticate anonymously before allowing database access. */
+/* Authenticate before allowing database access.
+   Registered users stay signed in across refreshes.
+   New visitors receive an anonymous Firebase account until they register. */
 newChatBtn.disabled = true;
-firebase.auth().signInAnonymously()
-.then(function(result){
-    clientId = result.user.uid;
-    newChatBtn.disabled = false;
-    document.getElementById("connectionState").innerHTML =
-        '<span class="dot"></span>READY';
-})
-.catch(function(error){
-    console.error(error);
-    document.getElementById("connectionState").innerHTML =
-        '<span class="dot off"></span>AUTH ERROR';
-    showToast("Could not connect securely. Please try again.");
+
+firebase.auth().onAuthStateChanged(function(user){
+    if(user){
+        clientId = user.uid;
+        newChatBtn.disabled = false;
+        document.getElementById("connectionState").innerHTML =
+            '<span class="dot"></span>READY';
+        updateAccountUI(user);
+        return;
+    }
+
+    firebase.auth().signInAnonymously()
+    .catch(function(error){
+        console.error(error);
+        document.getElementById("connectionState").innerHTML =
+            '<span class="dot off"></span>AUTH ERROR';
+        showToast("Could not connect securely. Please try again.");
+    });
 });
 
 /* =========================
@@ -1198,19 +1213,60 @@ function getAccountValues(){
     };
 }
 
+function setAccountMessage(text){
+    showToast(text);
+}
+
 function registerAccount(){
     const v = getAccountValues();
+    const currentUser = firebase.auth().currentUser;
 
     if(!v.email || !v.password || !v.username){
-        showToast("Enter email, password and username.");
+        setAccountMessage("Enter email, password and username.");
         return;
     }
 
     if(v.password.length < 6){
-        showToast("Password must be at least 6 characters.");
+        setAccountMessage("Password must be at least 6 characters.");
         return;
     }
 
+    if(!/^[a-zA-Z0-9_.-]{3,30}$/.test(v.username)){
+        setAccountMessage("Username: 3-30 letters, numbers, _ . or - only.");
+        return;
+    }
+
+    const credential = firebase.auth.EmailAuthProvider.credential(
+        v.email,
+        v.password
+    );
+
+    /* Upgrade the current anonymous account instead of creating a second UID.
+       This keeps the Firebase identity stable. */
+    if(currentUser && currentUser.isAnonymous){
+        currentUser.linkWithCredential(credential)
+        .then(function(result){
+            return db.ref("profiles/" + result.user.uid).set({
+                username: v.username,
+                email: v.email,
+                createdAt: firebase.database.ServerValue.TIMESTAMP
+            }).then(function(){
+                updateAccountUI(result.user);
+                showToast("Account created successfully.");
+            });
+        })
+        .catch(function(error){
+            console.error(error);
+            if(error.code === "auth/email-already-in-use"){
+                showToast("That email already has an account. Use Log In.");
+            }else{
+                showToast(error.message || "Could not create account.");
+            }
+        });
+        return;
+    }
+
+    /* Fallback for a non-anonymous session. */
     firebase.auth().createUserWithEmailAndPassword(v.email, v.password)
     .then(function(result){
         return db.ref("profiles/" + result.user.uid).set({
@@ -1218,7 +1274,7 @@ function registerAccount(){
             email: v.email,
             createdAt: firebase.database.ServerValue.TIMESTAMP
         }).then(function(){
-            showProfile(result.user);
+            updateAccountUI(result.user);
             showToast("Account created successfully.");
         });
     })
@@ -1238,7 +1294,8 @@ function loginAccount(){
 
     firebase.auth().signInWithEmailAndPassword(v.email, v.password)
     .then(function(result){
-        showProfile(result.user);
+        clientId = result.user.uid;
+        updateAccountUI(result.user);
         showToast("Logged in successfully.");
     })
     .catch(function(error){
@@ -1248,15 +1305,30 @@ function loginAccount(){
 }
 
 function logoutAccount(){
+    /* Signing out returns the visitor to a fresh anonymous Firebase session,
+       so the existing chat UI can still connect without exposing the account. */
     firebase.auth().signOut()
     .then(function(){
-        document.getElementById("profileCard").style.display = "none";
         showToast("Logged out.");
     })
     .catch(function(error){
         console.error(error);
         showToast("Could not log out.");
     });
+}
+
+function updateAccountUI(user){
+    const loggedOut = document.getElementById("loggedOutPanel");
+    const loggedIn = document.getElementById("loggedInPanel");
+
+    if(user && !user.isAnonymous){
+        loggedOut.style.display = "none";
+        loggedIn.style.display = "block";
+        showProfile(user);
+    }else{
+        loggedOut.style.display = "block";
+        loggedIn.style.display = "none";
+    }
 }
 
 function showProfile(user){
@@ -1267,10 +1339,11 @@ function showProfile(user){
             profile.username || "Dakshub user";
         document.getElementById("profileEmail").textContent =
             user.email || "";
-        document.getElementById("profileCard").style.display = "block";
     })
     .catch(function(error){
         console.error(error);
+        document.getElementById("profileName").textContent = "Profile";
+        document.getElementById("profileEmail").textContent = "";
     });
 }
 

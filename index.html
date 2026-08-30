@@ -386,6 +386,64 @@ footer{
     font-size:13px;
 }
 
+
+/* REGISTERED USERS DASHBOARD */
+.dashboard-panel{
+    margin-top:25px;
+    padding:22px;
+    border-radius:18px;
+    background:var(--card);
+    border:1px solid var(--border);
+}
+.dashboard-panel h2{margin-bottom:6px}
+.dashboard-subtitle{color:var(--muted);font-size:14px;margin-bottom:16px}
+.stats-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:12px;
+    margin-bottom:16px;
+}
+.stat-card{
+    padding:16px;
+    border:1px solid var(--border);
+    border-radius:14px;
+    background:var(--card2);
+}
+.stat-number{font-size:25px;font-weight:800;margin-top:5px}
+.stat-label{font-size:12px;color:var(--muted)}
+.users-list{
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+    max-height:360px;
+    overflow:auto;
+}
+.user-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    padding:12px 14px;
+    border:1px solid var(--border);
+    border-radius:12px;
+    background:var(--bg2);
+}
+.user-main{min-width:0}
+.user-name{font-weight:bold}
+.user-email{font-size:12px;color:var(--muted);overflow:hidden;text-overflow:ellipsis}
+.user-status{
+    white-space:nowrap;
+    font-size:12px;
+    display:flex;
+    align-items:center;
+}
+.user-status .dot{width:8px;height:8px;margin-right:5px}
+.dashboard-empty{color:var(--muted);padding:12px 0}
+@media(max-width:750px){
+    .stats-grid{grid-template-columns:1fr}
+    .user-row{align-items:flex-start}
+}
+
 /* MOBILE */
 @media(max-width:750px){
     .chat-app{
@@ -572,6 +630,35 @@ footer{
   </div>
 </section>
 
+
+<section class="dashboard-panel" id="dashboardPanel" style="display:none">
+    <h2>Dakshub Users</h2>
+    <div class="dashboard-subtitle">
+        Registered users and their current online status. Only usernames are shown here.
+    </div>
+
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-label">REGISTERED USERS</div>
+            <div class="stat-number" id="registeredCount">0</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-label">ONLINE NOW</div>
+            <div class="stat-number" id="onlineCount">0</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-label">OFFLINE</div>
+            <div class="stat-number" id="offlineCount">0</div>
+        </div>
+    </div>
+
+    <div class="users-list" id="usersList">
+        <div class="dashboard-empty">Loading users...</div>
+    </div>
+</section>
+
 <section class="about" id="about">
         <h2>About Dakshub</h2>
         <p>
@@ -632,6 +719,11 @@ let searchTimer = null;
 let messageListener = null;
 let assignmentListener = null;
 
+let profileListListener = null;
+let presenceListListener = null;
+let presenceConnectedListener = null;
+
+
 const messages = document.getElementById("messages");
 const emptyState = document.getElementById("emptyState");
 const messageInput = document.getElementById("messageInput");
@@ -650,6 +742,14 @@ firebase.auth().onAuthStateChanged(function(user){
         document.getElementById("connectionState").innerHTML =
             '<span class="dot"></span>READY';
         updateAccountUI(user);
+
+        if(!user.isAnonymous){
+            startPresence(user);
+            startUsersDashboard();
+        }else{
+            stopUsersDashboard();
+        }
+
         return;
     }
 
@@ -1267,11 +1367,21 @@ function registerAccount(){
         .then(function(result){
             const user = result.user;
 
-            return db.ref("profiles/" + user.uid).set({
+            const profileData = {
                 username: v.username,
                 email: v.email,
                 createdAt: firebase.database.ServerValue.TIMESTAMP
-            }).then(function(){
+            };
+
+            const directoryData = {
+                username: v.username,
+                createdAt: firebase.database.ServerValue.TIMESTAMP
+            };
+
+            return Promise.all([
+                db.ref("profiles/" + user.uid).set(profileData),
+                db.ref("directory/" + user.uid).set(directoryData)
+            ]).then(function(){
                 return user.sendEmailVerification()
                 .then(function(){
                     updateAccountUI(user);
@@ -1385,30 +1495,206 @@ function forgotPassword(){
 }
 
 function logoutAccount(){
-    firebase.auth().signOut()
-    .then(function(){
-        // onAuthStateChanged will create a fresh anonymous session
-        // so Random Chat continues working without an account.
-        showToast("Logged out.");
-    })
-    .catch(function(error){
-        console.error(error);
-        showToast("Could not log out.");
-    });
+    const user = firebase.auth().currentUser;
+
+    const finishLogout = function(){
+        return firebase.auth().signOut();
+    };
+
+    if(user && !user.isAnonymous){
+        db.ref("presence/" + user.uid).set({
+            online: false,
+            lastSeen: firebase.database.ServerValue.TIMESTAMP
+        }).then(finishLogout)
+        .catch(finishLogout)
+        .then(function(){
+            showToast("Logged out.");
+        })
+        .catch(function(error){
+            console.error(error);
+            showToast("Could not log out.");
+        });
+    }else{
+        finishLogout()
+        .then(function(){
+            showToast("Logged out.");
+        })
+        .catch(function(error){
+            console.error(error);
+            showToast("Could not log out.");
+        });
+    }
 }
 
 function updateAccountUI(user){
     const loggedOut = document.getElementById("loggedOutPanel");
     const loggedIn = document.getElementById("loggedInPanel");
+    const dashboard = document.getElementById("dashboardPanel");
 
     if(user && !user.isAnonymous){
         loggedOut.style.display = "none";
         loggedIn.style.display = "block";
+        dashboard.style.display = "block";
         showProfile(user);
     }else{
         loggedOut.style.display = "block";
         loggedIn.style.display = "none";
+        dashboard.style.display = "none";
     }
+}
+
+
+/* =========================
+   ONLINE PRESENCE
+   ========================= */
+
+function startPresence(user){
+    const connectedRef = db.ref(".info/connected");
+    const presenceRef = db.ref("presence/" + user.uid);
+
+    if(presenceConnectedListener){
+        connectedRef.off("value", presenceConnectedListener);
+    }
+
+    presenceConnectedListener = connectedRef.on("value", function(snapshot){
+        if(snapshot.val() !== true){
+            return;
+        }
+
+        presenceRef.onDisconnect().set({
+            online: false,
+            lastSeen: firebase.database.ServerValue.TIMESTAMP
+        });
+
+        presenceRef.set({
+            online: true,
+            lastSeen: firebase.database.ServerValue.TIMESTAMP
+        }).catch(function(error){
+            console.error(error);
+        });
+    });
+}
+
+function stopUsersDashboard(){
+    const dashboard = document.getElementById("dashboardPanel");
+    if(dashboard){
+        dashboard.style.display = "none";
+    }
+
+    if(profileListListener){
+        db.ref("profiles").off("value", profileListListener);
+        profileListListener = null;
+    }
+
+    if(presenceListListener){
+        db.ref("presence").off("value", presenceListListener);
+        presenceListListener = null;
+    }
+
+    document.getElementById("registeredCount").textContent = "0";
+    document.getElementById("onlineCount").textContent = "0";
+    document.getElementById("offlineCount").textContent = "0";
+    document.getElementById("usersList").innerHTML =
+        '<div class="dashboard-empty">Log in to see registered users.</div>';
+}
+
+function startUsersDashboard(){
+    const dashboard = document.getElementById("dashboardPanel");
+    if(!dashboard){
+        return;
+    }
+
+    dashboard.style.display = "block";
+
+    const profilesRef = db.ref("directory");
+    const presenceRef = db.ref("presence");
+
+    let profilesData = {};
+    let presenceData = {};
+
+    function renderUsers(){
+        const ids = Object.keys(profilesData);
+
+        document.getElementById("registeredCount").textContent = ids.length;
+
+        let online = 0;
+        ids.forEach(function(uid){
+            if(presenceData[uid] && presenceData[uid].online === true){
+                online++;
+            }
+        });
+
+        document.getElementById("onlineCount").textContent = online;
+        document.getElementById("offlineCount").textContent = ids.length - online;
+
+        const list = document.getElementById("usersList");
+
+        if(ids.length === 0){
+            list.innerHTML =
+                '<div class="dashboard-empty">No registered users yet.</div>';
+            return;
+        }
+
+        ids.sort(function(a,b){
+            const aName = String(profilesData[a].username || "").toLowerCase();
+            const bName = String(profilesData[b].username || "").toLowerCase();
+            return aName.localeCompare(bName);
+        });
+
+        list.innerHTML = "";
+
+        ids.forEach(function(uid){
+            const profile = profilesData[uid] || {};
+            const isOnline =
+                presenceData[uid] &&
+                presenceData[uid].online === true;
+
+            const row = document.createElement("div");
+            row.className = "user-row";
+
+            const main = document.createElement("div");
+            main.className = "user-main";
+
+            const name = document.createElement("div");
+            name.className = "user-name";
+            name.textContent = profile.username || "Dakshub user";
+
+            main.appendChild(name);
+
+            const status = document.createElement("div");
+            status.className = "user-status";
+
+            const dot = document.createElement("span");
+            dot.className = "dot" + (isOnline ? "" : " off");
+
+            status.appendChild(dot);
+            status.appendChild(
+                document.createTextNode(isOnline ? "Online" : "Offline")
+            );
+
+            row.appendChild(main);
+            row.appendChild(status);
+            list.appendChild(row);
+        });
+    }
+
+    if(profileListListener){
+        profilesRef.off("value", profileListListener);
+    }
+
+    if(presenceListListener){
+        presenceRef.off("value", presenceListListener);
+    }
+
+    profileListListener = profilesRef.on("value", function(snapshot){
+        profilesData = snapshot.val() || {};
+        renderUsers();
+    });
+
+    presenceListListener = presenceRef.on("value", function(snapshot){
+        presenceData = snapshot.val() || {};
+        renderUsers();
+    });
 }
 
 function showProfile(user){

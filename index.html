@@ -621,6 +621,12 @@ footer{
       <button type="button" onclick="registerAccount()">Create Account</button>
       <button type="button" class="secondary" onclick="loginAccount()">Log In</button>
     </div>
+
+    <div style="margin-top:10px">
+      <button type="button" class="secondary" onclick="resendVerificationFromForm()">
+        Resend Verification Email
+      </button>
+    </div>
   </div>
 
   <div id="loggedInPanel" style="display:none">
@@ -1415,6 +1421,33 @@ function logoutAccount(){
     .catch(function(error){
         console.error(error);
         showToast("Could not log out.");
+    });
+}
+
+function resendVerificationFromForm(){
+    const email = document.getElementById("accountEmail").value.trim();
+    const password = document.getElementById("accountPassword").value;
+
+    if(!email || !password){
+        showToast("Enter your email and password first, then press Resend.");
+        return;
+    }
+
+    firebase.auth().signInWithEmailAndPassword(email, password)
+    .then(function(result){
+        if(result.user.emailVerified){
+            showToast("Your email is already verified.");
+            return null;
+        }
+
+        return result.user.sendEmailVerification()
+        .then(function(){
+            showToast("Verification email sent. Check Inbox and Spam/Junk.");
+        });
+    })
+    .catch(function(error){
+        console.error(error);
+        showToast(error.message || "Could not resend verification email.");
     });
 }
 

@@ -436,82 +436,12 @@ footer{
     padding:14px;border:1px solid var(--border);border-radius:12px;
     background:var(--card2);margin-top:12px;display:none;
 }
-.profile-card strong{font-size:17px}.account-panel .error{color:var(--danger);font-size:13px;margin-top:10px}
+.profile-card strong{font-size:17px}
+.verification-note{margin-top:8px;color:var(--muted);font-size:13px;line-height:1.5}
+.verification-note.ok{color:var(--green)}
+.verification-note.warn{color:#f59e0b}
+.account-panel .error{color:var(--danger);font-size:13px;margin-top:10px}
 @media(max-width:750px){.account-grid{grid-template-columns:1fr}.account-panel{margin-top:18px}}
-
-
-#verificationStatus{margin-top:6px;color:var(--muted);font-size:13px}
-#resendVerificationBtn{display:none}
-
-
-/* =========================
-   USER DASHBOARD
-   ========================= */
-.dashboard-panel{
-    display:none;
-    margin-top:25px;
-    padding:22px;
-    border-radius:18px;
-    background:var(--card);
-    border:1px solid var(--border);
-}
-.dashboard-head{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:15px;
-    margin-bottom:18px;
-}
-.dashboard-head h2{margin:0}
-.dashboard-grid{
-    display:grid;
-    grid-template-columns:repeat(3,1fr);
-    gap:12px;
-}
-.stat-card{
-    padding:18px;
-    border-radius:14px;
-    background:var(--card2);
-    border:1px solid var(--border);
-}
-.stat-label{color:var(--muted);font-size:13px;margin-bottom:7px}
-.stat-number{font-size:28px;font-weight:800}
-.people-list{
-    margin-top:18px;
-    display:flex;
-    flex-direction:column;
-    gap:8px;
-}
-.person-row{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:10px;
-    padding:13px 14px;
-    border-radius:12px;
-    background:var(--bg2);
-    border:1px solid var(--border);
-}
-.person-name{font-weight:700}
-.person-status{font-size:12px;color:var(--muted)}
-.online-dot{
-    width:9px;height:9px;border-radius:50%;
-    display:inline-block;margin-right:6px;background:var(--green);
-}
-.offline-dot{
-    width:9px;height:9px;border-radius:50%;
-    display:inline-block;margin-right:6px;background:#888;
-}
-.dashboard-note{
-    color:var(--muted);
-    font-size:13px;
-    line-height:1.5;
-    margin-top:14px;
-}
-@media(max-width:750px){
-    .dashboard-grid{grid-template-columns:1fr}
-    .dashboard-head{align-items:flex-start;flex-direction:column}
-}
 
 </style>
 </head>
@@ -607,10 +537,10 @@ footer{
 
 
 <section class="account-panel" id="accountPanel">
-  <h2 id="accountTitle">Create your Dakshub account</h2>
-  <p id="accountHelp">Register with an email, password and username. Your username will be saved to your Dakshub profile.</p>
+  <div id="loggedOutPanel">
+    <h2>Create your Dakshub account</h2>
+    <p>Register with an email, password and username. Your username will be saved securely to your Dakshub profile.</p>
 
-  <div id="accountForm">
     <div class="account-grid">
       <input id="accountEmail" type="email" placeholder="Email address" autocomplete="email">
       <input id="accountPassword" type="password" placeholder="Password (6+ characters)" autocomplete="new-password">
@@ -620,54 +550,26 @@ footer{
     <div class="account-actions">
       <button type="button" onclick="registerAccount()">Create Account</button>
       <button type="button" class="secondary" onclick="loginAccount()">Log In</button>
-    </div>
-
-    <div style="margin-top:10px">
-      <button type="button" class="secondary" onclick="forgotPassword()">
-        Forgot Password?
-      </button>
+      <button type="button" class="secondary" onclick="forgotPassword()">Forgot Password?</button>
     </div>
   </div>
 
   <div id="loggedInPanel" style="display:none">
-    <div class="profile-card" style="display:block">
-      <strong id="profileName">Dakshub user</strong>
+    <h2>My Dakshub Profile</h2>
+
+    <div class="profile-card" id="profileCard" style="display:block">
+      <strong id="profileName">Loading...</strong>
       <div id="profileEmail"></div>
-      <div id="verificationStatus"></div>
+      <div id="verificationStatus" class="verification-note"></div>
     </div>
 
     <div class="account-actions">
+      <button type="button" id="resendVerificationBtn" class="secondary" onclick="resendVerificationEmail()" style="display:none">
+        Resend Verification Email
+      </button>
       <button type="button" class="secondary" onclick="logoutAccount()">Log Out</button>
-      <button type="button" class="secondary" id="resendVerificationBtn" onclick="resendVerification()">Resend Verification Email</button>
     </div>
   </div>
-
-</section>
-
-<section class="dashboard-panel" id="dashboardPanel">
-  <div class="dashboard-head">
-    <div>
-      <h2>People on Dakshub</h2>
-      <p class="dashboard-note">Your account dashboard. Email addresses are kept private.</p>
-    </div>
-  </div>
-
-  <div class="dashboard-grid">
-    <div class="stat-card">
-      <div class="stat-label">REGISTERED USERS</div>
-      <div class="stat-number" id="registeredCount">0</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-label">ONLINE NOW</div>
-      <div class="stat-number" id="onlineCount">0</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-label">OFFLINE</div>
-      <div class="stat-number" id="offlineCount">0</div>
-    </div>
-  </div>
-
-  <div class="people-list" id="peopleList"></div>
 </section>
 
 <section class="about" id="about">
@@ -1321,64 +1223,86 @@ function getAccountValues(){
     };
 }
 
+function setAccountMessage(text){
+    showToast(text);
+}
+
+/*
+ * IMPORTANT:
+ * Random Chat uses anonymous Firebase auth for visitors.
+ * Registration creates a completely separate Email/Password account.
+ * We do NOT use linkWithCredential(), so an anonymous session can never
+ * trigger the "Please verify the new email before changing email" flow.
+ */
 function registerAccount(){
     const v = getAccountValues();
     const currentUser = firebase.auth().currentUser;
 
     if(!v.email || !v.password || !v.username){
-        showToast("Enter email, password and username.");
+        setAccountMessage("Enter email, password and username.");
         return;
     }
 
     if(v.password.length < 6){
-        showToast("Password must be at least 6 characters.");
+        setAccountMessage("Password must be at least 6 characters.");
         return;
     }
 
     if(!/^[a-zA-Z0-9_.-]{3,30}$/.test(v.username)){
-        showToast("Username: 3-30 letters, numbers, _ . or - only.");
+        setAccountMessage("Username: 3-30 letters, numbers, _ . or - only.");
         return;
     }
 
-    const credential = firebase.auth.EmailAuthProvider.credential(
-        v.email,
-        v.password
-    );
+    // If already logged into a permanent account, don't create another one
+    // from inside that session. Log out first.
+    if(currentUser && !currentUser.isAnonymous){
+        setAccountMessage("You are already logged in. Log out first to create another account.");
+        return;
+    }
 
-    const finishRegistration = function(user){
-        return db.ref("profiles/" + user.uid).set({
-            username: v.username,
-            email: v.email,
-            createdAt: firebase.database.ServerValue.TIMESTAMP,
-            online: true
-        }).then(function(){
-            return user.sendEmailVerification();
-        }).then(function(){
-            updateAccountUI(user);
-            showToast("Account created. Check your email to verify it.");
+    // The visitor may have an anonymous account for Random Chat.
+    // Sign it out first, then create a REAL email/password account.
+    const createAccount = function(){
+        return firebase.auth().createUserWithEmailAndPassword(v.email, v.password)
+        .then(function(result){
+            const user = result.user;
+
+            return db.ref("profiles/" + user.uid).set({
+                username: v.username,
+                email: v.email,
+                createdAt: firebase.database.ServerValue.TIMESTAMP
+            }).then(function(){
+                return user.sendEmailVerification()
+                .then(function(){
+                    updateAccountUI(user);
+                    showToast("Account created. Check your email to verify your account.");
+                });
+            });
         });
     };
 
     if(currentUser && currentUser.isAnonymous){
-        currentUser.linkWithCredential(credential)
-        .then(function(result){
-            return finishRegistration(result.user);
-        })
+        firebase.auth().signOut()
+        .then(createAccount)
         .catch(function(error){
             console.error(error);
             showToast(error.message || "Could not create account.");
         });
-        return;
-    }
+    }else{
+        createAccount().catch(function(error){
+            console.error(error);
 
-    firebase.auth().createUserWithEmailAndPassword(v.email, v.password)
-    .then(function(result){
-        return finishRegistration(result.user);
-    })
-    .catch(function(error){
-        console.error(error);
-        showToast(error.message || "Could not create account.");
-    });
+            if(error.code === "auth/email-already-in-use"){
+                showToast("This email already has an account. Use Log In.");
+            }else if(error.code === "auth/invalid-email"){
+                showToast("Enter a valid email address.");
+            }else if(error.code === "auth/weak-password"){
+                showToast("Password must be at least 6 characters.");
+            }else{
+                showToast(error.message || "Could not create account.");
+            }
+        });
+    }
 }
 
 function loginAccount(){
@@ -1397,12 +1321,48 @@ function loginAccount(){
         if(result.user.emailVerified){
             showToast("Logged in successfully.");
         }else{
-            showToast("Logged in. Please verify your email. You can resend it below.");
+            showToast("Please verify your email. Use Resend Verification Email.");
         }
     })
     .catch(function(error){
         console.error(error);
-        showToast(error.message || "Could not log in.");
+
+        if(error.code === "auth/invalid-login-credentials" ||
+           error.code === "auth/wrong-password" ||
+           error.code === "auth/user-not-found"){
+            showToast("Email or password is incorrect.");
+        }else{
+            showToast(error.message || "Could not log in.");
+        }
+    });
+}
+
+function resendVerificationEmail(){
+    const user = firebase.auth().currentUser;
+
+    if(!user || user.isAnonymous){
+        showToast("Please log in to a registered account first.");
+        return;
+    }
+
+    if(user.emailVerified){
+        updateAccountUI(user);
+        showToast("Your email is already verified.");
+        return;
+    }
+
+    user.sendEmailVerification()
+    .then(function(){
+        showToast("Verification email sent. Check Inbox and Spam/Junk.");
+    })
+    .catch(function(error){
+        console.error(error);
+
+        if(error.code === "auth/too-many-requests"){
+            showToast("Too many requests. Please wait a little and try again.");
+        }else{
+            showToast(error.message || "Could not send verification email.");
+        }
     });
 }
 
@@ -1425,15 +1385,10 @@ function forgotPassword(){
 }
 
 function logoutAccount(){
-    const user = firebase.auth().currentUser;
-
-    if(user && !user.isAnonymous){
-        db.ref("profiles/" + user.uid + "/online").set(false)
-        .catch(function(error){ console.error(error); });
-    }
-
     firebase.auth().signOut()
     .then(function(){
+        // onAuthStateChanged will create a fresh anonymous session
+        // so Random Chat continues working without an account.
         showToast("Logged out.");
     })
     .catch(function(error){
@@ -1442,157 +1397,50 @@ function logoutAccount(){
     });
 }
 
-function resendVerification(){
-    const user = firebase.auth().currentUser;
-
-    if(!user || user.isAnonymous){
-        showToast("Please log in first.");
-        return;
-    }
-
-    if(user.emailVerified){
-        showToast("Your email is already verified.");
-        return;
-    }
-
-    user.sendEmailVerification()
-    .then(function(){
-        showToast("Verification email sent. Check Inbox and Spam/Junk.");
-    })
-    .catch(function(error){
-        console.error(error);
-        showToast(error.message || "Could not send verification email.");
-    });
-}
-
 function updateAccountUI(user){
-    const accountForm = document.getElementById("accountForm");
-    const loggedInPanel = document.getElementById("loggedInPanel");
-    const dashboard = document.getElementById("dashboardPanel");
+    const loggedOut = document.getElementById("loggedOutPanel");
+    const loggedIn = document.getElementById("loggedInPanel");
 
-    if(!user || user.isAnonymous){
-        accountForm.style.display = "block";
-        loggedInPanel.style.display = "none";
-        dashboard.style.display = "none";
-        return;
+    if(user && !user.isAnonymous){
+        loggedOut.style.display = "none";
+        loggedIn.style.display = "block";
+        showProfile(user);
+    }else{
+        loggedOut.style.display = "block";
+        loggedIn.style.display = "none";
     }
-
-    accountForm.style.display = "none";
-    loggedInPanel.style.display = "block";
-    dashboard.style.display = "block";
-
-    showProfile(user);
-    setOnlinePresence(user);
-    loadDashboard();
 }
 
 function showProfile(user){
     db.ref("profiles/" + user.uid).once("value")
     .then(function(snapshot){
         const profile = snapshot.val() || {};
+
         document.getElementById("profileName").textContent =
             profile.username || "Dakshub user";
+
         document.getElementById("profileEmail").textContent =
             user.email || "";
 
         const status = document.getElementById("verificationStatus");
-        const resend = document.getElementById("resendVerificationBtn");
+        const resendBtn = document.getElementById("resendVerificationBtn");
 
         if(user.emailVerified){
             status.textContent = "✓ Email verified";
-            resend.style.display = "none";
+            status.className = "verification-note ok";
+            resendBtn.style.display = "none";
         }else{
-            status.textContent = "⚠ Email not verified yet";
-            resend.style.display = "inline-block";
+            status.textContent = "⚠ Email not verified yet. Check your email or resend the verification email.";
+            status.className = "verification-note warn";
+            resendBtn.style.display = "inline-block";
         }
     })
     .catch(function(error){
         console.error(error);
+        document.getElementById("profileName").textContent = "Dakshub user";
+        document.getElementById("profileEmail").textContent = user.email || "";
     });
 }
-
-function setOnlinePresence(user){
-    if(!user || user.isAnonymous) return;
-
-    const profileRef = db.ref("profiles/" + user.uid);
-    profileRef.update({
-        online: true,
-        lastSeen: firebase.database.ServerValue.TIMESTAMP
-    });
-
-    profileRef.onDisconnect().update({
-        online: false,
-        lastSeen: firebase.database.ServerValue.TIMESTAMP
-    });
-}
-
-function loadDashboard(){
-    db.ref("profiles").on("value", function(snapshot){
-        let registered = 0;
-        let online = 0;
-        const people = [];
-
-        snapshot.forEach(function(child){
-            const profile = child.val() || {};
-            if(!profile.username) return;
-
-            registered++;
-
-            if(profile.online === true){
-                online++;
-            }
-
-            people.push({
-                uid: child.key,
-                username: profile.username,
-                online: profile.online === true
-            });
-        });
-
-        people.sort(function(a,b){
-            if(a.online !== b.online) return a.online ? -1 : 1;
-            return a.username.toLowerCase().localeCompare(b.username.toLowerCase());
-        });
-
-        document.getElementById("registeredCount").textContent = registered;
-        document.getElementById("onlineCount").textContent = online;
-        document.getElementById("offlineCount").textContent = registered - online;
-
-        const list = document.getElementById("peopleList");
-        list.innerHTML = "";
-
-        people.forEach(function(person){
-            const row = document.createElement("div");
-            row.className = "person-row";
-
-            const name = document.createElement("div");
-            name.className = "person-name";
-            name.textContent = person.username;
-
-            const status = document.createElement("div");
-            status.className = "person-status";
-
-            const dot = document.createElement("span");
-            dot.className = person.online ? "online-dot" : "offline-dot";
-
-            status.appendChild(dot);
-            status.appendChild(
-                document.createTextNode(person.online ? "Online" : "Offline")
-            );
-
-            row.appendChild(name);
-            row.appendChild(status);
-            list.appendChild(row);
-        });
-    });
-}
-
-firebase.auth().onAuthStateChanged(function(user){
-    if(user){
-        clientId = user.uid;
-    }
-    updateAccountUI(user);
-});
 
 /* YEAR */
 document.getElementById("year").textContent =

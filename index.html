@@ -458,6 +458,8 @@ footer{
 .private-chat-input input{flex:1}
 .private-chat-close{float:right;margin-top:-30px}
 
+.status-label{white-space:nowrap}
+
 /* MOBILE */
 @media(max-width:750px){
     .chat-app{
@@ -778,6 +780,16 @@ firebase.auth().onAuthStateChanged(function(user){
         if(!user.isAnonymous){
             startPresence(user);
             startUsersDashboard();
+
+            // Immediately mark the real signed-in account online.
+            // This also fixes cases where the initial .info/connected event
+            // happened before the email/password account became active.
+            db.ref("presence/" + user.uid).set({
+                online: true,
+                lastSeen: firebase.database.ServerValue.TIMESTAMP
+            }).catch(function(error){
+                console.error("Initial presence write failed:", error);
+            });
         }else{
             stopUsersDashboard();
         }
@@ -1598,11 +1610,7 @@ function startPresence(user){
         connectedRef.off("value", presenceConnectedListener);
     }
 
-    presenceConnectedListener = connectedRef.on("value", function(snapshot){
-        if(snapshot.val() !== true){
-            return;
-        }
-
+    function markOnline(){
         presenceRef.onDisconnect().set({
             online: false,
             lastSeen: firebase.database.ServerValue.TIMESTAMP
@@ -1614,9 +1622,22 @@ function startPresence(user){
         }).catch(function(error){
             console.error("Presence update failed:", error);
         });
+    }
+
+    presenceConnectedListener = connectedRef.on("value", function(snapshot){
+        if(snapshot.val() === true){
+            markOnline();
+        }
+    });
+
+    // Do not wait for the first .info/connected event.
+    presenceRef.set({
+        online: true,
+        lastSeen: firebase.database.ServerValue.TIMESTAMP
+    }).catch(function(error){
+        console.error("Presence initial set failed:", error);
     });
 }
-
 
 function makePrivateRoomId(uid1, uid2){
     return [uid1, uid2].sort().join("_");
@@ -1766,9 +1787,7 @@ function stopUsersDashboard(){
 
 function startUsersDashboard(){
     const dashboard = document.getElementById("dashboardPanel");
-    if(!dashboard){
-        return;
-    }
+    if(!dashboard) return;
 
     dashboard.style.display = "block";
 
@@ -1781,20 +1800,26 @@ function startUsersDashboard(){
     function renderUsers(){
         const ids = Object.keys(profilesData);
 
-        document.getElementById("registeredCount").textContent = ids.length;
+        const registeredEl = document.getElementById("registeredCount");
+        const onlineEl = document.getElementById("onlineCount");
+        const offlineEl = document.getElementById("offlineCount");
+        const list = document.getElementById("usersList");
 
-        let online = 0;
+        if(registeredEl) registeredEl.textContent = ids.length;
+
+        let onlineCount = 0;
+
         ids.forEach(function(uid){
-            const p = presenceData[uid];
-            if(p && p.online === true){
-                online++;
+            const presence = presenceData[uid];
+            if(presence && presence.online === true){
+                onlineCount++;
             }
         });
 
-        document.getElementById("onlineCount").textContent = online;
-        document.getElementById("offlineCount").textContent = ids.length - online;
+        if(onlineEl) onlineEl.textContent = onlineCount;
+        if(offlineEl) offlineEl.textContent = Math.max(0, ids.length - onlineCount);
 
-        const list = document.getElementById("usersList");
+        if(!list) return;
 
         if(ids.length === 0){
             list.innerHTML =
@@ -1802,19 +1827,21 @@ function startUsersDashboard(){
             return;
         }
 
-        ids.sort(function(a,b){
-            const aName = String(profilesData[a].username || "").toLowerCase();
-            const bName = String(profilesData[b].username || "").toLowerCase();
-            return aName.localeCompare(bName);
+        ids.sort(function(a, b){
+            const an = String((profilesData[a] || {}).username || "").toLowerCase();
+            const bn = String((profilesData[b] || {}).username || "").toLowerCase();
+            return an.localeCompare(bn);
         });
 
         list.innerHTML = "";
 
+        const currentUser = firebase.auth().currentUser;
+
         ids.forEach(function(uid){
             const profile = profilesData[uid] || {};
-            const isOnline =
-                presenceData[uid] &&
-                presenceData[uid].online === true;
+            const presence = presenceData[uid] || {};
+            const isOnline = presence.online === true;
+            const isMe = !!currentUser && uid === currentUser.uid;
 
             const row = document.createElement("div");
             row.className = "user-row";
@@ -1825,7 +1852,6 @@ function startUsersDashboard(){
             const name = document.createElement("div");
             name.className = "user-name";
             name.textContent = profile.username || "Dakshub user";
-
             main.appendChild(name);
 
             const status = document.createElement("div");
@@ -1833,35 +1859,28 @@ function startUsersDashboard(){
 
             const dot = document.createElement("span");
             dot.className = "dot" + (isOnline ? "" : " off");
-
             status.appendChild(dot);
-            status.appendChild(
-                document.createTextNode(isOnline ? "Online" : "Offline")
-            );
 
-            const isMe = firebase.auth().currentUser &&
-                         uid === firebase.auth().currentUser.uid;
+            const label = document.createElement("span");
+            label.className = "status-label";
+            label.textContent = isOnline ? "Online" : (isMe ? "You • Offline" : "Offline");
+            status.appendChild(label);
 
-            const statusLabel = document.createElement("span");
-            statusLabel.className = "status-label";
-            statusLabel.textContent = isOnline ? "Online" : (isMe ? "You • Offline" : "Offline");
-            status.appendChild(statusLabel);
-
+            // Only another ONLINE user gets a chat button.
             if(isOnline && !isMe){
                 const chatButton = document.createElement("button");
                 chatButton.type = "button";
                 chatButton.className = "secondary";
                 chatButton.textContent = "💬 Chat";
-                chatButton.style.padding = "8px 11px";
                 chatButton.style.marginLeft = "10px";
-                chatButton.style.border = "1px solid var(--border)";
-                chatButton.style.borderRadius = "9px";
-                chatButton.style.background = "var(--card2)";
-                chatButton.style.color = "var(--text)";
+                chatButton.style.padding = "8px 12px";
+
                 chatButton.addEventListener("click", function(event){
+                    event.preventDefault();
                     event.stopPropagation();
                     openPrivateChat(uid, profile.username || "Dakshub user");
                 });
+
                 status.appendChild(chatButton);
             }
 
@@ -1874,7 +1893,6 @@ function startUsersDashboard(){
     if(profileListListener){
         profilesRef.off("value", profileListListener);
     }
-
     if(presenceListListener){
         presenceRef.off("value", presenceListListener);
     }

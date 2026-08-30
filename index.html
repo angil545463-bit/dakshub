@@ -1658,14 +1658,13 @@ function openPrivateChat(partnerUid, partnerName){
         return;
     }
 
-    // Only allow opening a private chat with a currently online user.
-    db.ref("presence/" + partnerUid).once("value")
-    .then(function(presenceSnap){
+    // Check that the other person is really online.
+    db.ref("presence/" + partnerUid).once("value").then(function(presenceSnap){
         const presence = presenceSnap.val() || {};
 
         if(presence.online !== true){
             showToast("This user is offline.");
-            return null;
+            return;
         }
 
         closePrivateChat();
@@ -1673,77 +1672,80 @@ function openPrivateChat(partnerUid, partnerName){
         privateChatPartnerId = partnerUid;
         privateChatRoomId = makePrivateRoomId(user.uid, partnerUid);
 
+        const panel = document.getElementById("privateChatPanel");
+        const title = document.getElementById("privateChatTitle");
+        const box = document.getElementById("privateChatMessages");
+
+        if(panel) panel.style.display = "block";
+        if(title) title.textContent = "Chat with " + (partnerName || "Dakshub user");
+        if(box) box.innerHTML = "";
+
         const roomRef = db.ref("privateRooms/" + privateChatRoomId);
 
-        // Explicitly create/merge the room membership before reading or
-        // writing messages. This is what was missing when the send failed.
-        const roomData = {
-            members: {}
-        };
-        roomData.members[user.uid] = true;
-        roomData.members[partnerUid] = true;
+        // Create the room if it does not exist. If it already exists,
+        // make sure both members are still present.
+        return roomRef.once("value").then(function(roomSnap){
+            const room = roomSnap.val() || {};
+            const members = room.members || {};
 
-        return roomRef.update(roomData).then(function(){
-            showPrivateChatPanel(partnerName);
+            members[user.uid] = true;
+            members[partnerUid] = true;
 
-            if(privateMessagesListener){
-                roomRef.child("messages").off("value", privateMessagesListener);
+            const updateData = {
+                members: members
+            };
+
+            if(!roomSnap.exists()){
+                updateData.createdAt = firebase.database.ServerValue.TIMESTAMP;
             }
 
-            privateMessagesListener = roomRef.child("messages").on("value",
-                function(snapshot){
-                    const messages = snapshot.val() || {};
-                    renderPrivateMessages(messages);
-                },
-                function(error){
-                    console.error("Private messages read failed:", error);
-                    showToast("Could not load private messages.");
-                }
-            );
-
-            return null;
+            return roomRef.update(updateData);
         });
-    })
-    .catch(function(error){
-        console.error("Private room creation failed:", error);
-        showToast("Private chat could not be opened.");
+    }).then(function(){
+        if(!privateChatRoomId) return;
+
+        const messagesRef = db.ref(
+            "privateRooms/" + privateChatRoomId + "/messages"
+        );
+
+        // Always use the same listener variable used by closePrivateChat().
+        if(privateChatMessageListener){
+            messagesRef.off("child_added", privateChatMessageListener);
+        }
+
+        privateChatMessageListener = messagesRef.on(
+            "child_added",
+            function(snapshot){
+                const data = snapshot.val();
+
+                if(!data) return;
+
+                addPrivateMessage(
+                    data.text || "",
+                    data.sender === firebase.auth().currentUser.uid,
+                    data.time
+                );
+            },
+            function(error){
+                console.error("Private chat read failed:", error);
+                showToast("Could not load private messages.");
+            }
+        );
+
+        const input = document.getElementById("privateMessageInput");
+        if(input){
+            input.focus();
+        }
+    }).catch(function(error){
+        console.error("Private room error:", error);
+        showToast("Could not open private chat.");
     });
-}
-
-function showPrivateChatPanel(partnerName){
-    const panel = document.getElementById("privateChatPanel");
-    const title = document.getElementById("privateChatTitle");
-
-    if(title){
-        title.textContent = "Chat with " + (partnerName || "Dakshub user");
-    }
-
-    if(panel){
-        panel.style.display = "block";
-        panel.scrollIntoView({behavior:"smooth", block:"center"});
-    }
-}
-
-function renderPrivateMessages(messages){
-    const box = document.getElementById("privateMessages");
-    if(!box) return;
-
-    box.innerHTML = "";
-
-    Object.keys(messages)
-        .sort(function(a,b){
-            return (Number(messages[a].time) || 0) -
-                   (Number(messages[b].time) || 0);
-        })
-        .forEach(function(messageId){
-            addPrivateMessage(messageId, messages[messageId]);
-        });
-
-    box.scrollTop = box.scrollHeight;
 }
 
 function addPrivateMessage(text, mine, time){
     const box = document.getElementById("privateChatMessages");
+    if(!box) return;
+
     const row = document.createElement("div");
     row.className = "message-row" + (mine ? " mine" : "");
 
@@ -1755,13 +1757,18 @@ function addPrivateMessage(text, mine, time){
 
     const timeEl = document.createElement("div");
     timeEl.className = "message-time";
+
     const date = time ? new Date(time) : new Date();
-    timeEl.textContent = date.toLocaleTimeString([], {hour:"2-digit", minute:"2-digit"});
+    timeEl.textContent = date.toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit"
+    });
 
     bubble.appendChild(textEl);
     bubble.appendChild(timeEl);
     row.appendChild(bubble);
     box.appendChild(row);
+
     box.scrollTop = box.scrollHeight;
 }
 
@@ -1769,54 +1776,67 @@ function sendPrivateMessage(){
     const user = firebase.auth().currentUser;
     const input = document.getElementById("privateMessageInput");
 
-    if(!user || user.isAnonymous || !privateChatPartnerId || !privateChatRoomId || !input){
+    if(!user || user.isAnonymous || !privateChatPartnerId ||
+       !privateChatRoomId || !input){
+        showToast("Open a private chat first.");
         return;
     }
 
     const text = input.value.trim();
+
     if(!text){
         return;
     }
 
     const roomRef = db.ref("privateRooms/" + privateChatRoomId);
 
+    // Ensure membership exists before writing the message.
     const members = {};
     members[user.uid] = true;
     members[privateChatPartnerId] = true;
 
-    roomRef.update({members: members})
-    .then(function(){
+    roomRef.update({
+        members: members
+    }).then(function(){
         return roomRef.child("messages").push({
             sender: user.uid,
             text: text.slice(0, 2000),
             time: firebase.database.ServerValue.TIMESTAMP
         });
-    })
-    .then(function(){
+    }).then(function(){
         input.value = "";
-    })
-    .catch(function(error){
+        input.focus();
+    }).catch(function(error){
         console.error("Private message send failed:", error);
-        showToast("Private message could not be sent.");
+
+        if(error && error.code === "PERMISSION_DENIED"){
+            showToast("Firebase permission denied. Check privateRooms Rules.");
+        }else{
+            showToast("Private message could not be sent.");
+        }
     });
 }
 
 function closePrivateChat(){
     if(privateChatRoomId && privateChatMessageListener){
-        db.ref("privateRooms/" + privateChatRoomId + "/messages").off(
-            "child_added",
-            privateChatMessageListener
-        );
+        db.ref(
+            "privateRooms/" + privateChatRoomId + "/messages"
+        ).off("child_added", privateChatMessageListener);
     }
+
     privateChatRoomId = null;
     privateChatPartnerId = null;
     privateChatMessageListener = null;
 
     const panel = document.getElementById("privateChatPanel");
-    if(panel) panel.style.display = "none";
+    if(panel){
+        panel.style.display = "none";
+    }
 
     const box = document.getElementById("privateChatMessages");
-    if(box) box.innerHTML = "";
+    if(box){
+        box.innerHTML = "";
+    }
 }
 
 function stopUsersDashboard(){

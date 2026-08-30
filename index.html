@@ -1658,15 +1658,9 @@ function openPrivateChat(partnerUid, partnerName){
         return;
     }
 
-    // Check that the other person is really online.
-    db.ref("presence/" + partnerUid).once("value").then(function(presenceSnap){
-        const presence = presenceSnap.val() || {};
-
-        if(presence.online !== true){
-            showToast("This user is offline.");
-            return;
-        }
-
+    // Private chat is available even if the recipient is offline.
+    // They can read the message when they come back online.
+    Promise.resolve().then(function(){
         closePrivateChat();
 
         privateChatPartnerId = partnerUid;
@@ -1942,7 +1936,7 @@ function startUsersDashboard(){
                 (isMe ? "You • Offline" : "Offline");
             status.appendChild(label);
 
-            if(isOnline && !isMe){
+            if(!isMe){
                 const chatButton = document.createElement("button");
                 chatButton.type = "button";
                 chatButton.className = "secondary";

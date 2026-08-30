@@ -439,6 +439,80 @@ footer{
 .profile-card strong{font-size:17px}.account-panel .error{color:var(--danger);font-size:13px;margin-top:10px}
 @media(max-width:750px){.account-grid{grid-template-columns:1fr}.account-panel{margin-top:18px}}
 
+
+#verificationStatus{margin-top:6px;color:var(--muted);font-size:13px}
+#resendVerificationBtn{display:none}
+
+
+/* =========================
+   USER DASHBOARD
+   ========================= */
+.dashboard-panel{
+    display:none;
+    margin-top:25px;
+    padding:22px;
+    border-radius:18px;
+    background:var(--card);
+    border:1px solid var(--border);
+}
+.dashboard-head{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:15px;
+    margin-bottom:18px;
+}
+.dashboard-head h2{margin:0}
+.dashboard-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:12px;
+}
+.stat-card{
+    padding:18px;
+    border-radius:14px;
+    background:var(--card2);
+    border:1px solid var(--border);
+}
+.stat-label{color:var(--muted);font-size:13px;margin-bottom:7px}
+.stat-number{font-size:28px;font-weight:800}
+.people-list{
+    margin-top:18px;
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+}
+.person-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    padding:13px 14px;
+    border-radius:12px;
+    background:var(--bg2);
+    border:1px solid var(--border);
+}
+.person-name{font-weight:700}
+.person-status{font-size:12px;color:var(--muted)}
+.online-dot{
+    width:9px;height:9px;border-radius:50%;
+    display:inline-block;margin-right:6px;background:var(--green);
+}
+.offline-dot{
+    width:9px;height:9px;border-radius:50%;
+    display:inline-block;margin-right:6px;background:#888;
+}
+.dashboard-note{
+    color:var(--muted);
+    font-size:13px;
+    line-height:1.5;
+    margin-top:14px;
+}
+@media(max-width:750px){
+    .dashboard-grid{grid-template-columns:1fr}
+    .dashboard-head{align-items:flex-start;flex-direction:column}
+}
+
 </style>
 </head>
 
@@ -533,10 +607,10 @@ footer{
 
 
 <section class="account-panel" id="accountPanel">
-  <div id="loggedOutPanel">
-    <h2>Create your Dakshub account</h2>
-    <p>Register with an email, password and username. Your username will be saved to your Dakshub profile.</p>
+  <h2 id="accountTitle">Create your Dakshub account</h2>
+  <p id="accountHelp">Register with an email, password and username. Your username will be saved to your Dakshub profile.</p>
 
+  <div id="accountForm">
     <div class="account-grid">
       <input id="accountEmail" type="email" placeholder="Email address" autocomplete="email">
       <input id="accountPassword" type="password" placeholder="Password (6+ characters)" autocomplete="new-password">
@@ -550,19 +624,47 @@ footer{
   </div>
 
   <div id="loggedInPanel" style="display:none">
-    <h2>My Dakshub Profile</h2>
-    <div class="profile-card" id="profileCard" style="display:block">
-      <strong id="profileName">Loading...</strong>
+    <div class="profile-card" style="display:block">
+      <strong id="profileName">Dakshub user</strong>
       <div id="profileEmail"></div>
+      <div id="verificationStatus"></div>
     </div>
+
     <div class="account-actions">
       <button type="button" class="secondary" onclick="logoutAccount()">Log Out</button>
+      <button type="button" class="secondary" id="resendVerificationBtn" onclick="resendVerification()">Resend Verification Email</button>
     </div>
   </div>
+
 </section>
 
+<section class="dashboard-panel" id="dashboardPanel">
+  <div class="dashboard-head">
+    <div>
+      <h2>People on Dakshub</h2>
+      <p class="dashboard-note">Your account dashboard. Email addresses are kept private.</p>
+    </div>
+  </div>
 
-    <section class="about" id="about">
+  <div class="dashboard-grid">
+    <div class="stat-card">
+      <div class="stat-label">REGISTERED USERS</div>
+      <div class="stat-number" id="registeredCount">0</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">ONLINE NOW</div>
+      <div class="stat-number" id="onlineCount">0</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">OFFLINE</div>
+      <div class="stat-number" id="offlineCount">0</div>
+    </div>
+  </div>
+
+  <div class="people-list" id="peopleList"></div>
+</section>
+
+<section class="about" id="about">
         <h2>About Dakshub</h2>
         <p>
             Dakshub is a simple real-time random chat website. When two users
@@ -1213,26 +1315,22 @@ function getAccountValues(){
     };
 }
 
-function setAccountMessage(text){
-    showToast(text);
-}
-
 function registerAccount(){
     const v = getAccountValues();
     const currentUser = firebase.auth().currentUser;
 
     if(!v.email || !v.password || !v.username){
-        setAccountMessage("Enter email, password and username.");
+        showToast("Enter email, password and username.");
         return;
     }
 
     if(v.password.length < 6){
-        setAccountMessage("Password must be at least 6 characters.");
+        showToast("Password must be at least 6 characters.");
         return;
     }
 
     if(!/^[a-zA-Z0-9_.-]{3,30}$/.test(v.username)){
-        setAccountMessage("Username: 3-30 letters, numbers, _ . or - only.");
+        showToast("Username: 3-30 letters, numbers, _ . or - only.");
         return;
     }
 
@@ -1241,44 +1339,35 @@ function registerAccount(){
         v.password
     );
 
-    /* Upgrade the current anonymous account instead of creating a second UID.
-       This keeps the Firebase identity stable. */
+    const finishRegistration = function(user){
+        return db.ref("profiles/" + user.uid).set({
+            username: v.username,
+            email: v.email,
+            createdAt: firebase.database.ServerValue.TIMESTAMP,
+            online: true
+        }).then(function(){
+            return user.sendEmailVerification();
+        }).then(function(){
+            updateAccountUI(user);
+            showToast("Account created. Check your email to verify it.");
+        });
+    };
+
     if(currentUser && currentUser.isAnonymous){
         currentUser.linkWithCredential(credential)
         .then(function(result){
-            return db.ref("profiles/" + result.user.uid).set({
-                username: v.username,
-                email: v.email,
-                createdAt: firebase.database.ServerValue.TIMESTAMP
-            }).then(function(){
-                return result.user.sendEmailVerification();
-            }).then(function(){
-                updateAccountUI(result.user);
-                showToast("Account created. Check your email to verify it.");
-            });
+            return finishRegistration(result.user);
         })
         .catch(function(error){
             console.error(error);
-            if(error.code === "auth/email-already-in-use"){
-                showToast("That email already has an account. Use Log In.");
-            }else{
-                showToast(error.message || "Could not create account.");
-            }
+            showToast(error.message || "Could not create account.");
         });
         return;
     }
 
-    /* Fallback for a non-anonymous session. */
     firebase.auth().createUserWithEmailAndPassword(v.email, v.password)
     .then(function(result){
-        return db.ref("profiles/" + result.user.uid).set({
-            username: v.username,
-            email: v.email,
-            createdAt: firebase.database.ServerValue.TIMESTAMP
-        }).then(function(){
-            updateAccountUI(result.user);
-            showToast("Account created successfully.");
-        });
+        return finishRegistration(result.user);
     })
     .catch(function(error){
         console.error(error);
@@ -1302,7 +1391,7 @@ function loginAccount(){
         if(result.user.emailVerified){
             showToast("Logged in successfully.");
         }else{
-            showToast("Please verify your email from your inbox.");
+            showToast("Logged in. Please verify your email.");
         }
     })
     .catch(function(error){
@@ -1312,8 +1401,13 @@ function loginAccount(){
 }
 
 function logoutAccount(){
-    /* Signing out returns the visitor to a fresh anonymous Firebase session,
-       so the existing chat UI can still connect without exposing the account. */
+    const user = firebase.auth().currentUser;
+
+    if(user && !user.isAnonymous){
+        db.ref("profiles/" + user.uid + "/online").set(false)
+        .catch(function(error){ console.error(error); });
+    }
+
     firebase.auth().signOut()
     .then(function(){
         showToast("Logged out.");
@@ -1324,18 +1418,48 @@ function logoutAccount(){
     });
 }
 
-function updateAccountUI(user){
-    const loggedOut = document.getElementById("loggedOutPanel");
-    const loggedIn = document.getElementById("loggedInPanel");
+function resendVerification(){
+    const user = firebase.auth().currentUser;
 
-    if(user && !user.isAnonymous){
-        loggedOut.style.display = "none";
-        loggedIn.style.display = "block";
-        showProfile(user);
-    }else{
-        loggedOut.style.display = "block";
-        loggedIn.style.display = "none";
+    if(!user || user.isAnonymous){
+        showToast("Please log in first.");
+        return;
     }
+
+    if(user.emailVerified){
+        showToast("Your email is already verified.");
+        return;
+    }
+
+    user.sendEmailVerification()
+    .then(function(){
+        showToast("Verification email sent. Check Inbox and Spam/Junk.");
+    })
+    .catch(function(error){
+        console.error(error);
+        showToast(error.message || "Could not send verification email.");
+    });
+}
+
+function updateAccountUI(user){
+    const accountForm = document.getElementById("accountForm");
+    const loggedInPanel = document.getElementById("loggedInPanel");
+    const dashboard = document.getElementById("dashboardPanel");
+
+    if(!user || user.isAnonymous){
+        accountForm.style.display = "block";
+        loggedInPanel.style.display = "none";
+        dashboard.style.display = "none";
+        return;
+    }
+
+    accountForm.style.display = "none";
+    loggedInPanel.style.display = "block";
+    dashboard.style.display = "block";
+
+    showProfile(user);
+    setOnlinePresence(user);
+    loadDashboard();
 }
 
 function showProfile(user){
@@ -1346,13 +1470,105 @@ function showProfile(user){
             profile.username || "Dakshub user";
         document.getElementById("profileEmail").textContent =
             user.email || "";
+
+        const status = document.getElementById("verificationStatus");
+        const resend = document.getElementById("resendVerificationBtn");
+
+        if(user.emailVerified){
+            status.textContent = "✓ Email verified";
+            resend.style.display = "none";
+        }else{
+            status.textContent = "⚠ Email not verified yet";
+            resend.style.display = "inline-block";
+        }
     })
     .catch(function(error){
         console.error(error);
-        document.getElementById("profileName").textContent = "Profile";
-        document.getElementById("profileEmail").textContent = "";
     });
 }
+
+function setOnlinePresence(user){
+    if(!user || user.isAnonymous) return;
+
+    const profileRef = db.ref("profiles/" + user.uid);
+    profileRef.update({
+        online: true,
+        lastSeen: firebase.database.ServerValue.TIMESTAMP
+    });
+
+    profileRef.onDisconnect().update({
+        online: false,
+        lastSeen: firebase.database.ServerValue.TIMESTAMP
+    });
+}
+
+function loadDashboard(){
+    db.ref("profiles").on("value", function(snapshot){
+        let registered = 0;
+        let online = 0;
+        const people = [];
+
+        snapshot.forEach(function(child){
+            const profile = child.val() || {};
+            if(!profile.username) return;
+
+            registered++;
+
+            if(profile.online === true){
+                online++;
+            }
+
+            people.push({
+                uid: child.key,
+                username: profile.username,
+                online: profile.online === true
+            });
+        });
+
+        people.sort(function(a,b){
+            if(a.online !== b.online) return a.online ? -1 : 1;
+            return a.username.toLowerCase().localeCompare(b.username.toLowerCase());
+        });
+
+        document.getElementById("registeredCount").textContent = registered;
+        document.getElementById("onlineCount").textContent = online;
+        document.getElementById("offlineCount").textContent = registered - online;
+
+        const list = document.getElementById("peopleList");
+        list.innerHTML = "";
+
+        people.forEach(function(person){
+            const row = document.createElement("div");
+            row.className = "person-row";
+
+            const name = document.createElement("div");
+            name.className = "person-name";
+            name.textContent = person.username;
+
+            const status = document.createElement("div");
+            status.className = "person-status";
+
+            const dot = document.createElement("span");
+            dot.className = person.online ? "online-dot" : "offline-dot";
+
+            status.appendChild(dot);
+            status.appendChild(
+                document.createTextNode(person.online ? "Online" : "Offline")
+            );
+
+            row.appendChild(name);
+            row.appendChild(status);
+            list.appendChild(row);
+        });
+    });
+}
+
+firebase.auth().onAuthStateChanged(function(user){
+    if(user){
+        clientId = user.uid;
+    }
+    updateAccountUI(user);
+});
 
 /* YEAR */
 document.getElementById("year").textContent =

@@ -1603,6 +1603,8 @@ function updateAccountUI(user){
    ========================= */
 
 function startPresence(user){
+    if(!user || user.isAnonymous) return;
+
     const connectedRef = db.ref(".info/connected");
     const presenceRef = db.ref("presence/" + user.uid);
 
@@ -1610,7 +1612,7 @@ function startPresence(user){
         connectedRef.off("value", presenceConnectedListener);
     }
 
-    function markOnline(){
+    function setOnline(){
         presenceRef.onDisconnect().set({
             online: false,
             lastSeen: firebase.database.ServerValue.TIMESTAMP
@@ -1626,16 +1628,17 @@ function startPresence(user){
 
     presenceConnectedListener = connectedRef.on("value", function(snapshot){
         if(snapshot.val() === true){
-            markOnline();
+            setOnline();
         }
     });
 
-    // Do not wait for the first .info/connected event.
+    // Immediate attempt; the connected listener will repeat it after the
+    // database connection is confirmed.
     presenceRef.set({
         online: true,
         lastSeen: firebase.database.ServerValue.TIMESTAMP
     }).catch(function(error){
-        console.error("Presence initial set failed:", error);
+        console.error("Initial presence set failed:", error);
     });
 }
 
@@ -1791,11 +1794,10 @@ function startUsersDashboard(){
 
     dashboard.style.display = "block";
 
-    const profilesRef = db.ref("directory");
-    const presenceRef = db.ref("presence");
-
+    const directoryRef = db.ref("directory");
     let profilesData = {};
     let presenceData = {};
+    const presenceListeners = {};
 
     function renderUsers(){
         const ids = Object.keys(profilesData);
@@ -1808,10 +1810,8 @@ function startUsersDashboard(){
         if(registeredEl) registeredEl.textContent = ids.length;
 
         let onlineCount = 0;
-
         ids.forEach(function(uid){
-            const presence = presenceData[uid];
-            if(presence && presence.online === true){
+            if(presenceData[uid] && presenceData[uid].online === true){
                 onlineCount++;
             }
         });
@@ -1839,8 +1839,8 @@ function startUsersDashboard(){
 
         ids.forEach(function(uid){
             const profile = profilesData[uid] || {};
-            const presence = presenceData[uid] || {};
-            const isOnline = presence.online === true;
+            const p = presenceData[uid] || {};
+            const isOnline = p.online === true;
             const isMe = !!currentUser && uid === currentUser.uid;
 
             const row = document.createElement("div");
@@ -1863,10 +1863,10 @@ function startUsersDashboard(){
 
             const label = document.createElement("span");
             label.className = "status-label";
-            label.textContent = isOnline ? "Online" : (isMe ? "You • Offline" : "Offline");
+            label.textContent = isOnline ? "Online" :
+                (isMe ? "You • Offline" : "Offline");
             status.appendChild(label);
 
-            // Only another ONLINE user gets a chat button.
             if(isOnline && !isMe){
                 const chatButton = document.createElement("button");
                 chatButton.type = "button";
@@ -1890,20 +1890,47 @@ function startUsersDashboard(){
         });
     }
 
+    // Remove previous directory listener if one exists.
     if(profileListListener){
-        profilesRef.off("value", profileListListener);
-    }
-    if(presenceListListener){
-        presenceRef.off("value", presenceListListener);
+        directoryRef.off("value", profileListListener);
     }
 
-    profileListListener = profilesRef.on("value", function(snapshot){
-        profilesData = snapshot.val() || {};
-        renderUsers();
+    // Clean up old per-user presence listeners.
+    Object.keys(presenceListeners).forEach(function(uid){
+        db.ref("presence/" + uid).off("value", presenceListeners[uid]);
+        delete presenceListeners[uid];
     });
 
-    presenceListListener = presenceRef.on("value", function(snapshot){
-        presenceData = snapshot.val() || {};
+    profileListListener = directoryRef.on("value", function(snapshot){
+        profilesData = snapshot.val() || {};
+
+        const ids = Object.keys(profilesData);
+
+        // Attach one listener to each exact UID in directory.
+        ids.forEach(function(uid){
+            if(presenceListeners[uid]) return;
+
+            const ref = db.ref("presence/" + uid);
+
+            presenceListeners[uid] = ref.on("value", function(presenceSnap){
+                presenceData[uid] = presenceSnap.val() || {};
+                renderUsers();
+            }, function(error){
+                console.error("Presence read failed for " + uid + ":", error);
+                presenceData[uid] = {};
+                renderUsers();
+            });
+        });
+
+        // Remove listeners for users no longer in directory.
+        Object.keys(presenceListeners).forEach(function(uid){
+            if(!profilesData[uid]){
+                db.ref("presence/" + uid).off("value", presenceListeners[uid]);
+                delete presenceListeners[uid];
+                delete presenceData[uid];
+            }
+        });
+
         renderUsers();
     });
 }

@@ -1,2066 +1,3914 @@
 <!DOCTYPE html>
 <html lang="en">
-<head><!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-CDSY4KZFHQ"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-CDSY4KZFHQ');
-</script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9490201968341878"
-     crossorigin="anonymous"></script>
+<head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
 
 <title>Dakshub - Chat with People Online</title>
-<meta name="description" content="Dakshub is a place to meet and chat with new people online in real time.">
-<meta name="robots" content="index, follow">
+<meta name="description" content="Dakshub is a real-time chat website where people can meet and chat online.">
+<meta name="robots" content="index,follow">
 <link rel="canonical" href="https://mydaksh.shop/">
 
 <style>
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-}
+*{box-sizing:border-box;margin:0;padding:0}
 
 :root{
-    --bg:#160d24;
-    --bg2:#211332;
-    --card:#2c1a40;
-    --card2:#38224f;
-    --text:#ffffff;
-    --muted:#bdb2c9;
-    --purple:#7c3aed;
-    --purple2:#9b6cff;
-    --border:rgba(255,255,255,.12);
-    --green:#42d392;
-    --danger:#ff5d6c;
+ --bg:#160d24;
+ --bg2:#211332;
+ --card:#2c1a40;
+ --card2:#38224f;
+ --text:#fff;
+ --muted:#bdb2c9;
+ --purple:#7c3aed;
+ --purple2:#9b6cff;
+ --border:rgba(255,255,255,.12);
+ --green:#42d392;
+ --danger:#ff5d6c;
 }
 
 body.light{
-    --bg:#f5f3f7;
-    --bg2:#ffffff;
-    --card:#ffffff;
-    --card2:#f0eaf5;
-    --text:#241b2b;
-    --muted:#6e6475;
-    --border:rgba(0,0,0,.1);
+ --bg:#f5f3f7;
+ --bg2:#fff;
+ --card:#fff;
+ --card2:#f0eaf5;
+ --text:#241b2b;
+ --muted:#6e6475;
+ --border:rgba(0,0,0,.1);
 }
 
 body{
-    min-height:100vh;
-    font-family:Arial,Helvetica,sans-serif;
-    background:var(--bg);
-    color:var(--text);
-    transition:.25s;
+ min-height:100vh;
+ font-family:Arial,Helvetica,sans-serif;
+ background:var(--bg);
+ color:var(--text);
 }
 
-button,input{
-    font:inherit;
-}
+button,input{font:inherit}
+button{cursor:pointer}
 
-button{
-    cursor:pointer;
-}
-
-/* TOP BAR */
 .topbar{
-    height:68px;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    padding:0 6%;
-    background:var(--bg2);
-    border-bottom:1px solid var(--border);
+ height:68px;
+ display:flex;
+ align-items:center;
+ justify-content:space-between;
+ padding:0 6%;
+ background:var(--bg2);
+ border-bottom:1px solid var(--border);
 }
 
 .logo{
-    font-size:25px;
-    font-weight:800;
-    letter-spacing:1px;
+ font-size:25px;
+ font-weight:800;
+ letter-spacing:1px;
 }
 
-.logo span{
-    color:var(--purple2);
-}
+.logo span{color:var(--purple2)}
 
 .nav{
-    display:flex;
-    gap:10px;
+ display:flex;
+ gap:8px;
 }
 
 .nav button{
-    border:1px solid var(--border);
-    background:var(--card);
-    color:var(--text);
-    padding:10px 14px;
-    border-radius:10px;
+ border:1px solid var(--border);
+ background:var(--card);
+ color:var(--text);
+ padding:9px 12px;
+ border-radius:10px;
 }
 
-.nav button:hover{
-    transform:translateY(-1px);
-}
-
-/* MAIN */
 .main{
-    width:min(1050px,94%);
-    margin:30px auto;
+ width:min(1050px,94%);
+ margin:30px auto;
 }
 
 .hero{
-    text-align:center;
-    margin-bottom:24px;
+ text-align:center;
+ margin-bottom:24px;
 }
 
 .hero h1{
-    font-size:clamp(28px,5vw,46px);
-    margin-bottom:10px;
+ font-size:clamp(30px,5vw,46px);
+ margin-bottom:10px;
 }
 
-.hero h1 span{
-    color:var(--purple2);
-}
+.hero h1 span{color:var(--purple2)}
 
 .hero p{
-    color:var(--muted);
-    max-width:650px;
-    margin:auto;
-    line-height:1.6;
+ color:var(--muted);
+ line-height:1.6;
 }
 
-/* CHAT APP */
 .chat-app{
-    display:grid;
-    grid-template-columns:300px 1fr;
-    min-height:580px;
-    border:1px solid var(--border);
-    border-radius:20px;
-    overflow:hidden;
-    background:var(--card);
-    box-shadow:0 20px 50px rgba(0,0,0,.25);
+ display:grid;
+ grid-template-columns:300px 1fr;
+ min-height:580px;
+ border:1px solid var(--border);
+ border-radius:20px;
+ overflow:hidden;
+ background:var(--card);
+ box-shadow:0 20px 50px rgba(0,0,0,.25);
 }
 
 .sidebar{
-    padding:24px;
-    background:var(--bg2);
-    border-right:1px solid var(--border);
+ padding:24px;
+ background:var(--bg2);
+ border-right:1px solid var(--border);
 }
 
-.sidebar h2{
-    font-size:20px;
-    margin-bottom:8px;
-}
+.sidebar h2{margin-bottom:8px}
 
 .status-text{
-    color:var(--muted);
-    font-size:14px;
-    line-height:1.5;
-    margin-bottom:20px;
+ color:var(--muted);
+ font-size:14px;
+ line-height:1.5;
+ margin-bottom:20px;
 }
 
 .status-box{
-    padding:15px;
-    border-radius:14px;
-    background:var(--card);
-    border:1px solid var(--border);
-    margin-bottom:18px;
+ padding:15px;
+ border-radius:14px;
+ background:var(--card);
+ border:1px solid var(--border);
+ margin-bottom:18px;
 }
 
 .status-label{
-    color:var(--muted);
-    font-size:12px;
-    margin-bottom:7px;
+ color:var(--muted);
+ font-size:12px;
+ margin-bottom:6px;
 }
 
 .status-value{
-    font-weight:bold;
-    font-size:14px;
+ font-weight:bold;
+ font-size:14px;
 }
 
 .dot{
-    width:9px;
-    height:9px;
-    display:inline-block;
-    border-radius:50%;
-    background:var(--green);
-    margin-right:6px;
+ width:9px;
+ height:9px;
+ display:inline-block;
+ border-radius:50%;
+ background:var(--green);
+ margin-right:6px;
 }
 
-.dot.off{
-    background:#888;
-}
+.dot.off{background:#888}
 
 .action-btn{
-    width:100%;
-    border:none;
-    border-radius:12px;
-    padding:14px;
-    background:var(--purple);
-    color:white;
-    font-weight:bold;
-    margin-bottom:10px;
+ width:100%;
+ border:0;
+ border-radius:12px;
+ padding:14px;
+ background:var(--purple);
+ color:#fff;
+ font-weight:bold;
+ margin-bottom:10px;
 }
 
-.action-btn:hover{
-    background:var(--purple2);
-}
+.action-btn:hover{background:var(--purple2)}
 
 .action-btn:disabled{
-    opacity:.55;
-    cursor:not-allowed;
+ opacity:.5;
+ cursor:not-allowed;
 }
 
 .end-btn{
-    background:transparent;
-    border:1px solid var(--danger);
-    color:var(--danger);
+ background:transparent;
+ border:1px solid var(--danger);
+ color:var(--danger);
 }
 
 .info{
-    margin-top:18px;
-    color:var(--muted);
-    font-size:13px;
-    line-height:1.6;
+ margin-top:18px;
+ color:var(--muted);
+ font-size:13px;
+ line-height:1.6;
 }
 
-/* CHAT */
 .chat-area{
-    display:flex;
-    flex-direction:column;
-    min-width:0;
+ display:flex;
+ flex-direction:column;
+ min-width:0;
 }
 
 .chat-head{
-    padding:18px 22px;
-    border-bottom:1px solid var(--border);
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
+ padding:18px 22px;
+ border-bottom:1px solid var(--border);
+ display:flex;
+ justify-content:space-between;
+ align-items:center;
 }
 
-.chat-head h3{
-    font-size:17px;
-}
+.chat-head h3{font-size:17px}
 
 .chat-sub{
-    color:var(--muted);
-    font-size:13px;
-    margin-top:4px;
+ color:var(--muted);
+ font-size:13px;
+ margin-top:4px;
 }
 
 .badge{
-    font-size:11px;
-    padding:7px 10px;
-    border-radius:999px;
-    background:var(--card2);
-    color:var(--muted);
+ font-size:11px;
+ padding:7px 10px;
+ border-radius:999px;
+ background:var(--card2);
+ color:var(--muted);
 }
 
 .messages{
-    flex:1;
-    padding:22px;
-    overflow:auto;
-    display:flex;
-    flex-direction:column;
-    gap:10px;
+ flex:1;
+ padding:22px;
+ overflow:auto;
+ display:flex;
+ flex-direction:column;
+ gap:10px;
 }
 
 .empty{
-    flex:1;
-    display:flex;
-    flex-direction:column;
-    justify-content:center;
-    align-items:center;
-    text-align:center;
-    color:var(--muted);
+ flex:1;
+ display:flex;
+ flex-direction:column;
+ justify-content:center;
+ align-items:center;
+ text-align:center;
+ color:var(--muted);
 }
 
 .empty h3{
-    color:var(--text);
-    margin-bottom:8px;
+ color:var(--text);
+ margin-bottom:8px;
 }
 
-.message-row{
-    display:flex;
-}
+.message-row{display:flex}
 
-.message-row.mine{
-    justify-content:flex-end;
-}
+.message-row.mine{justify-content:flex-end}
 
 .bubble{
-    max-width:75%;
-    padding:11px 14px;
-    border-radius:15px;
-    background:var(--card2);
-    line-height:1.4;
-    word-break:break-word;
+ max-width:75%;
+ padding:11px 14px;
+ border-radius:15px;
+ background:var(--card2);
+ line-height:1.4;
+ word-break:break-word;
 }
 
 .message-row.mine .bubble{
-    background:var(--purple);
-    color:white;
+ background:var(--purple);
+ color:#fff;
 }
 
 .message-time{
-    font-size:10px;
-    opacity:.65;
-    margin-top:5px;
+ font-size:10px;
+ opacity:.65;
+ margin-top:5px;
 }
 
 .input-area{
-    padding:15px;
-    border-top:1px solid var(--border);
-    display:flex;
-    gap:10px;
+ padding:15px;
+ border-top:1px solid var(--border);
+ display:flex;
+ gap:10px;
 }
 
 .input-area input{
-    flex:1;
-    min-width:0;
-    border:1px solid var(--border);
-    background:var(--bg2);
-    color:var(--text);
-    padding:13px 15px;
-    border-radius:12px;
-    outline:none;
+ flex:1;
+ min-width:0;
+ border:1px solid var(--border);
+ background:var(--bg2);
+ color:var(--text);
+ padding:13px 15px;
+ border-radius:12px;
+ outline:0;
 }
 
 .send-btn{
-    border:none;
-    border-radius:12px;
-    padding:0 20px;
-    background:var(--purple);
-    color:white;
-    font-weight:bold;
+ border:0;
+ border-radius:12px;
+ padding:0 20px;
+ background:var(--purple);
+ color:#fff;
+ font-weight:bold;
 }
 
-.send-btn:disabled{
-    opacity:.5;
-}
+.send-btn:disabled{opacity:.5}
 
-/* ABOUT */
+.account-panel,
+.dashboard-panel,
+.private-chat-panel,
 .about{
-    margin-top:25px;
-    padding:22px;
-    border-radius:18px;
-    background:var(--card);
-    border:1px solid var(--border);
-    display:none;
+ margin-top:25px;
+ padding:22px;
+ border-radius:18px;
+ background:var(--card);
+ border:1px solid var(--border);
 }
 
-.about h2{
-    margin-bottom:10px;
-}
+.account-panel h2,
+.dashboard-panel h2{margin-bottom:8px}
 
+.account-panel p,
 .about p{
-    color:var(--muted);
-    line-height:1.7;
+ color:var(--muted);
+ line-height:1.6;
 }
 
-/* TOAST */
+.account-grid{
+ display:grid;
+ grid-template-columns:1fr 1fr 1fr;
+ gap:10px;
+ margin-top:14px;
+}
+
+.account-grid input{
+ width:100%;
+ border:1px solid var(--border);
+ background:var(--bg2);
+ color:var(--text);
+ padding:12px;
+ border-radius:10px;
+ outline:0;
+}
+
+.account-actions{
+ display:flex;
+ gap:10px;
+ flex-wrap:wrap;
+ margin-top:12px;
+}
+
+.account-actions button{
+ border:0;
+ border-radius:10px;
+ padding:11px 15px;
+ background:var(--purple);
+ color:#fff;
+ font-weight:bold;
+}
+
+.account-actions button.secondary,
+.private-chat-close{
+ background:var(--card2);
+ color:var(--text);
+}
+
+.profile-card{
+ padding:14px;
+ border:1px solid var(--border);
+ border-radius:12px;
+ background:var(--card2);
+ margin-top:12px;
+}
+
+.profile-card strong{font-size:17px}
+
+.verification-note{
+ margin-top:7px;
+ color:var(--muted);
+ font-size:13px;
+}
+
+.verification-note.ok{color:var(--green)}
+.verification-note.warn{color:#f59e0b}
+
+.stats-grid{
+ display:grid;
+ grid-template-columns:repeat(3,1fr);
+ gap:12px;
+ margin:18px 0;
+}
+
+.stat-card{
+ padding:16px;
+ border:1px solid var(--border);
+ border-radius:14px;
+ background:var(--card2);
+}
+
+.stat-label{
+ font-size:12px;
+ color:var(--muted);
+}
+
+.stat-number{
+ font-size:25px;
+ font-weight:800;
+ margin-top:5px;
+}
+
+.users-list{
+ display:flex;
+ flex-direction:column;
+ gap:8px;
+ max-height:380px;
+ overflow:auto;
+}
+
+.user-row{
+ display:flex;
+ align-items:center;
+ justify-content:space-between;
+ gap:12px;
+ padding:12px 14px;
+ border:1px solid var(--border);
+ border-radius:12px;
+ background:var(--bg2);
+}
+
+.user-main{min-width:0}
+
+.user-name{font-weight:bold}
+
+.user-status{
+ display:flex;
+ align-items:center;
+ gap:8px;
+ white-space:nowrap;
+ font-size:12px;
+}
+
+.private-chat-button{
+ border:1px solid var(--border);
+ border-radius:10px;
+ padding:8px 12px;
+ background:var(--card2);
+ color:var(--text);
+ font-weight:bold;
+}
+
+.private-chat-button:hover{
+ background:var(--purple);
+ color:#fff;
+}
+
+.dashboard-empty{
+ color:var(--muted);
+ padding:12px 0;
+}
+
+.private-chat-panel{
+ padding:0;
+ overflow:hidden;
+}
+
+.private-chat-header{
+ padding:18px 20px;
+ border-bottom:1px solid var(--border);
+ position:relative;
+}
+
+.private-chat-title{
+ font-weight:800;
+ font-size:18px;
+}
+
+.private-chat-subtitle{
+ color:var(--muted);
+ font-size:13px;
+ margin-top:3px;
+}
+
+.private-chat-close{
+ position:absolute;
+ right:15px;
+ top:15px;
+ border:0;
+ border-radius:9px;
+ padding:7px 10px;
+}
+
+.private-chat-messages{
+ height:330px;
+ overflow:auto;
+ padding:18px;
+ display:flex;
+ flex-direction:column;
+ gap:10px;
+}
+
+.private-chat-input{
+ display:flex;
+ gap:10px;
+ padding:14px;
+ border-top:1px solid var(--border);
+}
+
+.private-chat-input input{
+ flex:1;
+ min-width:0;
+ border:1px solid var(--border);
+ background:var(--bg2);
+ color:var(--text);
+ padding:12px;
+ border-radius:10px;
+ outline:0;
+}
+
+.private-chat-input button{
+ border:0;
+ border-radius:10px;
+ padding:0 18px;
+ background:var(--purple);
+ color:#fff;
+ font-weight:bold;
+}
+
+.about{display:none}
+
 .toast{
-    position:fixed;
-    bottom:22px;
-    left:50%;
-    transform:translateX(-50%) translateY(100px);
-    background:#111;
-    color:#fff;
-    padding:12px 18px;
-    border-radius:10px;
-    transition:.3s;
-    z-index:1000;
+ position:fixed;
+ bottom:22px;
+ left:50%;
+ transform:translateX(-50%) translateY(100px);
+ background:#111;
+ color:#fff;
+ padding:12px 18px;
+ border-radius:10px;
+ transition:.3s;
+ z-index:1000;
 }
 
 .toast.show{
-    transform:translateX(-50%) translateY(0);
+ transform:translateX(-50%) translateY(0);
 }
 
-/* FOOTER */
 footer{
-    text-align:center;
-    padding:25px;
-    color:var(--muted);
-    font-size:13px;
+ text-align:center;
+ padding:25px;
+ color:var(--muted);
+ font-size:13px;
 }
 
-
-/* REGISTERED USERS DASHBOARD */
-.dashboard-panel{
-    margin-top:25px;
-    padding:22px;
-    border-radius:18px;
-    background:var(--card);
-    border:1px solid var(--border);
-}
-.dashboard-panel h2{margin-bottom:6px}
-.dashboard-subtitle{color:var(--muted);font-size:14px;margin-bottom:16px}
-.stats-grid{
-    display:grid;
-    grid-template-columns:repeat(3,1fr);
-    gap:12px;
-    margin-bottom:16px;
-}
-.stat-card{
-    padding:16px;
-    border:1px solid var(--border);
-    border-radius:14px;
-    background:var(--card2);
-}
-.stat-number{font-size:25px;font-weight:800;margin-top:5px}
-.stat-label{font-size:12px;color:var(--muted)}
-.users-list{
-    display:flex;
-    flex-direction:column;
-    gap:8px;
-    max-height:360px;
-    overflow:auto;
-}
-.user-row{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:12px;
-    padding:12px 14px;
-    border:1px solid var(--border);
-    border-radius:12px;
-    background:var(--bg2);
-}
-.user-main{min-width:0}
-.user-name{font-weight:bold}
-.user-email{font-size:12px;color:var(--muted);overflow:hidden;text-overflow:ellipsis}
-.user-status{
-    white-space:nowrap;
-    font-size:12px;
-    display:flex;
-    align-items:center;
-}
-.user-status .dot{width:8px;height:8px;margin-right:5px}
-.dashboard-empty{color:var(--muted);padding:12px 0}
 @media(max-width:750px){
-    .stats-grid{grid-template-columns:1fr}
-    .user-row{align-items:flex-start}
+
+ .chat-app{
+  grid-template-columns:1fr;
+  min-height:650px;
+ }
+
+ .sidebar{
+  border-right:0;
+  border-bottom:1px solid var(--border);
+ }
+
+ .account-grid{
+  grid-template-columns:1fr;
+ }
+
+ .stats-grid{
+  grid-template-columns:1fr;
+ }
+
+ .user-row{
+  align-items:flex-start;
+ }
+
+ .user-status{
+  flex-wrap:wrap;
+  justify-content:flex-end;
+ }
+
+ .private-chat-input{
+  flex-direction:column;
+ }
+
+ .private-chat-input button{
+  padding:12px;
+ }
+
+ .nav button{
+  padding:8px 9px;
+ }
+
 }
-
-
-/* PRIVATE USER CHAT */
-.user-row{cursor:pointer;transition:.15s}
-.user-row:hover{border-color:var(--purple2);transform:translateY(-1px)}
-.user-chat-hint{font-size:11px;color:var(--accent);margin-top:3px}
-.private-chat-panel{margin-top:25px;padding:0;border-radius:18px;background:var(--card);border:1px solid var(--border);overflow:hidden}
-.private-chat-header{padding:18px 20px;border-bottom:1px solid var(--border)}
-.private-chat-title{font-weight:800;font-size:18px}
-.private-chat-subtitle{color:var(--muted);font-size:13px;margin-top:3px}
-.private-chat-messages{height:330px;overflow:auto;padding:18px}
-.private-chat-input{display:flex;gap:10px;padding:14px;border-top:1px solid var(--border)}
-.private-chat-input input{flex:1}
-.private-chat-close{float:right;margin-top:-30px}
-
-.status-label{white-space:nowrap}
-
-/* MOBILE */
-@media(max-width:750px){
-    .chat-app{
-        grid-template-columns:1fr;
-        min-height:650px;
-    }
-
-    .sidebar{
-        border-right:none;
-        border-bottom:1px solid var(--border);
-    }
-
-    .info{
-        display:none;
-    }
-
-    .hero{
-        margin-bottom:18px;
-    }
-
-    .nav button{
-        padding:9px 10px;
-    }
-}
-
-/* ACCOUNT / PROFILE */
-.account-panel{
-    margin-top:25px;
-    padding:22px;
-    border-radius:18px;
-    background:var(--card);
-    border:1px solid var(--border);
-}
-.account-panel h2{margin-bottom:8px}
-.account-panel p{color:var(--muted);line-height:1.5;margin-bottom:14px}
-.account-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.account-grid input{
-    width:100%;border:1px solid var(--border);background:var(--bg2);
-    color:var(--text);padding:12px;border-radius:10px;outline:none;
-}
-.account-actions{display:flex;gap:10px;margin-top:12px;flex-wrap:wrap}
-.account-actions button{
-    border:none;border-radius:10px;padding:11px 15px;background:var(--purple);
-    color:#fff;font-weight:bold;
-}
-.account-actions button.secondary{background:var(--card2);color:var(--text)}
-.profile-card{
-    padding:14px;border:1px solid var(--border);border-radius:12px;
-    background:var(--card2);margin-top:12px;display:none;
-}
-.profile-card strong{font-size:17px}
-.verification-note{margin-top:8px;color:var(--muted);font-size:13px;line-height:1.5}
-.verification-note.ok{color:var(--green)}
-.verification-note.warn{color:#f59e0b}
-.account-panel .error{color:var(--danger);font-size:13px;margin-top:10px}
-@media(max-width:750px){.account-grid{grid-template-columns:1fr}.account-panel{margin-top:18px}}
-
 </style>
 </head>
 
 <body>
 
 <header class="topbar">
-    <div class="logo">DAKS<span>HUB</span></div>
 
-    <div class="nav">
-        <button onclick="goHome()">Home</button>
-        <button onclick="showAbout()">About</button>
-        <button id="themeButton" onclick="toggleTheme()">☀ Light</button>
-    </div>
+ <div class="logo">
+  DAKS<span>HUB</span>
+ </div>
+
+ <div class="nav">
+  <button onclick="goHome()">Home</button>
+  <button onclick="showAbout()">About</button>
+  <button id="themeButton" onclick="toggleTheme()">☀ Light</button>
+ </div>
+
 </header>
 
 <main class="main">
 
-    <section class="hero">
-        <h1>Meet. Match. <span>Chat.</span></h1>
-        <p>Connect with another person and start a real-time conversation on Dakshub.</p>
-    </section>
+<section class="hero">
 
-    <section class="chat-app">
+ <h1>
+  Meet. Match. <span>Chat.</span>
+ </h1>
 
-        <aside class="sidebar">
-            <h2>Random Chat</h2>
-            <p class="status-text">Press New Chat and wait for another person to join.</p>
+ <p>
+  Connect with people and start a real-time conversation on Dakshub.
+ </p>
 
-            <div class="status-box">
-                <div class="status-label">CONNECTION</div>
-                <div class="status-value" id="connectionState">
-                    <span class="dot off"></span>NOT CONNECTED
-                </div>
-            </div>
-
-            <button class="action-btn" id="newChatBtn" onclick="startNewChat()">
-                New Chat
-            </button>
-
-            <button class="action-btn end-btn" onclick="leaveChat()">
-                End Chat
-            </button>
-
-            <p class="info">
-                Dakshub connects two people through Firebase Realtime Database.
-                Messages are shown in real time while the chat is active.
-            </p>
-        </aside>
-
-        <section class="chat-area">
-
-            <div class="chat-head">
-                <div>
-                    <h3 id="partnerTitle">Ready to connect</h3>
-                    <div class="chat-sub" id="partnerStatus">
-                        Press New Chat to find someone
-                    </div>
-                </div>
-
-                <div class="badge" id="chatBadge">OFFLINE</div>
-            </div>
-
-            <div class="messages" id="messages">
-
-                <div class="empty" id="emptyState">
-                    <h3 id="emptyTitle">Ready to Meet Someone?</h3>
-                    <p id="emptyText">Press New Chat to start searching.</p>
-                </div>
-
-            </div>
-
-            <div class="input-area">
-                <input
-                    id="messageInput"
-                    type="text"
-                    placeholder="Type a message..."
-                    disabled
-                >
-
-                <button
-                    class="send-btn"
-                    id="sendBtn"
-                    onclick="sendMessage()"
-                    disabled
-                >
-                    Send
-                </button>
-            </div>
-
-        </section>
-    </section>
-
-
-<section class="account-panel" id="accountPanel">
-  <div id="loggedOutPanel">
-    <h2>Create your Dakshub account</h2>
-    <p>Register with an email, password and username. Your username will be saved securely to your Dakshub profile.</p>
-
-    <div class="account-grid">
-      <input id="accountEmail" type="email" placeholder="Email address" autocomplete="email">
-      <input id="accountPassword" type="password" placeholder="Password (6+ characters)" autocomplete="new-password">
-      <input id="profileUsername" type="text" placeholder="Username" maxlength="30" autocomplete="nickname">
-    </div>
-
-    <div class="account-actions">
-      <button type="button" onclick="registerAccount()">Create Account</button>
-      <button type="button" class="secondary" onclick="loginAccount()">Log In</button>
-      <button type="button" class="secondary" onclick="forgotPassword()">Forgot Password?</button>
-    </div>
-  </div>
-
-  <div id="loggedInPanel" style="display:none">
-    <h2>My Dakshub Profile</h2>
-
-    <div class="profile-card" id="profileCard" style="display:block">
-      <strong id="profileName">Loading...</strong>
-      <div id="profileEmail"></div>
-      <div id="verificationStatus" class="verification-note"></div>
-    </div>
-
-    <div class="account-actions">
-      <button type="button" id="resendVerificationBtn" class="secondary" onclick="resendVerificationEmail()" style="display:none">
-        Resend Verification Email
-      </button>
-      <button type="button" class="secondary" onclick="logoutAccount()">Log Out</button>
-    </div>
-  </div>
 </section>
 
 
-<section class="dashboard-panel" id="dashboardPanel" style="display:none">
-    <h2>Dakshub Users</h2>
-    <div class="dashboard-subtitle">
-        Registered users and their current online status. Tap 💬 Chat beside an online user to message them.
+<!-- RANDOM CHAT -->
+
+<section class="chat-app">
+
+ <aside class="sidebar">
+
+  <h2>Random Chat</h2>
+
+  <p class="status-text">
+   Press New Chat and wait for another person to join.
+  </p>
+
+  <div class="status-box">
+
+   <div class="status-label">
+    CONNECTION
+   </div>
+
+   <div class="status-value" id="connectionState">
+    <span class="dot off"></span>
+    CONNECTING
+   </div>
+
+  </div>
+
+  <button
+   class="action-btn"
+   id="newChatBtn"
+   onclick="startNewChat()"
+   disabled
+  >
+   New Chat
+  </button>
+
+  <button
+   class="action-btn end-btn"
+   onclick="leaveChat()"
+  >
+   End Chat
+  </button>
+
+  <p class="info">
+   Dakshub uses Firebase Realtime Database
+   for real-time random chat.
+  </p>
+
+ </aside>
+
+
+ <section class="chat-area">
+
+  <div class="chat-head">
+
+   <div>
+
+    <h3 id="partnerTitle">
+     Ready to connect
+    </h3>
+
+    <div
+     class="chat-sub"
+     id="partnerStatus"
+    >
+     Press New Chat to find someone
     </div>
 
-    <div class="stats-grid">
-        <div class="stat-card">
-            <div class="stat-label">REGISTERED USERS</div>
-            <div class="stat-number" id="registeredCount">0</div>
-        </div>
+   </div>
 
-        <div class="stat-card">
-            <div class="stat-label">ONLINE NOW</div>
-            <div class="stat-number" id="onlineCount">0</div>
-        </div>
+   <div
+    class="badge"
+    id="chatBadge"
+   >
+    OFFLINE
+   </div>
 
-        <div class="stat-card">
-            <div class="stat-label">OFFLINE</div>
-            <div class="stat-number" id="offlineCount">0</div>
-        </div>
-    </div>
+  </div>
 
-    <div class="users-list" id="usersList">
-        <div class="dashboard-empty">Loading users...</div>
-    </div>
+
+  <div
+   class="messages"
+   id="messages"
+  >
+
+   <div
+    class="empty"
+    id="emptyState"
+   >
+
+    <h3 id="emptyTitle">
+     Ready to Meet Someone?
+    </h3>
+
+    <p id="emptyText">
+     Press New Chat to start searching.
+    </p>
+
+   </div>
+
+  </div>
+
+
+  <div class="input-area">
+
+   <input
+    id="messageInput"
+    type="text"
+    maxlength="2000"
+    placeholder="Type a message..."
+    disabled
+   >
+
+   <button
+    class="send-btn"
+    id="sendBtn"
+    onclick="sendMessage()"
+    disabled
+   >
+    Send
+   </button>
+
+  </div>
+
+ </section>
+
 </section>
 
 
-<section class="private-chat-panel" id="privateChatPanel" style="display:none">
-  <div class="private-chat-header">
-    <div class="private-chat-title" id="privateChatTitle">Private Chat</div>
-    <div class="private-chat-subtitle">Private realtime conversation</div>
-    <button type="button" class="secondary private-chat-close" onclick="closePrivateChat()">Close</button>
+<!-- ACCOUNT -->
+
+<section
+ class="account-panel"
+ id="accountPanel"
+>
+
+ <div id="loggedOutPanel">
+
+  <h2>Create your Dakshub account</h2>
+
+  <p>
+   Create an account using email, password and username.
+  </p>
+
+  <div class="account-grid">
+
+   <input
+    id="accountEmail"
+    type="email"
+    placeholder="Email address"
+    autocomplete="email"
+   >
+
+   <input
+    id="accountPassword"
+    type="password"
+    placeholder="Password (6+ characters)"
+    autocomplete="new-password"
+   >
+
+   <input
+    id="profileUsername"
+    type="text"
+    maxlength="30"
+    placeholder="Username"
+    autocomplete="nickname"
+   >
+
   </div>
-  <div class="private-chat-messages" id="privateChatMessages"></div>
-  <div class="private-chat-input">
-    <input id="privateMessageInput" type="text" maxlength="2000" placeholder="Type a private message..." autocomplete="off">
-    <button type="button" id="privateSendBtn" onclick="sendPrivateMessage()">Send</button>
+
+
+  <div class="account-actions">
+
+   <button onclick="registerAccount()">
+    Create Account
+   </button>
+
+   <button
+    class="secondary"
+    onclick="loginAccount()"
+   >
+    Log In
+   </button>
+
+   <button
+    class="secondary"
+    onclick="forgotPassword()"
+   >
+    Forgot Password?
+   </button>
+
   </div>
+
+ </div>
+
+
+ <div
+  id="loggedInPanel"
+  style="display:none"
+ >
+
+  <h2>My Dakshub Profile</h2>
+
+  <div class="profile-card">
+
+   <strong id="profileName">
+    Loading...
+   </strong>
+
+   <div id="profileEmail"></div>
+
+   <div
+    id="verificationStatus"
+    class="verification-note"
+   ></div>
+
+  </div>
+
+  <div class="account-actions">
+
+   <button
+    id="resendVerificationBtn"
+    class="secondary"
+    onclick="resendVerificationEmail()"
+    style="display:none"
+   >
+    Resend Verification Email
+   </button>
+
+   <button
+    class="secondary"
+    onclick="logoutAccount()"
+   >
+    Log Out
+   </button>
+
+  </div>
+
+ </div>
+
 </section>
 
-<section class="about" id="about">
-        <h2>About Dakshub</h2>
-        <p>
-            Dakshub is a simple real-time random chat website. When two users
-            press New Chat, the system attempts to match them and creates a
-            shared chat room using Firebase Realtime Database.
-        </p>
-    </section>
+
+<!-- USERS -->
+
+<section
+ class="dashboard-panel"
+ id="dashboardPanel"
+ style="display:none"
+>
+
+ <h2>Dakshub Users</h2>
+
+ <p class="dashboard-empty">
+  Registered users. You can privately message any other user.
+ </p>
+
+
+ <div class="stats-grid">
+
+  <div class="stat-card">
+
+   <div class="stat-label">
+    REGISTERED USERS
+   </div>
+
+   <div
+    class="stat-number"
+    id="registeredCount"
+   >
+    0
+   </div>
+
+  </div>
+
+
+  <div class="stat-card">
+
+   <div class="stat-label">
+    ONLINE NOW
+   </div>
+
+   <div
+    class="stat-number"
+    id="onlineCount"
+   >
+    0
+   </div>
+
+  </div>
+
+
+  <div class="stat-card">
+
+   <div class="stat-label">
+    OFFLINE
+   </div>
+
+   <div
+    class="stat-number"
+    id="offlineCount"
+   >
+    0
+   </div>
+
+  </div>
+
+ </div>
+
+
+ <div
+  class="users-list"
+  id="usersList"
+ >
+
+  <div class="dashboard-empty">
+   Loading users...
+  </div>
+
+ </div>
+
+</section>
+
+
+<!-- PRIVATE CHAT -->
+
+<section
+ class="private-chat-panel"
+ id="privateChatPanel"
+ style="display:none"
+>
+
+ <div class="private-chat-header">
+
+  <div
+   class="private-chat-title"
+   id="privateChatTitle"
+  >
+   Private Chat
+  </div>
+
+  <div class="private-chat-subtitle">
+   Private realtime conversation
+  </div>
+
+  <button
+   class="private-chat-close"
+   onclick="closePrivateChat()"
+  >
+   Close
+  </button>
+
+ </div>
+
+
+ <div
+  class="private-chat-messages"
+  id="privateChatMessages"
+ ></div>
+
+
+ <div class="private-chat-input">
+
+  <input
+   id="privateMessageInput"
+   type="text"
+   maxlength="2000"
+   placeholder="Type a private message..."
+   autocomplete="off"
+  >
+
+  <button
+   onclick="sendPrivateMessage()"
+  >
+   Send
+  </button>
+
+ </div>
+
+</section>
+
+
+<section
+ class="about"
+ id="about"
+>
+
+ <h2>About Dakshub</h2>
+
+ <p>
+  Dakshub is a real-time chat website.
+  Users can use Random Chat or privately
+  message another registered Dakshub user.
+ </p>
+
+</section>
 
 </main>
 
-<div class="toast" id="toast"></div>
+
+<div
+ class="toast"
+ id="toast"
+></div>
+
 
 <footer>
-    © <span id="year"></span> Dakshub
+ © <span id="year"></span> Dakshub
 </footer>
 
-<!-- Firebase SDK -->
+
+<!-- FIREBASE -->
+
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
 
+
 <script>
 
-/* =========================
-   FIREBASE CONFIG
-========================= */
+/* =========================================
+   FIREBASE
+========================================= */
 
 const firebaseConfig = {
-    apiKey: "AIzaSyBA7whtVuz10pNxlK5lIOVbEJJLBQ6G3wU",
-    authDomain: "dakshub-3cd0f.firebaseapp.com",
-    databaseURL: "https://dakshub-3cd0f-default-rtdb.firebaseio.com",
-    projectId: "dakshub-3cd0f",
-    storageBucket: "dakshub-3cd0f.firebasestorage.app",
-    messagingSenderId: "203055229267",
-    appId: "1:203055229267:web:647ddbd7407995019d19a6",
-    measurementId: "G-CDSY4KZFHQ"
+
+ apiKey:
+  "AIzaSyBA7whtVuz10pNxlK5lIOVbEJJLBQ6G3wU",
+
+ authDomain:
+  "dakshub-3cd0f.firebaseapp.com",
+
+ databaseURL:
+  "https://dakshub-3cd0f-default-rtdb.firebaseio.com",
+
+ projectId:
+  "dakshub-3cd0f",
+
+ storageBucket:
+  "dakshub-3cd0f.firebasestorage.app",
+
+ messagingSenderId:
+  "203055229267",
+
+ appId:
+  "1:203055229267:web:647ddbd7407995019d19a6",
+
+ measurementId:
+  "G-CDSY4KZFHQ"
+
 };
 
 firebase.initializeApp(firebaseConfig);
-const db = firebase.database();
 
-/* =========================
-   USER ID
-   Firebase Anonymous Auth gives each visitor a real Firebase UID.
-========================= */
+const db =
+ firebase.database();
+
+
+/* =========================================
+   VARIABLES
+========================================= */
 
 let clientId = null;
 
-/* =========================
-   VARIABLES
-========================= */
-
 let currentTicketId = null;
 let currentRoomId = null;
+
 let isSearching = false;
+
 let searchTimer = null;
+
 let messageListener = null;
 let assignmentListener = null;
 
 let profileListListener = null;
-let presenceListListener = null;
-let presenceConnectedListener = null;
+
 let privateChatRoomId = null;
 let privateChatPartnerId = null;
 let privateChatMessageListener = null;
 
 
+/* =========================================
+   ELEMENTS
+========================================= */
 
-const messages = document.getElementById("messages");
-const emptyState = document.getElementById("emptyState");
-const messageInput = document.getElementById("messageInput");
-const sendBtn = document.getElementById("sendBtn");
-const newChatBtn = document.getElementById("newChatBtn");
+const messages =
+ document.getElementById("messages");
 
-/* Authenticate before allowing database access.
-   Registered users stay signed in across refreshes.
-   New visitors receive an anonymous Firebase account until they register. */
-newChatBtn.disabled = true;
+const emptyState =
+ document.getElementById("emptyState");
+
+const messageInput =
+ document.getElementById("messageInput");
+
+const sendBtn =
+ document.getElementById("sendBtn");
+
+const newChatBtn =
+ document.getElementById("newChatBtn");
+
+
+/* =========================================
+   AUTH
+========================================= */
 
 firebase.auth().onAuthStateChanged(function(user){
-    if(user){
-        clientId = user.uid;
-        newChatBtn.disabled = false;
-        document.getElementById("connectionState").innerHTML =
-            '<span class="dot"></span>READY';
-        updateAccountUI(user);
 
-        if(!user.isAnonymous){
-            startPresence(user);
-            startUsersDashboard();
+ if(user){
 
-            // Immediately mark the real signed-in account online.
-            // This also fixes cases where the initial .info/connected event
-            // happened before the email/password account became active.
-            db.ref("presence/" + user.uid).set({
-                online: true,
-                lastSeen: firebase.database.ServerValue.TIMESTAMP
-            }).catch(function(error){
-                console.error("Initial presence write failed:", error);
-            });
-        }else{
-            stopUsersDashboard();
-        }
+  clientId = user.uid;
 
-        return;
-    }
+  newChatBtn.disabled = false;
 
-    firebase.auth().signInAnonymously()
-    .catch(function(error){
-        console.error(error);
-        document.getElementById("connectionState").innerHTML =
-            '<span class="dot off"></span>AUTH ERROR';
-        showToast("Could not connect securely. Please try again.");
-    });
+  document.getElementById(
+   "connectionState"
+  ).innerHTML =
+   '<span class="dot"></span>READY';
+
+  updateAccountUI(user);
+
+  if(!user.isAnonymous){
+
+   startPresence(user);
+
+   startUsersDashboard();
+
+  }else{
+
+   stopUsersDashboard();
+
+  }
+
+  return;
+ }
+
+
+ firebase.auth()
+ .signInAnonymously()
+ .catch(function(error){
+
+  console.error(error);
+
+  document.getElementById(
+   "connectionState"
+  ).innerHTML =
+   '<span class="dot off"></span>AUTH ERROR';
+
+  showToast(
+   "Could not connect to Firebase."
+  );
+
+ });
+
 });
 
-/* =========================
-   START CHAT
-========================= */
+
+/* =========================================
+   RANDOM CHAT
+========================================= */
 
 function startNewChat(){
 
-    if(!clientId){
-        showToast("Connecting securely. Please wait...");
-        return;
+ if(!clientId){
+
+  showToast(
+   "Connecting. Please wait..."
+  );
+
+  return;
+ }
+
+ if(isSearching || currentRoomId){
+
+  return;
+
+ }
+
+ isSearching = true;
+
+ newChatBtn.disabled = true;
+
+ document.getElementById(
+  "partnerTitle"
+ ).textContent =
+ "Looking for someone";
+
+ document.getElementById(
+  "partnerStatus"
+ ).textContent =
+ "Searching for another person...";
+
+ document.getElementById(
+  "connectionState"
+ ).innerHTML =
+ '<span class="dot"></span>SEARCHING';
+
+ document.getElementById(
+  "chatBadge"
+ ).textContent =
+ "SEARCHING";
+
+ messages.innerHTML = "";
+
+ messages.appendChild(
+  emptyState
+ );
+
+ emptyState.style.display =
+ "flex";
+
+ document.getElementById(
+  "emptyTitle"
+ ).textContent =
+ "Searching for someone...";
+
+ document.getElementById(
+  "emptyText"
+ ).textContent =
+ "Waiting for another Dakshub user.";
+
+
+ const ticketRef =
+  db.ref("matchmaking").push();
+
+ currentTicketId =
+  ticketRef.key;
+
+
+ ticketRef.set({
+
+  userId:
+   clientId,
+
+  createdAt:
+   firebase.database.ServerValue.TIMESTAMP
+
+ })
+ .then(function(){
+
+  ticketRef.onDisconnect().remove();
+
+  listenForAssignment();
+
+  findPartner();
+
+  searchTimer =
+   setInterval(function(){
+
+    if(
+     isSearching &&
+     !currentRoomId
+    ){
+
+     findPartner();
+
     }
 
-    if(isSearching || currentRoomId){
-        return;
-    }
+   },2000);
 
-    isSearching = true;
-    newChatBtn.disabled = true;
+  showToast(
+   "Searching for someone..."
+  );
 
-    document.getElementById("partnerTitle").textContent =
-        "Looking for someone";
+ })
+ .catch(function(error){
 
-    document.getElementById("partnerStatus").textContent =
-        "Searching for another person...";
+  console.error(error);
 
-    document.getElementById("connectionState").innerHTML =
-        '<span class="dot"></span>SEARCHING';
+  isSearching = false;
 
-    document.getElementById("chatBadge").textContent =
-        "SEARCHING";
+  newChatBtn.disabled = false;
 
-    emptyState.style.display = "flex";
-    document.getElementById("emptyTitle").textContent =
-        "Searching for someone...";
+  showToast(
+   "Could not start random chat."
+  );
 
-    document.getElementById("emptyText").textContent =
-        "Waiting for another Dakshub user.";
+ });
 
-    const ticketRef = db.ref("matchmaking").push();
-
-    currentTicketId = ticketRef.key;
-
-    ticketRef.set({
-        userId: clientId,
-        createdAt: firebase.database.ServerValue.TIMESTAMP
-    });
-
-    ticketRef.onDisconnect().remove();
-
-    listenForAssignment();
-    findPartner();
-
-    searchTimer = setInterval(function(){
-
-        if(isSearching && !currentRoomId){
-            findPartner();
-        }
-
-    }, 2000);
-
-    showToast("Searching for someone...");
 }
 
-/* =========================
+
+/* =========================================
    FIND PARTNER
-========================= */
+========================================= */
 
 function findPartner(){
 
-    if(!isSearching || !currentTicketId || currentRoomId){
-        return;
-    }
+ if(
+  !isSearching ||
+  !currentTicketId ||
+  currentRoomId
+ ){
+  return;
+ }
 
-    db.ref("matchmaking").once("value")
-    .then(function(snapshot){
 
-        let partner = null;
+ db.ref("matchmaking")
+ .once("value")
+ .then(function(snapshot){
 
-        snapshot.forEach(function(child){
+  const candidates = [];
 
-            const data = child.val();
 
-            if(
-                !partner &&
-                child.key !== currentTicketId &&
-                data &&
-                data.userId !== clientId
-            ){
-                partner = {
-                    ticketId: child.key,
-                    userId: data.userId
-                };
-            }
+  snapshot.forEach(function(child){
 
-        });
+   const data =
+    child.val();
 
-        if(partner){
-            claimPartner(partner);
-        }
+   if(
+    data &&
+    data.userId &&
+    data.userId !== clientId &&
+    child.key !== currentTicketId
+   ){
 
-    })
-    .catch(function(error){
-        console.error(error);
-        showToast("Database connection error.");
+    candidates.push({
+
+     ticketId:
+      child.key,
+
+     userId:
+      data.userId,
+
+     createdAt:
+      Number(data.createdAt) || 0
+
     });
+
+   }
+
+  });
+
+
+  if(!candidates.length){
+
+   return;
+
+  }
+
+
+  candidates.sort(function(a,b){
+
+   if(
+    a.createdAt !==
+    b.createdAt
+   ){
+
+    return (
+     a.createdAt -
+     b.createdAt
+    );
+
+   }
+
+   return String(
+    a.ticketId
+   ).localeCompare(
+    String(b.ticketId)
+   );
+
+  });
+
+
+  const partner =
+   candidates[0];
+
+
+  const myTicket =
+   snapshot.child(
+    currentTicketId
+   ).val();
+
+
+  if(!myTicket){
+
+   return;
+
+  }
+
+
+  const myTime =
+   Number(
+    myTicket.createdAt
+   ) || 0;
+
+
+  const partnerTime =
+   Number(
+    partner.createdAt
+   ) || 0;
+
+
+  const iAmOlder =
+   myTime < partnerTime ||
+   (
+    myTime === partnerTime &&
+    String(currentTicketId) <
+    String(partner.ticketId)
+   );
+
+
+  if(iAmOlder){
+
+   claimPartner(
+    partner
+   );
+
+  }
+
+ })
+ .catch(function(error){
+
+  console.error(
+   "Matchmaking error:",
+   error
+  );
+
+ });
+
 }
 
-/* =========================
+
+/* =========================================
    CLAIM PARTNER
-========================= */
+========================================= */
 
 function claimPartner(partner){
 
-    if(currentRoomId || !isSearching){
-        return;
-    }
+ if(
+  currentRoomId ||
+  !isSearching ||
+  !currentTicketId
+ ){
 
-    const ids = [currentTicketId, partner.ticketId].sort();
+  return;
 
-    const roomId =
-        "room_" + ids[0] + "_" + ids[1];
+ }
 
-    const claimRef =
-        db.ref("claims/" + partner.ticketId);
 
-    claimRef.transaction(function(current){
+ const ids = [
 
-        if(current === null){
-            return {
-                claimedBy: clientId,
-                roomId: roomId,
-                createdAt:
-                    firebase.database.ServerValue.TIMESTAMP
-            };
-        }
+  currentTicketId,
+  partner.ticketId
 
-        return;
+ ].sort();
 
-    }, function(error, committed){
 
-        if(error){
-            console.error(error);
-            return;
-        }
+ const roomId =
+  "room_" +
+  ids[0] +
+  "_" +
+  ids[1];
 
-        if(committed){
 
-            db.ref(
-                "rooms/" + roomId
-            ).update({
-                createdAt:
-                    firebase.database.ServerValue.TIMESTAMP,
-                active: true,
-                users: {
-                    [clientId]: true,
-                    [partner.userId]: true
-                }
-            }).then(function(){
-                joinRoom(roomId);
-            }).catch(function(error){
-                console.error(error);
-                showToast("Could not create secure chat room.");
-            });
-        }
+ const claimRef =
+  db.ref(
+   "claims/" +
+   partner.ticketId
+  );
 
-    });
+
+ claimRef.transaction(
+
+  function(current){
+
+   if(current === null){
+
+    return {
+
+     claimedBy:
+      clientId,
+
+     roomId:
+      roomId,
+
+     createdAt:
+      firebase.database.ServerValue.TIMESTAMP
+
+    };
+
+   }
+
+   return;
+
+  },
+
+  function(error,committed){
+
+   if(error){
+
+    console.error(
+     "Claim error:",
+     error
+    );
+
+    return;
+
+   }
+
+
+   if(!committed){
+
+    setTimeout(
+     findPartner,
+     300
+    );
+
+    return;
+
+   }
+
+
+   createRandomRoom(
+    roomId,
+    partner.userId
+   );
+
+  }
+
+ );
+
 }
 
-/* =========================
+
+/* =========================================
+   CREATE RANDOM ROOM
+========================================= */
+
+function createRandomRoom(
+ roomId,
+ partnerUid
+){
+
+ const roomRef =
+  db.ref(
+   "rooms/" +
+   roomId
+  );
+
+
+ roomRef.transaction(
+
+  function(current){
+
+   if(current === null){
+
+    return {
+
+     createdAt:
+      firebase.database.ServerValue.TIMESTAMP,
+
+     active:
+      true,
+
+     users: {
+
+      [clientId]:
+       true,
+
+      [partnerUid]:
+       true
+
+     }
+
+    };
+
+   }
+
+   return current;
+
+  },
+
+  function(error){
+
+   if(error){
+
+    console.error(
+     "Room creation error:",
+     error
+    );
+
+    showToast(
+     "Could not create chat room."
+    );
+
+    return;
+
+   }
+
+
+   joinRoom(
+    roomId
+   );
+
+  }
+
+ );
+
+}
+
+
+/* =========================================
    LISTEN FOR ASSIGNMENT
-========================= */
+========================================= */
 
 function listenForAssignment(){
 
-    /* The partner claims our ticket; the claim contains the room ID. */
-    const ref =
-        db.ref("claims/" + currentTicketId);
+ if(!currentTicketId){
+  return;
+ }
 
-    assignmentListener =
-        ref.on("value", function(snapshot){
+ const ref =
+  db.ref(
+   "claims/" +
+   currentTicketId
+  );
 
-            const data = snapshot.val();
 
-            if(
-                data &&
-                data.roomId &&
-                !currentRoomId
-            ){
-                joinRoom(data.roomId);
-            }
+ if(assignmentListener){
 
-        });
+  ref.off(
+   "value",
+   assignmentListener
+  );
+
+ }
+
+
+ assignmentListener =
+  ref.on(
+   "value",
+   function(snapshot){
+
+    const data =
+     snapshot.val();
+
+
+    if(
+     data &&
+     data.roomId &&
+     !currentRoomId
+    ){
+
+     joinRoom(
+      data.roomId
+     );
+
+    }
+
+   }
+  );
+
 }
 
-/* =========================
-   JOIN ROOM
-========================= */
+
+/* =========================================
+   JOIN RANDOM ROOM
+========================================= */
 
 function joinRoom(roomId){
 
-    if(currentRoomId){
-        return;
-    }
+ if(currentRoomId){
 
-    currentRoomId = roomId;
-    isSearching = false;
+  return;
 
-    if(searchTimer){
-        clearInterval(searchTimer);
-        searchTimer = null;
-    }
+ }
 
-    db.ref(
-        "matchmaking/" + currentTicketId
-    ).remove();
 
-    document.getElementById("partnerTitle").textContent =
-        "Connected to someone";
+ currentRoomId =
+  roomId;
 
-    document.getElementById("partnerStatus").textContent =
-        "You can start chatting now";
+ isSearching = false;
 
-    document.getElementById("connectionState").innerHTML =
-        '<span class="dot"></span>CONNECTED';
 
-    document.getElementById("chatBadge").textContent =
-        "CONNECTED";
+ if(searchTimer){
 
-    emptyState.style.display = "none";
+  clearInterval(
+   searchTimer
+  );
 
-    messageInput.disabled = false;
-    sendBtn.disabled = false;
-    newChatBtn.disabled = true;
+  searchTimer = null;
 
-    messageInput.focus();
+ }
 
-    showToast("Connected! Say hello 👋");
 
-    listenForMessages();
+ if(currentTicketId){
+
+  db.ref(
+   "matchmaking/" +
+   currentTicketId
+  ).remove();
+
+ }
+
+
+ if(
+  assignmentListener &&
+  currentTicketId
+ ){
+
+  db.ref(
+   "claims/" +
+   currentTicketId
+  ).off(
+   "value",
+   assignmentListener
+  );
+
+ }
+
+
+ document.getElementById(
+  "partnerTitle"
+ ).textContent =
+ "Connected";
+
+ document.getElementById(
+  "partnerStatus"
+ ).textContent =
+ "You can start chatting now";
+
+ document.getElementById(
+  "connectionState"
+ ).innerHTML =
+ '<span class="dot"></span>CONNECTED';
+
+ document.getElementById(
+  "chatBadge"
+ ).textContent =
+ "CONNECTED";
+
+
+ messages.innerHTML = "";
+
+ messages.appendChild(
+  emptyState
+ );
+
+ emptyState.style.display =
+ "flex";
+
+
+ messageInput.disabled =
+ false;
+
+ sendBtn.disabled =
+ false;
+
+ newChatBtn.disabled =
+ true;
+
+
+ messageInput.focus();
+
+
+ listenForMessages();
+
+ showToast(
+  "Connected! Say hello 👋"
+ );
+
 }
 
-/* =========================
-   REALTIME MESSAGES
-========================= */
+
+/* =========================================
+   RANDOM CHAT MESSAGES
+========================================= */
 
 function listenForMessages(){
 
-    if(!currentRoomId){
-        return;
+ if(!currentRoomId){
+
+  return;
+
+ }
+
+
+ const ref =
+  db.ref(
+   "rooms/" +
+   currentRoomId +
+   "/messages"
+  );
+
+
+ if(messageListener){
+
+  ref.off(
+   "value",
+   messageListener
+  );
+
+ }
+
+
+ messageListener =
+  ref.on(
+
+   "value",
+
+   function(snapshot){
+
+    messages.innerHTML = "";
+
+    messages.appendChild(
+     emptyState
+    );
+
+
+    const data =
+     snapshot.val() || {};
+
+
+    const list =
+     Object.keys(data).map(
+      function(id){
+
+       return {
+
+        id:id,
+
+        data:
+         data[id] || {}
+
+       };
+
+      }
+     );
+
+
+    list.sort(
+     function(a,b){
+
+      return (
+       Number(
+        a.data.time
+       ) || 0
+      ) -
+      (
+       Number(
+        b.data.time
+       ) || 0
+      );
+
+     }
+    );
+
+
+    if(!list.length){
+
+     emptyState.style.display =
+      "flex";
+
+     return;
+
     }
 
-    const ref =
-        db.ref(
-            "rooms/" +
-            currentRoomId +
-            "/messages"
-        );
 
-    messageListener =
-        ref.on("child_added", function(snapshot){
+    emptyState.style.display =
+     "none";
 
-            const data = snapshot.val();
 
-            if(data){
-                addMessage(
-                    data.text,
-                    data.sender === clientId,
-                    data.time
-                );
-            }
+    list.forEach(
+     function(item){
 
-        });
+      addMessage(
+
+       item.data.text || "",
+
+       String(
+        item.data.sender
+       ) ===
+       String(clientId),
+
+       item.data.time
+
+      );
+
+     }
+    );
+
+
+    messages.scrollTop =
+     messages.scrollHeight;
+
+   },
+
+   function(error){
+
+    console.error(
+     "Random chat receive error:",
+     error
+    );
+
+    showToast(
+     "Could not receive messages."
+    );
+
+   }
+
+  );
+
 }
 
-/* =========================
-   SEND MESSAGE
-========================= */
+
+/* =========================================
+   SEND RANDOM MESSAGE
+========================================= */
 
 function sendMessage(){
 
-    const text =
-        messageInput.value.trim();
+ const text =
+  messageInput.value.trim();
 
-    if(!text || !currentRoomId){
-        return;
-    }
 
-    db.ref(
-        "rooms/" +
-        currentRoomId +
-        "/messages"
-    ).push({
-        sender: clientId,
-        text: text,
-        time:
-            firebase.database.ServerValue.TIMESTAMP
-    })
-    .then(function(){
-        messageInput.value = "";
-    })
-    .catch(function(error){
-        console.error(error);
-        showToast("Message could not be sent.");
-    });
+ if(
+  !text ||
+  !currentRoomId
+ ){
+
+  return;
+
+ }
+
+
+ db.ref(
+  "rooms/" +
+  currentRoomId +
+  "/messages"
+ )
+ .push({
+
+  sender:
+   clientId,
+
+  text:
+   text.slice(0,2000),
+
+  time:
+   firebase.database.ServerValue.TIMESTAMP
+
+ })
+ .then(function(){
+
+  messageInput.value = "";
+
+  messageInput.focus();
+
+ })
+ .catch(function(error){
+
+  console.error(error);
+
+  showToast(
+   "Message could not be sent."
+  );
+
+ });
+
 }
 
-/* =========================
-   SHOW MESSAGE
-========================= */
 
-function addMessage(text, mine, time){
+/* =========================================
+   SHOW RANDOM MESSAGE
+========================================= */
 
-    emptyState.style.display = "none";
+function addMessage(
+ text,
+ mine,
+ time
+){
 
-    const row =
-        document.createElement("div");
+ const row =
+  document.createElement(
+   "div"
+  );
 
-    row.className =
-        "message-row" +
-        (mine ? " mine" : "");
+ row.className =
+  "message-row" +
+  (
+   mine
+   ? " mine"
+   : ""
+  );
 
-    const bubble =
-        document.createElement("div");
 
-    bubble.className = "bubble";
+ const bubble =
+  document.createElement(
+   "div"
+  );
 
-    const textElement =
-        document.createElement("div");
+ bubble.className =
+  "bubble";
 
-    textElement.textContent = text;
 
-    const timeElement =
-        document.createElement("div");
+ const textEl =
+  document.createElement(
+   "div"
+  );
 
-    timeElement.className =
-        "message-time";
+ textEl.textContent =
+  text;
 
-    const date =
-        time ? new Date(time) : new Date();
 
-    timeElement.textContent =
-        date.toLocaleTimeString(
-            [],
-            {
-                hour:"2-digit",
-                minute:"2-digit"
-            }
-        );
+ const timeEl =
+  document.createElement(
+   "div"
+  );
 
-    bubble.appendChild(textElement);
-    bubble.appendChild(timeElement);
-    row.appendChild(bubble);
-    messages.appendChild(row);
+ timeEl.className =
+  "message-time";
 
-    messages.scrollTop =
-        messages.scrollHeight;
+
+ const date =
+  time
+  ? new Date(time)
+  : new Date();
+
+
+ timeEl.textContent =
+  date.toLocaleTimeString(
+   [],
+   {
+    hour:"2-digit",
+    minute:"2-digit"
+   }
+  );
+
+
+ bubble.appendChild(
+  textEl
+ );
+
+ bubble.appendChild(
+  timeEl
+ );
+
+ row.appendChild(
+  bubble
+ );
+
+ messages.appendChild(
+  row
+ );
+
 }
 
-/* =========================
-   LEAVE CHAT
-========================= */
+
+/* =========================================
+   LEAVE RANDOM CHAT
+========================================= */
 
 function leaveChat(){
 
-    if(searchTimer){
-        clearInterval(searchTimer);
-        searchTimer = null;
-    }
+ if(searchTimer){
 
-    if(currentTicketId){
+  clearInterval(
+   searchTimer
+  );
 
-        db.ref(
-            "matchmaking/" +
-            currentTicketId
-        ).remove();
+  searchTimer = null;
 
-    }
+ }
 
-    if(
-        currentTicketId &&
-        assignmentListener
-    ){
-        db.ref(
-            "claims/" +
-            currentTicketId
-        ).off(
-            "value",
-            assignmentListener
-        );
-    }
 
-    if(
-        currentRoomId &&
-        messageListener
-    ){
-        db.ref(
-            "rooms/" +
-            currentRoomId +
-            "/messages"
-        ).off(
-            "child_added",
-            messageListener
-        );
-    }
+ if(currentTicketId){
 
-    currentTicketId = null;
-    currentRoomId = null;
-    isSearching = false;
-    assignmentListener = null;
-    messageListener = null;
+  db.ref(
+   "matchmaking/" +
+   currentTicketId
+  ).remove();
 
-    messages.innerHTML = "";
-    messages.appendChild(emptyState);
 
-    emptyState.style.display = "flex";
+  db.ref(
+   "claims/" +
+   currentTicketId
+  ).remove();
 
-    document.getElementById("emptyTitle").textContent =
-        "Ready to Meet Someone?";
+ }
 
-    document.getElementById("emptyText").textContent =
-        "Press New Chat to start searching.";
 
-    document.getElementById("partnerTitle").textContent =
-        "Ready to connect";
+ if(
+  currentRoomId &&
+  messageListener
+ ){
 
-    document.getElementById("partnerStatus").textContent =
-        "Press New Chat to find someone";
+  db.ref(
+   "rooms/" +
+   currentRoomId +
+   "/messages"
+  ).off(
+   "value",
+   messageListener
+  );
 
-    document.getElementById("connectionState").innerHTML =
-        '<span class="dot off"></span>NOT CONNECTED';
+ }
 
-    document.getElementById("chatBadge").textContent =
-        "OFFLINE";
 
-    messageInput.disabled = true;
-    sendBtn.disabled = true;
-    messageInput.value = "";
+ currentTicketId = null;
+ currentRoomId = null;
 
-    newChatBtn.disabled = false;
+ isSearching = false;
 
-    showToast("Chat ended.");
+ messageListener = null;
+ assignmentListener = null;
+
+
+ messages.innerHTML = "";
+
+ messages.appendChild(
+  emptyState
+ );
+
+ emptyState.style.display =
+  "flex";
+
+
+ document.getElementById(
+  "emptyTitle"
+ ).textContent =
+ "Ready to Meet Someone?";
+
+
+ document.getElementById(
+  "emptyText"
+ ).textContent =
+ "Press New Chat to start searching.";
+
+
+ document.getElementById(
+  "partnerTitle"
+ ).textContent =
+ "Ready to connect";
+
+
+ document.getElementById(
+  "partnerStatus"
+ ).textContent =
+ "Press New Chat to find someone";
+
+
+ document.getElementById(
+  "connectionState"
+ ).innerHTML =
+ '<span class="dot off"></span>NOT CONNECTED';
+
+
+ document.getElementById(
+  "chatBadge"
+ ).textContent =
+ "OFFLINE";
+
+
+ messageInput.disabled =
+ true;
+
+ sendBtn.disabled =
+ true;
+
+ messageInput.value =
+ "";
+
+
+ newChatBtn.disabled =
+ false;
+
+
+ showToast(
+  "Chat ended."
+ );
+
 }
 
-/* =========================
-   ENTER TO SEND
-========================= */
+
+/* =========================================
+   PRESENCE
+========================================= */
+
+function startPresence(user){
+
+ if(
+  !user ||
+  user.isAnonymous
+ ){
+
+  return;
+
+ }
+
+
+ const connectedRef =
+  db.ref(".info/connected");
+
+
+ const presenceRef =
+  db.ref(
+   "presence/" +
+   user.uid
+  );
+
+
+ connectedRef.on(
+  "value",
+  function(snapshot){
+
+   if(snapshot.val() !== true){
+
+    return;
+
+   }
+
+
+   presenceRef
+   .onDisconnect()
+   .set({
+
+    online:false,
+
+    lastSeen:
+     firebase.database.ServerValue.TIMESTAMP
+
+   })
+   .then(function(){
+
+    return presenceRef.set({
+
+     online:true,
+
+     lastSeen:
+      firebase.database.ServerValue.TIMESTAMP
+
+    });
+
+   })
+   .catch(function(error){
+
+    console.error(
+     "Presence error:",
+     error
+    );
+
+   });
+
+  }
+ );
+
+}
+
+
+/* =========================================
+   USERS DASHBOARD
+========================================= */
+
+function startUsersDashboard(){
+
+ const dashboard =
+  document.getElementById(
+   "dashboardPanel"
+  );
+
+ dashboard.style.display =
+  "block";
+
+
+ const directoryRef =
+  db.ref("directory");
+
+
+ let profiles = {};
+ let presence = {};
+
+
+ profileListListener =
+  directoryRef.on(
+   "value",
+   function(snapshot){
+
+    profiles =
+     snapshot.val() || {};
+
+
+    const ids =
+     Object.keys(
+      profiles
+     );
+
+
+    ids.forEach(function(uid){
+
+     db.ref(
+      "presence/" +
+      uid
+     )
+     .on(
+      "value",
+      function(snap){
+
+       presence[uid] =
+        snap.val() || {};
+
+       renderUsers();
+
+      }
+     );
+
+    });
+
+
+    renderUsers();
+
+   }
+  );
+
+
+
+ function renderUsers(){
+
+  const ids =
+   Object.keys(
+    profiles
+   );
+
+
+  document.getElementById(
+   "registeredCount"
+  ).textContent =
+   ids.length;
+
+
+  let online = 0;
+
+
+  ids.forEach(function(uid){
+
+   if(
+    presence[uid] &&
+    presence[uid].online === true
+   ){
+
+    online++;
+
+   }
+
+  });
+
+
+  document.getElementById(
+   "onlineCount"
+  ).textContent =
+   online;
+
+
+  document.getElementById(
+   "offlineCount"
+  ).textContent =
+   Math.max(
+    0,
+    ids.length - online
+   );
+
+
+  const list =
+   document.getElementById(
+    "usersList"
+   );
+
+
+  list.innerHTML = "";
+
+
+  if(!ids.length){
+
+   list.innerHTML =
+    '<div class="dashboard-empty">No registered users yet.</div>';
+
+   return;
+
+  }
+
+
+  ids.sort(function(a,b){
+
+   return String(
+    profiles[a].username || ""
+   ).localeCompare(
+    String(
+     profiles[b].username || ""
+    )
+   );
+
+  });
+
+
+  const currentUser =
+   firebase.auth().currentUser;
+
+
+  ids.forEach(function(uid){
+
+   const profile =
+    profiles[uid] || {};
+
+
+   const p =
+    presence[uid] || {};
+
+
+   const isOnline =
+    p.online === true;
+
+
+   const isMe =
+    currentUser &&
+    uid === currentUser.uid;
+
+
+   const row =
+    document.createElement(
+     "div"
+    );
+
+   row.className =
+    "user-row";
+
+
+   const main =
+    document.createElement(
+     "div"
+    );
+
+   main.className =
+    "user-main";
+
+
+   const name =
+    document.createElement(
+     "div"
+    );
+
+   name.className =
+    "user-name";
+
+   name.textContent =
+    profile.username ||
+    "Dakshub user";
+
+
+   main.appendChild(
+    name
+   );
+
+
+   const status =
+    document.createElement(
+     "div"
+    );
+
+   status.className =
+    "user-status";
+
+
+   const dot =
+    document.createElement(
+     "span"
+    );
+
+   dot.className =
+    "dot" +
+    (
+     isOnline
+     ? ""
+     : " off"
+    );
+
+
+   const label =
+    document.createElement(
+     "span"
+    );
+
+
+   label.textContent =
+    isOnline
+    ? "Online"
+    : "Offline";
+
+
+   status.appendChild(
+    dot
+   );
+
+   status.appendChild(
+    label
+   );
+
+
+   /*
+      IMPORTANT:
+      Chat button appears for EVERY OTHER user,
+      not only online users.
+   */
+
+   if(!isMe){
+
+    const chat =
+     document.createElement(
+      "button"
+     );
+
+
+    chat.className =
+     "private-chat-button";
+
+
+    chat.textContent =
+     "💬 Chat";
+
+
+    chat.onclick =
+     function(event){
+
+      event.preventDefault();
+      event.stopPropagation();
+
+
+      openPrivateChat(
+       uid,
+       profile.username ||
+       "Dakshub user"
+      );
+
+     };
+
+
+    status.appendChild(
+     chat
+    );
+
+   }
+
+
+   row.appendChild(
+    main
+   );
+
+   row.appendChild(
+    status
+   );
+
+
+   list.appendChild(
+    row
+   );
+
+  });
+
+ }
+
+}
+
+
+/* =========================================
+   STOP USERS DASHBOARD
+========================================= */
+
+function stopUsersDashboard(){
+
+ const dashboard =
+  document.getElementById(
+   "dashboardPanel"
+  );
+
+
+ if(dashboard){
+
+  dashboard.style.display =
+   "none";
+
+ }
+
+
+ if(profileListListener){
+
+  db.ref("directory")
+  .off(
+   "value",
+   profileListListener
+  );
+
+  profileListListener =
+   null;
+
+ }
+
+}
+
+
+/* =========================================
+   PRIVATE ROOM ID
+========================================= */
+
+function makePrivateRoomId(
+ uid1,
+ uid2
+){
+
+ return [
+
+  String(uid1),
+  String(uid2)
+
+ ].sort().join("_");
+
+}
+
+
+/* =========================================
+   OPEN PRIVATE CHAT
+========================================= */
+
+function openPrivateChat(
+ partnerUid,
+ partnerName
+){
+
+ const user =
+  firebase.auth().currentUser;
+
+
+ if(
+  !user ||
+  user.isAnonymous
+ ){
+
+  showToast(
+   "Please log in first."
+  );
+
+  return;
+
+ }
+
+
+ if(
+  !partnerUid ||
+  String(partnerUid) ===
+  String(user.uid)
+ ){
+
+  showToast(
+   "You cannot chat with yourself."
+  );
+
+  return;
+
+ }
+
+
+ closePrivateChat();
+
+
+ privateChatPartnerId =
+  String(partnerUid);
+
+
+ privateChatRoomId =
+  makePrivateRoomId(
+   user.uid,
+   privateChatPartnerId
+  );
+
+
+ document.getElementById(
+  "privateChatPanel"
+ ).style.display =
+ "block";
+
+
+ document.getElementById(
+  "privateChatTitle"
+ ).textContent =
+ "Chat with " +
+ (
+  partnerName ||
+  "Dakshub user"
+ );
+
+
+ const box =
+  document.getElementById(
+   "privateChatMessages"
+  );
+
+
+ box.innerHTML =
+  '<div class="dashboard-empty">Loading messages...</div>';
+
+
+ const roomRef =
+  db.ref(
+   "privateRooms/" +
+   privateChatRoomId
+  );
+
+
+ const members = {};
+
+
+ members[user.uid] =
+  true;
+
+
+ members[
+  privateChatPartnerId
+ ] =
+  true;
+
+
+ roomRef
+ .update({
+
+  members:members
+
+ })
+ .then(function(){
+
+  const ref =
+   roomRef.child(
+    "messages"
+   );
+
+
+  privateChatMessageListener =
+   ref.on(
+
+    "value",
+
+    function(snapshot){
+
+     renderPrivateMessages(
+      snapshot.val() || {}
+     );
+
+    },
+
+    function(error){
+
+     console.error(
+      "Private receive error:",
+      error
+     );
+
+     showToast(
+      "Could not receive private messages."
+     );
+
+    }
+
+   );
+
+
+  document.getElementById(
+   "privateMessageInput"
+  ).focus();
+
+ })
+ .catch(function(error){
+
+  console.error(
+   "Private room error:",
+   error
+  );
+
+  showToast(
+   "Could not open private chat."
+  );
+
+ });
+
+}
+
+
+/* =========================================
+   PRIVATE MESSAGES RENDER
+========================================= */
+
+function renderPrivateMessages(
+ data
+){
+
+ const box =
+  document.getElementById(
+   "privateChatMessages"
+  );
+
+
+ const user =
+  firebase.auth().currentUser;
+
+
+ box.innerHTML = "";
+
+
+ const list =
+  Object.keys(data)
+  .map(function(id){
+
+   return {
+
+    id:id,
+
+    data:
+     data[id] || {}
+
+   };
+
+  });
+
+
+ list.sort(
+  function(a,b){
+
+   return (
+    Number(
+     a.data.time
+    ) || 0
+   ) -
+   (
+    Number(
+     b.data.time
+    ) || 0
+   );
+
+  }
+ );
+
+
+ if(!list.length){
+
+  box.innerHTML =
+   '<div class="dashboard-empty">No messages yet.</div>';
+
+  return;
+
+ }
+
+
+ list.forEach(
+  function(item){
+
+   addPrivateMessage(
+
+    item.data.text || "",
+
+    user &&
+    String(
+     item.data.sender
+    ) ===
+    String(user.uid),
+
+    item.data.time
+
+   );
+
+  }
+ );
+
+
+ box.scrollTop =
+  box.scrollHeight;
+
+}
+
+
+/* =========================================
+   ADD PRIVATE MESSAGE
+========================================= */
+
+function addPrivateMessage(
+ text,
+ mine,
+ time
+){
+
+ const box =
+  document.getElementById(
+   "privateChatMessages"
+  );
+
+
+ const row =
+  document.createElement(
+   "div"
+  );
+
+
+ row.className =
+  "message-row" +
+  (
+   mine
+   ? " mine"
+   : ""
+  );
+
+
+ const bubble =
+  document.createElement(
+   "div"
+  );
+
+
+ bubble.className =
+  "bubble";
+
+
+ const textEl =
+  document.createElement(
+   "div"
+  );
+
+
+ textEl.textContent =
+  text;
+
+
+ const timeEl =
+  document.createElement(
+   "div"
+  );
+
+
+ timeEl.className =
+  "message-time";
+
+
+ const date =
+  time
+  ? new Date(time)
+  : new Date();
+
+
+ timeEl.textContent =
+  date.toLocaleTimeString(
+   [],
+   {
+    hour:"2-digit",
+    minute:"2-digit"
+   }
+  );
+
+
+ bubble.appendChild(
+  textEl
+ );
+
+ bubble.appendChild(
+  timeEl
+ );
+
+ row.appendChild(
+  bubble
+ );
+
+ box.appendChild(
+  row
+ );
+
+}
+
+
+/* =========================================
+   SEND PRIVATE MESSAGE
+========================================= */
+
+function sendPrivateMessage(){
+
+ const user =
+  firebase.auth().currentUser;
+
+
+ const input =
+  document.getElementById(
+   "privateMessageInput"
+  );
+
+
+ if(
+  !user ||
+  user.isAnonymous
+ ){
+
+  showToast(
+   "Please log in first."
+  );
+
+  return;
+
+ }
+
+
+ if(
+  !privateChatRoomId ||
+  !privateChatPartnerId
+ ){
+
+  showToast(
+   "Open a private chat first."
+  );
+
+  return;
+
+ }
+
+
+ const text =
+  input.value.trim();
+
+
+ if(!text){
+
+  return;
+
+ }
+
+
+ const roomRef =
+  db.ref(
+   "privateRooms/" +
+   privateChatRoomId
+  );
+
+
+ roomRef
+ .update({
+
+  members:{
+
+   [user.uid]:
+    true,
+
+   [privateChatPartnerId]:
+    true
+
+  }
+
+ })
+ .then(function(){
+
+  return roomRef
+   .child("messages")
+   .push({
+
+    sender:
+     user.uid,
+
+    text:
+     text.slice(0,2000),
+
+    time:
+     firebase.database.ServerValue.TIMESTAMP
+
+   });
+
+ })
+ .then(function(){
+
+  input.value = "";
+
+  input.focus();
+
+ })
+ .catch(function(error){
+
+  console.error(
+   "Private send error:",
+   error
+  );
+
+  showToast(
+   "Message could not be sent."
+  );
+
+ });
+
+}
+
+
+/* =========================================
+   CLOSE PRIVATE CHAT
+========================================= */
+
+function closePrivateChat(){
+
+ if(
+  privateChatRoomId &&
+  privateChatMessageListener
+ ){
+
+  db.ref(
+   "privateRooms/" +
+   privateChatRoomId +
+   "/messages"
+  )
+  .off(
+   "value",
+   privateChatMessageListener
+  );
+
+ }
+
+
+ privateChatRoomId =
+  null;
+
+ privateChatPartnerId =
+  null;
+
+ privateChatMessageListener =
+  null;
+
+
+ const panel =
+  document.getElementById(
+   "privateChatPanel"
+  );
+
+
+ if(panel){
+
+  panel.style.display =
+   "none";
+
+ }
+
+
+ const box =
+  document.getElementById(
+   "privateChatMessages"
+  );
+
+
+ if(box){
+
+  box.innerHTML =
+   "";
+
+ }
+
+}
+
+
+/* =========================================
+   ACCOUNT
+========================================= */
+
+function getAccountValues(){
+
+ return {
+
+  email:
+   document.getElementById(
+    "accountEmail"
+   ).value.trim(),
+
+  password:
+   document.getElementById(
+    "accountPassword"
+   ).value,
+
+  username:
+   document.getElementById(
+    "profileUsername"
+   ).value.trim()
+
+ };
+
+}
+
+
+/* =========================================
+   REGISTER
+========================================= */
+
+function registerAccount(){
+
+ const v =
+  getAccountValues();
+
+
+ if(
+  !v.email ||
+  !v.password ||
+  !v.username
+ ){
+
+  showToast(
+   "Enter email, password and username."
+  );
+
+  return;
+
+ }
+
+
+ if(v.password.length < 6){
+
+  showToast(
+   "Password must be at least 6 characters."
+  );
+
+  return;
+
+ }
+
+
+ if(
+  !/^[a-zA-Z0-9_.-]{3,30}$/.test(
+   v.username
+  )
+ ){
+
+  showToast(
+   "Username must be 3-30 characters."
+  );
+
+  return;
+
+ }
+
+
+ const current =
+  firebase.auth().currentUser;
+
+
+ if(
+  current &&
+  !current.isAnonymous
+ ){
+
+  showToast(
+   "Log out first to create another account."
+  );
+
+  return;
+
+ }
+
+
+ function create(){
+
+  return firebase.auth()
+  .createUserWithEmailAndPassword(
+   v.email,
+   v.password
+  )
+  .then(function(result){
+
+   const user =
+    result.user;
+
+
+   return Promise.all([
+
+    db.ref(
+     "profiles/" +
+     user.uid
+    ).set({
+
+     username:
+      v.username,
+
+     email:
+      v.email,
+
+     createdAt:
+      firebase.database.ServerValue.TIMESTAMP
+
+    }),
+
+
+    db.ref(
+     "directory/" +
+     user.uid
+    ).set({
+
+     username:
+      v.username,
+
+     createdAt:
+      firebase.database.ServerValue.TIMESTAMP
+
+    })
+
+   ])
+   .then(function(){
+
+    return user
+     .sendEmailVerification();
+
+   })
+   .then(function(){
+
+    updateAccountUI(
+     user
+    );
+
+    showToast(
+     "Account created successfully."
+    );
+
+   });
+
+  });
+
+ }
+
+
+ if(
+  current &&
+  current.isAnonymous
+ ){
+
+  firebase.auth()
+  .signOut()
+  .then(create)
+  .catch(function(error){
+
+   console.error(error);
+
+   showToast(
+    error.message
+   );
+
+  });
+
+ }else{
+
+  create()
+  .catch(function(error){
+
+   console.error(error);
+
+   if(
+    error.code ===
+    "auth/email-already-in-use"
+   ){
+
+    showToast(
+     "Email already registered. Please log in."
+    );
+
+   }else{
+
+    showToast(
+     error.message ||
+     "Could not create account."
+    );
+
+   }
+
+  });
+
+ }
+
+}
+
+
+/* =========================================
+   LOGIN
+========================================= */
+
+function loginAccount(){
+
+ const v =
+  getAccountValues();
+
+
+ if(
+  !v.email ||
+  !v.password
+ ){
+
+  showToast(
+   "Enter email and password."
+  );
+
+  return;
+
+ }
+
+
+ firebase.auth()
+ .signInWithEmailAndPassword(
+  v.email,
+  v.password
+ )
+ .then(function(result){
+
+  clientId =
+   result.user.uid;
+
+  updateAccountUI(
+   result.user
+  );
+
+  showToast(
+   "Logged in successfully."
+  );
+
+ })
+ .catch(function(error){
+
+  console.error(error);
+
+  showToast(
+   "Email or password is incorrect."
+  );
+
+ });
+
+}
+
+
+/* =========================================
+   FORGOT PASSWORD
+========================================= */
+
+function forgotPassword(){
+
+ const email =
+  document.getElementById(
+   "accountEmail"
+  ).value.trim();
+
+
+ if(!email){
+
+  showToast(
+   "Enter your email first."
+  );
+
+  return;
+
+ }
+
+
+ firebase.auth()
+ .sendPasswordResetEmail(
+  email
+ )
+ .then(function(){
+
+  showToast(
+   "Password reset email sent."
+  );
+
+ })
+ .catch(function(error){
+
+  console.error(error);
+
+  showToast(
+   error.message
+  );
+
+ });
+
+}
+
+
+/* =========================================
+   LOGOUT
+========================================= */
+
+function logoutAccount(){
+
+ const user =
+  firebase.auth().currentUser;
+
+
+ if(
+  user &&
+  !user.isAnonymous
+ ){
+
+  db.ref(
+   "presence/" +
+   user.uid
+  )
+  .set({
+
+   online:false,
+
+   lastSeen:
+    firebase.database.ServerValue.TIMESTAMP
+
+  })
+  .finally(function(){
+
+   firebase.auth()
+    .signOut();
+
+  });
+
+ }else{
+
+  firebase.auth()
+   .signOut();
+
+ }
+
+}
+
+
+/* =========================================
+   ACCOUNT UI
+========================================= */
+
+function updateAccountUI(
+ user
+){
+
+ const loggedOut =
+  document.getElementById(
+   "loggedOutPanel"
+  );
+
+
+ const loggedIn =
+  document.getElementById(
+   "loggedInPanel"
+  );
+
+
+ const dashboard =
+  document.getElementById(
+   "dashboardPanel"
+  );
+
+
+ if(
+  user &&
+  !user.isAnonymous
+ ){
+
+  loggedOut.style.display =
+   "none";
+
+  loggedIn.style.display =
+   "block";
+
+  dashboard.style.display =
+   "block";
+
+  showProfile(
+   user
+  );
+
+ }else{
+
+  loggedOut.style.display =
+   "block";
+
+  loggedIn.style.display =
+   "none";
+
+  dashboard.style.display =
+   "none";
+
+ }
+
+}
+
+
+/* =========================================
+   PROFILE
+========================================= */
+
+function showProfile(
+ user
+){
+
+ db.ref(
+  "profiles/" +
+  user.uid
+ )
+ .once("value")
+ .then(function(snapshot){
+
+  const p =
+   snapshot.val() || {};
+
+
+  document.getElementById(
+   "profileName"
+  ).textContent =
+   p.username ||
+   "Dakshub user";
+
+
+  document.getElementById(
+   "profileEmail"
+  ).textContent =
+   user.email || "";
+
+
+  const status =
+   document.getElementById(
+    "verificationStatus"
+   );
+
+
+  const resend =
+   document.getElementById(
+    "resendVerificationBtn"
+   );
+
+
+  if(user.emailVerified){
+
+   status.textContent =
+    "✓ Email verified";
+
+   status.className =
+    "verification-note ok";
+
+   resend.style.display =
+    "none";
+
+  }else{
+
+   status.textContent =
+    "⚠ Email not verified yet.";
+
+   status.className =
+    "verification-note warn";
+
+   resend.style.display =
+    "inline-block";
+
+  }
+
+ });
+
+}
+
+
+/* =========================================
+   RESEND VERIFICATION
+========================================= */
+
+function resendVerificationEmail(){
+
+ const user =
+  firebase.auth().currentUser;
+
+
+ if(
+  !user ||
+  user.isAnonymous
+ ){
+
+  return;
+
+ }
+
+
+ user.sendEmailVerification()
+ .then(function(){
+
+  showToast(
+   "Verification email sent."
+  );
+
+ })
+ .catch(function(error){
+
+  console.error(error);
+
+  showToast(
+   error.message
+  );
+
+ });
+
+}
+
+
+/* =========================================
+   PRIVATE CHAT ENTER
+========================================= */
+
+document.getElementById(
+ "privateMessageInput"
+).addEventListener(
+ "keydown",
+ function(event){
+
+  if(event.key === "Enter"){
+
+   event.preventDefault();
+
+   sendPrivateMessage();
+
+  }
+
+ }
+);
+
+
+/* =========================================
+   RANDOM CHAT ENTER
+========================================= */
 
 messageInput.addEventListener(
-    "keydown",
-    function(event){
+ "keydown",
+ function(event){
 
-        if(event.key === "Enter"){
-            sendMessage();
-        }
+  if(event.key === "Enter"){
 
-    }
+   event.preventDefault();
+
+   sendMessage();
+
+  }
+
+ }
 );
 
 
-document.getElementById("privateMessageInput").addEventListener(
-    "keydown",
-    function(event){
-        if(event.key === "Enter"){
-            sendPrivateMessage();
-        }
-    }
-);
-
-/* =========================
+/* =========================================
    THEME
-========================= */
+========================================= */
 
 function toggleTheme(){
 
-    document.body.classList.toggle("light");
+ document.body.classList.toggle(
+  "light"
+ );
 
-    const button =
-        document.getElementById("themeButton");
 
-    if(document.body.classList.contains("light")){
+ const button =
+  document.getElementById(
+   "themeButton"
+  );
 
-        button.textContent = "🌙 Dark";
-        localStorage.setItem(
-            "dakshubTheme",
-            "light"
-        );
 
-    }else{
+ if(
+  document.body.classList.contains(
+   "light"
+  )
+ ){
 
-        button.textContent = "☀ Light";
-        localStorage.setItem(
-            "dakshubTheme",
-            "dark"
-        );
-    }
+  button.textContent =
+   "🌙 Dark";
+
+  localStorage.setItem(
+   "dakshubTheme",
+   "light"
+  );
+
+ }else{
+
+  button.textContent =
+   "☀ Light";
+
+  localStorage.setItem(
+   "dakshubTheme",
+   "dark"
+  );
+
+ }
+
 }
+
 
 if(
-    localStorage.getItem("dakshubTheme") ===
-    "light"
+ localStorage.getItem(
+  "dakshubTheme"
+ ) === "light"
 ){
-    document.body.classList.add("light");
 
-    document.getElementById("themeButton")
-    .textContent = "🌙 Dark";
+ document.body.classList.add(
+  "light"
+ );
+
+ document.getElementById(
+  "themeButton"
+ ).textContent =
+  "🌙 Dark";
+
 }
 
-/* =========================
+
+/* =========================================
    ABOUT / HOME
-========================= */
+========================================= */
 
 function showAbout(){
 
-    const about =
-        document.getElementById("about");
+ const about =
+  document.getElementById(
+   "about"
+  );
 
-    about.style.display =
-        about.style.display === "block"
-        ? "none"
-        : "block";
 
-    if(about.style.display === "block"){
-        about.scrollIntoView({
-            behavior:"smooth"
-        });
-    }
+ about.style.display =
+  about.style.display ===
+  "block"
+  ? "none"
+  : "block";
+
+
+ if(
+  about.style.display ===
+  "block"
+ ){
+
+  about.scrollIntoView({
+   behavior:"smooth"
+  });
+
+ }
+
 }
+
 
 function goHome(){
-    window.scrollTo({
-        top:0,
-        behavior:"smooth"
-    });
+
+ window.scrollTo({
+
+  top:0,
+
+  behavior:"smooth"
+
+ });
+
 }
 
-/* =========================
+
+/* =========================================
    TOAST
-========================= */
+========================================= */
 
 let toastTimer = null;
 
-function showToast(text){
 
-    const toast =
-        document.getElementById("toast");
+function showToast(
+ text
+){
 
-    toast.textContent = text;
-    toast.classList.add("show");
+ const toast =
+  document.getElementById(
+   "toast"
+  );
 
-    clearTimeout(toastTimer);
 
-    toastTimer =
-        setTimeout(function(){
+ toast.textContent =
+  text;
 
-            toast.classList.remove("show");
 
-        },3000);
+ toast.classList.add(
+  "show"
+ );
+
+
+ clearTimeout(
+  toastTimer
+ );
+
+
+ toastTimer =
+  setTimeout(
+   function(){
+
+    toast.classList.remove(
+     "show"
+    );
+
+   },
+   3000
+  );
+
 }
 
 
-/* =========================
-   PERMANENT ACCOUNT / PROFILE
-   ========================= */
-
-function getAccountValues(){
-    return {
-        email: document.getElementById("accountEmail").value.trim(),
-        password: document.getElementById("accountPassword").value,
-        username: document.getElementById("profileUsername").value.trim()
-    };
-}
-
-function setAccountMessage(text){
-    showToast(text);
-}
-
-/*
- * IMPORTANT:
- * Random Chat uses anonymous Firebase auth for visitors.
- * Registration creates a completely separate Email/Password account.
- * We do NOT use linkWithCredential(), so an anonymous session can never
- * trigger the "Please verify the new email before changing email" flow.
- */
-function registerAccount(){
-    const v = getAccountValues();
-    const currentUser = firebase.auth().currentUser;
-
-    if(!v.email || !v.password || !v.username){
-        setAccountMessage("Enter email, password and username.");
-        return;
-    }
-
-    if(v.password.length < 6){
-        setAccountMessage("Password must be at least 6 characters.");
-        return;
-    }
-
-    if(!/^[a-zA-Z0-9_.-]{3,30}$/.test(v.username)){
-        setAccountMessage("Username: 3-30 letters, numbers, _ . or - only.");
-        return;
-    }
-
-    // If already logged into a permanent account, don't create another one
-    // from inside that session. Log out first.
-    if(currentUser && !currentUser.isAnonymous){
-        setAccountMessage("You are already logged in. Log out first to create another account.");
-        return;
-    }
-
-    // The visitor may have an anonymous account for Random Chat.
-    // Sign it out first, then create a REAL email/password account.
-    const createAccount = function(){
-        return firebase.auth().createUserWithEmailAndPassword(v.email, v.password)
-        .then(function(result){
-            const user = result.user;
-
-            const profileData = {
-                username: v.username,
-                email: v.email,
-                createdAt: firebase.database.ServerValue.TIMESTAMP
-            };
-
-            const directoryData = {
-                username: v.username,
-                createdAt: firebase.database.ServerValue.TIMESTAMP
-            };
-
-            return Promise.all([
-                db.ref("profiles/" + user.uid).set(profileData),
-                db.ref("directory/" + user.uid).set(directoryData)
-            ]).then(function(){
-                return user.sendEmailVerification()
-                .then(function(){
-                    updateAccountUI(user);
-                    showToast("Account created. Check your email to verify your account.");
-                });
-            });
-        });
-    };
-
-    if(currentUser && currentUser.isAnonymous){
-        firebase.auth().signOut()
-        .then(createAccount)
-        .catch(function(error){
-            console.error(error);
-            showToast(error.message || "Could not create account.");
-        });
-    }else{
-        createAccount().catch(function(error){
-            console.error(error);
-
-            if(error.code === "auth/email-already-in-use"){
-                showToast("This email already has an account. Use Log In.");
-            }else if(error.code === "auth/invalid-email"){
-                showToast("Enter a valid email address.");
-            }else if(error.code === "auth/weak-password"){
-                showToast("Password must be at least 6 characters.");
-            }else{
-                showToast(error.message || "Could not create account.");
-            }
-        });
-    }
-}
-
-function loginAccount(){
-    const v = getAccountValues();
-
-    if(!v.email || !v.password){
-        showToast("Enter email and password.");
-        return;
-    }
-
-    firebase.auth().signInWithEmailAndPassword(v.email, v.password)
-    .then(function(result){
-        clientId = result.user.uid;
-        updateAccountUI(result.user);
-
-        if(result.user.emailVerified){
-            showToast("Logged in successfully.");
-        }else{
-            showToast("Please verify your email. Use Resend Verification Email.");
-        }
-    })
-    .catch(function(error){
-        console.error(error);
-
-        if(error.code === "auth/invalid-login-credentials" ||
-           error.code === "auth/wrong-password" ||
-           error.code === "auth/user-not-found"){
-            showToast("Email or password is incorrect.");
-        }else{
-            showToast(error.message || "Could not log in.");
-        }
-    });
-}
-
-function resendVerificationEmail(){
-    const user = firebase.auth().currentUser;
-
-    if(!user || user.isAnonymous){
-        showToast("Please log in to a registered account first.");
-        return;
-    }
-
-    if(user.emailVerified){
-        updateAccountUI(user);
-        showToast("Your email is already verified.");
-        return;
-    }
-
-    user.sendEmailVerification()
-    .then(function(){
-        showToast("Verification email sent. Check Inbox and Spam/Junk.");
-    })
-    .catch(function(error){
-        console.error(error);
-
-        if(error.code === "auth/too-many-requests"){
-            showToast("Too many requests. Please wait a little and try again.");
-        }else{
-            showToast(error.message || "Could not send verification email.");
-        }
-    });
-}
-
-function forgotPassword(){
-    const email = document.getElementById("accountEmail").value.trim();
-
-    if(!email){
-        showToast("Enter your email address first.");
-        return;
-    }
-
-    firebase.auth().sendPasswordResetEmail(email)
-    .then(function(){
-        showToast("Password reset email sent. Check Inbox and Spam/Junk.");
-    })
-    .catch(function(error){
-        console.error(error);
-        showToast(error.message || "Could not send password reset email.");
-    });
-}
-
-function logoutAccount(){
-    const user = firebase.auth().currentUser;
-
-    const finishLogout = function(){
-        return firebase.auth().signOut();
-    };
-
-    if(user && !user.isAnonymous){
-        db.ref("presence/" + user.uid).set({
-            online: false,
-            lastSeen: firebase.database.ServerValue.TIMESTAMP
-        }).then(finishLogout)
-        .catch(finishLogout)
-        .then(function(){
-            showToast("Logged out.");
-        })
-        .catch(function(error){
-            console.error(error);
-            showToast("Could not log out.");
-        });
-    }else{
-        finishLogout()
-        .then(function(){
-            showToast("Logged out.");
-        })
-        .catch(function(error){
-            console.error(error);
-            showToast("Could not log out.");
-        });
-    }
-}
-
-function updateAccountUI(user){
-    const loggedOut = document.getElementById("loggedOutPanel");
-    const loggedIn = document.getElementById("loggedInPanel");
-    const dashboard = document.getElementById("dashboardPanel");
-
-    if(user && !user.isAnonymous){
-        loggedOut.style.display = "none";
-        loggedIn.style.display = "block";
-        dashboard.style.display = "block";
-        showProfile(user);
-    }else{
-        loggedOut.style.display = "block";
-        loggedIn.style.display = "none";
-        dashboard.style.display = "none";
-    }
-}
-
-
-/* =========================
-   ONLINE PRESENCE
-   ========================= */
-
-function startPresence(user){
-    if(!user || user.isAnonymous) return;
-
-    const connectedRef = db.ref(".info/connected");
-    const presenceRef = db.ref("presence/" + user.uid);
-
-    if(presenceConnectedListener){
-        connectedRef.off("value", presenceConnectedListener);
-    }
-
-    function setOnline(){
-        presenceRef.onDisconnect().set({
-            online: false,
-            lastSeen: firebase.database.ServerValue.TIMESTAMP
-        }).then(function(){
-            return presenceRef.set({
-                online: true,
-                lastSeen: firebase.database.ServerValue.TIMESTAMP
-            });
-        }).catch(function(error){
-            console.error("Presence update failed:", error);
-        });
-    }
-
-    presenceConnectedListener = connectedRef.on("value", function(snapshot){
-        if(snapshot.val() === true){
-            setOnline();
-        }
-    });
-
-    // Immediate attempt; the connected listener will repeat it after the
-    // database connection is confirmed.
-    presenceRef.set({
-        online: true,
-        lastSeen: firebase.database.ServerValue.TIMESTAMP
-    }).catch(function(error){
-        console.error("Initial presence set failed:", error);
-    });
-}
-
-function makePrivateRoomId(uid1, uid2){
-    return [uid1, uid2].sort().join("_");
-}
-
-function makePrivateRoomId(uid1, uid2){
-    return [String(uid1), String(uid2)].sort().join("_");
-}
-
-function openPrivateChat(partnerUid, partnerName){
-    const user = firebase.auth().currentUser;
-
-    if(!user || user.isAnonymous){
-        showToast("Please log in first.");
-        return;
-    }
-
-    if(!partnerUid || String(partnerUid) === String(user.uid)){
-        showToast("You cannot chat with yourself.");
-        return;
-    }
-
-    // Close any previously opened private chat/listener.
-    closePrivateChat();
-
-    privateChatPartnerId = String(partnerUid);
-    privateChatRoomId = makePrivateRoomId(user.uid, privateChatPartnerId);
-
-    const panel = document.getElementById("privateChatPanel");
-    const title = document.getElementById("privateChatTitle");
-    const box = document.getElementById("privateChatMessages");
-
-    if(panel) panel.style.display = "block";
-    if(title) title.textContent = "Chat with " + (partnerName || "Dakshub user");
-    if(box) box.innerHTML = '<div class="dashboard-empty">Loading messages...</div>';
-
-    const roomRef = db.ref("privateRooms/" + privateChatRoomId);
-
-    const members = {};
-    members[user.uid] = true;
-    members[privateChatPartnerId] = true;
-
-    // Create/repair the room membership first.
-    roomRef.update({
-        members: members
-    }).then(function(){
-        const messagesRef = roomRef.child("messages");
-
-        // Use one listener and redraw the whole list whenever the room changes.
-        // This handles messages sent by either account and messages that already
-        // existed before the chat was opened.
-        privateChatMessageListener = messagesRef.on(
-            "value",
-            function(snapshot){
-                renderPrivateMessages(snapshot.val() || {});
-            },
-            function(error){
-                console.error("Private chat receive failed:", error);
-                showToast("Could not receive private messages.");
-            }
-        );
-
-        const input = document.getElementById("privateMessageInput");
-        if(input){
-            input.focus();
-        }
-    }).catch(function(error){
-        console.error("Private room setup failed:", error);
-        showToast("Private chat could not be opened.");
-    });
-}
-
-function renderPrivateMessages(messages){
-    const box = document.getElementById("privateChatMessages");
-    const user = firebase.auth().currentUser;
-
-    if(!box) return;
-
-    box.innerHTML = "";
-
-    const list = Object.keys(messages || {}).map(function(id){
-        return {
-            id: id,
-            data: messages[id] || {}
-        };
-    });
-
-    list.sort(function(a, b){
-        return (Number(a.data.time) || 0) - (Number(b.data.time) || 0);
-    });
-
-    if(list.length === 0){
-        const empty = document.createElement("div");
-        empty.className = "dashboard-empty";
-        empty.textContent = "No messages yet.";
-        box.appendChild(empty);
-        return;
-    }
-
-    list.forEach(function(item){
-        const data = item.data;
-        addPrivateMessage(
-            data.text || "",
-            !!user && String(data.sender) === String(user.uid),
-            data.time
-        );
-    });
-
-    box.scrollTop = box.scrollHeight;
-}
-
-function addPrivateMessage(text, mine, time){
-    const box = document.getElementById("privateChatMessages");
-    if(!box) return;
-
-    const row = document.createElement("div");
-    row.className = "message-row" + (mine ? " mine" : "");
-
-    const bubble = document.createElement("div");
-    bubble.className = "bubble";
-
-    const textEl = document.createElement("div");
-    textEl.textContent = text;
-
-    const timeEl = document.createElement("div");
-    timeEl.className = "message-time";
-
-    const date = time ? new Date(time) : new Date();
-    timeEl.textContent = date.toLocaleTimeString([], {
-        hour: "2-digit",
-        minute: "2-digit"
-    });
-
-    bubble.appendChild(textEl);
-    bubble.appendChild(timeEl);
-    row.appendChild(bubble);
-    box.appendChild(row);
-}
-
-function sendPrivateMessage(){
-    const user = firebase.auth().currentUser;
-    const input = document.getElementById("privateMessageInput");
-
-    if(!user || user.isAnonymous){
-        showToast("Please log in first.");
-        return;
-    }
-
-    if(!privateChatPartnerId || !privateChatRoomId){
-        showToast("Open a private chat first.");
-        return;
-    }
-
-    if(!input) return;
-
-    const text = input.value.trim();
-    if(!text) return;
-
-    const roomRef = db.ref("privateRooms/" + privateChatRoomId);
-
-    const members = {};
-    members[user.uid] = true;
-    members[privateChatPartnerId] = true;
-
-    // First ensure both users are members, then push the message.
-    roomRef.update({
-        members: members
-    }).then(function(){
-        return roomRef.child("messages").push({
-            sender: user.uid,
-            text: text.slice(0, 2000),
-            time: firebase.database.ServerValue.TIMESTAMP
-        });
-    }).then(function(){
-        input.value = "";
-        input.focus();
-    }).catch(function(error){
-        console.error("Private message send failed:", error);
-
-        if(error && error.code === "PERMISSION_DENIED"){
-            showToast("Firebase permission denied.");
-        }else{
-            showToast("Private message could not be sent.");
-        }
-    });
-}
-
-function closePrivateChat(){
-    if(privateChatRoomId && privateChatMessageListener){
-        db.ref(
-            "privateRooms/" + privateChatRoomId + "/messages"
-        ).off("value", privateChatMessageListener);
-    }
-
-    privateChatRoomId = null;
-    privateChatPartnerId = null;
-    privateChatMessageListener = null;
-
-    const panel = document.getElementById("privateChatPanel");
-    if(panel){
-        panel.style.display = "none";
-    }
-
-    const box = document.getElementById("privateChatMessages");
-    if(box){
-        box.innerHTML = "";
-    }
-}
-
-function stopUsersDashboard(){
-    closePrivateChat();
-    const dashboard = document.getElementById("dashboardPanel");
-    if(dashboard){
-        dashboard.style.display = "none";
-    }
-
-    if(profileListListener){
-        db.ref("profiles").off("value", profileListListener);
-        profileListListener = null;
-    }
-
-    if(presenceListListener){
-        db.ref("presence").off("value", presenceListListener);
-        presenceListListener = null;
-    }
-
-    document.getElementById("registeredCount").textContent = "0";
-    document.getElementById("onlineCount").textContent = "0";
-    document.getElementById("offlineCount").textContent = "0";
-    document.getElementById("usersList").innerHTML =
-        '<div class="dashboard-empty">Log in to see registered users.</div>';
-}
-
-function startUsersDashboard(){
-    const dashboard = document.getElementById("dashboardPanel");
-    if(!dashboard) return;
-
-    dashboard.style.display = "block";
-
-    const directoryRef = db.ref("directory");
-    let profilesData = {};
-    let presenceData = {};
-    const presenceListeners = {};
-
-    function renderUsers(){
-        const ids = Object.keys(profilesData);
-
-        const registeredEl = document.getElementById("registeredCount");
-        const onlineEl = document.getElementById("onlineCount");
-        const offlineEl = document.getElementById("offlineCount");
-        const list = document.getElementById("usersList");
-
-        if(registeredEl) registeredEl.textContent = ids.length;
-
-        let onlineCount = 0;
-        ids.forEach(function(uid){
-            if(presenceData[uid] && presenceData[uid].online === true){
-                onlineCount++;
-            }
-        });
-
-        if(onlineEl) onlineEl.textContent = onlineCount;
-        if(offlineEl) offlineEl.textContent = Math.max(0, ids.length - onlineCount);
-
-        if(!list) return;
-
-        if(ids.length === 0){
-            list.innerHTML =
-                '<div class="dashboard-empty">No registered users yet.</div>';
-            return;
-        }
-
-        ids.sort(function(a, b){
-            const an = String((profilesData[a] || {}).username || "").toLowerCase();
-            const bn = String((profilesData[b] || {}).username || "").toLowerCase();
-            return an.localeCompare(bn);
-        });
-
-        list.innerHTML = "";
-
-        const currentUser = firebase.auth().currentUser;
-
-        ids.forEach(function(uid){
-            const profile = profilesData[uid] || {};
-            const p = presenceData[uid] || {};
-            const isOnline = p.online === true;
-            const isMe = !!currentUser && uid === currentUser.uid;
-
-            const row = document.createElement("div");
-            row.className = "user-row";
-
-            const main = document.createElement("div");
-            main.className = "user-main";
-
-            const name = document.createElement("div");
-            name.className = "user-name";
-            name.textContent = profile.username || "Dakshub user";
-            main.appendChild(name);
-
-            const status = document.createElement("div");
-            status.className = "user-status";
-
-            const dot = document.createElement("span");
-            dot.className = "dot" + (isOnline ? "" : " off");
-            status.appendChild(dot);
-
-            const label = document.createElement("span");
-            label.className = "status-label";
-            label.textContent = isOnline ? "Online" :
-                (isMe ? "You • Offline" : "Offline");
-            status.appendChild(label);
-
-            if(!isMe){
-                const chatButton = document.createElement("button");
-                chatButton.type = "button";
-                chatButton.className = "secondary";
-                chatButton.textContent = "💬 Chat";
-                chatButton.style.marginLeft = "10px";
-                chatButton.style.padding = "8px 12px";
-
-                chatButton.addEventListener("click", function(event){
-                    event.preventDefault();
-                    event.stopPropagation();
-                    openPrivateChat(uid, profile.username || "Dakshub user");
-                });
-
-                status.appendChild(chatButton);
-            }
-
-            row.appendChild(main);
-            row.appendChild(status);
-            list.appendChild(row);
-        });
-    }
-
-    // Remove previous directory listener if one exists.
-    if(profileListListener){
-        directoryRef.off("value", profileListListener);
-    }
-
-    // Clean up old per-user presence listeners.
-    Object.keys(presenceListeners).forEach(function(uid){
-        db.ref("presence/" + uid).off("value", presenceListeners[uid]);
-        delete presenceListeners[uid];
-    });
-
-    profileListListener = directoryRef.on("value", function(snapshot){
-        profilesData = snapshot.val() || {};
-
-        const ids = Object.keys(profilesData);
-
-        // Attach one listener to each exact UID in directory.
-        ids.forEach(function(uid){
-            if(presenceListeners[uid]) return;
-
-            const ref = db.ref("presence/" + uid);
-
-            presenceListeners[uid] = ref.on("value", function(presenceSnap){
-                presenceData[uid] = presenceSnap.val() || {};
-                renderUsers();
-            }, function(error){
-                console.error("Presence read failed for " + uid + ":", error);
-                presenceData[uid] = {};
-                renderUsers();
-            });
-        });
-
-        // Remove listeners for users no longer in directory.
-        Object.keys(presenceListeners).forEach(function(uid){
-            if(!profilesData[uid]){
-                db.ref("presence/" + uid).off("value", presenceListeners[uid]);
-                delete presenceListeners[uid];
-                delete presenceData[uid];
-            }
-        });
-
-        renderUsers();
-    });
-}
-
-function showProfile(user){
-    db.ref("profiles/" + user.uid).once("value")
-    .then(function(snapshot){
-        const profile = snapshot.val() || {};
-
-        document.getElementById("profileName").textContent =
-            profile.username || "Dakshub user";
-
-        document.getElementById("profileEmail").textContent =
-            user.email || "";
-
-        const status = document.getElementById("verificationStatus");
-        const resendBtn = document.getElementById("resendVerificationBtn");
-
-        if(user.emailVerified){
-            status.textContent = "✓ Email verified";
-            status.className = "verification-note ok";
-            resendBtn.style.display = "none";
-        }else{
-            status.textContent = "⚠ Email not verified yet. Check your email or resend the verification email.";
-            status.className = "verification-note warn";
-            resendBtn.style.display = "inline-block";
-        }
-    })
-    .catch(function(error){
-        console.error(error);
-        document.getElementById("profileName").textContent = "Dakshub user";
-        document.getElementById("profileEmail").textContent = user.email || "";
-    });
-}
-
-/* YEAR */
-document.getElementById("year").textContent =
-    new Date().getFullYear();
+/* =========================================
+   YEAR
+========================================= */
+
+document.getElementById(
+ "year"
+).textContent =
+ new Date().getFullYear();
 
 </script>
-    <footer style="text-align: center; padding: 20px;">
-  <a href="/about.html">About Us</a> |
-  <a href="/contact.html">Contact</a> |
-  <a href="/privacy.html">Privacy Policy</a>
-</footer>
+
 </body>
 </html>
